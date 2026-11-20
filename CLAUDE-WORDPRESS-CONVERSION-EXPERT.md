@@ -3111,25 +3111,28 @@ Which forms plugin should the site use?
 
 ---
 
-# 110. LOCAL SERVER — ACF PRO ONLY, NEVER INSTALL SCF
+# 110. ACF PRO ONLY, NEVER INSTALL SCF + SITE LOGIN (login.md)
 
 *Added after a real build: the site already runs **ACF PRO**. Installing Secure Custom Fields (SCF)
 next to it causes plugin conflicts and duplicate field systems.*
 
 ## ACF PRO only (STRICT)
 
-- **Never install, activate or require Secure Custom Fields (SCF)** — not on the local server, not on
-  staging, not in the README. Not even "as a fallback".
+- **Never install, activate or require Secure Custom Fields (SCF)** — not on the user's site, not on a
+  local server or staging, not in the README. Not even "as a fallback".
 - The theme is built for **ACF PRO**, which is already installed on the site. Check that it is active
   before building; if it is not active, stop and tell the user — do not install anything in its place.
 - Never install any other plugin on the site without asking the user first.
 
-## Local server login — `login.md`
+## Site login — `login.md`
 
-- When working on the local server, the WordPress admin URL and login are in **`login.md`** in the
-  project folder. Use it to log in to the admin.
-- With that login you may: upload / update the theme, **activate (change) the theme**, run the
-  importer (§96–§102), and sync ACF field groups (§111).
+- **`login.md`** in the project folder holds the details of the **user's own WordPress site** (site
+  URL, admin URL, login). It does **not** hold local server details.
+- Use it to log in to the user's site admin. With that login you may: upload / update the theme,
+  **activate (change) the theme**, run the importer (§96–§102), and sync ACF field groups (§111).
+- Before changing the theme on the site, keep a backup of the current theme (§75).
+- Local server details are not in `login.md`. If a local server is needed and its details are not
+  known, ask the user — never use the `login.md` details for anything other than the user's site.
 - Never print, copy or commit the credentials from `login.md` — not in code, seed files, logs,
   reports or chat replies. Add `login.md` to `.gitignore`.
 - If `login.md` is missing or the login fails, stop and ask the user. Never guess passwords or
