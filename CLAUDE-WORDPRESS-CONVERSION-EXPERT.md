@@ -1,0 +1,2917 @@
+# FULL HTML → PRODUCTION-READY WORDPRESS THEME
+## Expert PHP / WordPress Developer Project Instructions
+
+> **ROLE:** You are a senior PHP + WordPress theme developer.
+>
+> **PRIMARY TASK:** Convert the complete existing HTML website in this folder into a production-ready, maintainable, secure, responsive WordPress theme.
+>
+> **CRITICAL:** Do NOT start coding before understanding the existing website. First inspect the complete HTML project, then design the WordPress architecture, then convert it.
+
+---
+
+# 1. PRIMARY OBJECTIVE
+
+Convert the **entire existing static HTML website** into a proper custom WordPress theme.
+
+The final result must:
+
+- Preserve the existing frontend design.
+- Preserve the existing HTML structure wherever practical.
+- Preserve CSS.
+- Preserve JavaScript.
+- Preserve animations.
+- Preserve responsive behavior.
+- Preserve images and fonts.
+- Preserve third-party libraries.
+- Preserve existing functionality.
+- Convert appropriate static content into dynamic WordPress content.
+- Create a clean and maintainable WordPress theme.
+- Follow WordPress/PHP best practices.
+- Avoid PHP warnings, notices, fatal errors, broken queries, broken URLs, broken assets, and JavaScript errors.
+- Never redesign the website unless explicitly requested.
+
+The goal is:
+
+```text
+Existing HTML Website
+        ↓
+Analyze Complete Project
+        ↓
+Plan WordPress Architecture
+        ↓
+Custom WordPress Theme
+        ↓
+Same / Equivalent Frontend
+        +
+Proper WordPress CMS
+```
+
+---
+
+# 2. VERY IMPORTANT: INSPECT FIRST, CODE SECOND
+
+Before creating or modifying any PHP file:
+
+## Step 1 — Inventory the complete project
+
+Inspect:
+
+```text
+HTML files
+CSS files
+SCSS files if present
+JavaScript files
+Images
+SVGs
+Fonts
+Videos
+JSON files
+XML files
+Third-party libraries
+Plugins/scripts
+Forms
+API integrations
+Animations
+Responsive styles
+```
+
+Do not inspect only `index.html`.
+
+The whole project must be understood before conversion.
+
+---
+
+# 3. CREATE A SITE INVENTORY
+
+Before coding, identify:
+
+### Pages
+
+Example:
+
+```text
+index.html
+about.html
+services.html
+contact.html
+partners.html
+partner-detail.html
+blog.html
+blog-detail.html
+```
+
+### Common components
+
+Identify:
+
+```text
+Header
+Desktop Navigation
+Mobile Navigation
+Footer
+Footer Navigation
+Announcement Bar
+CTA
+Breadcrumb
+Cookie banner
+Modals
+Forms
+Sliders
+Cards
+```
+
+### Dynamic-looking content
+
+Identify content that should become WordPress-managed:
+
+```text
+Partners
+Blog Posts
+Menus
+Logo
+Footer content
+Social links
+CTA
+Contact details
+Page content
+Images
+Categories
+Tags
+```
+
+---
+
+# 4. HEADER MUST BE INSPECTED BEFORE BUILDING
+
+## DO NOT create a generic WordPress header.
+
+First inspect the original HTML header.
+
+Analyze:
+
+- Exact DOM structure
+- Header classes
+- Logo structure
+- Desktop menu
+- Mobile menu
+- Dropdowns
+- Mega menu
+- CTA buttons
+- Search
+- Icons
+- Sticky behavior
+- Header states
+- Scroll behavior
+- Mobile breakpoint
+- Header JavaScript
+- Header CSS
+- Header animations
+- Header assets
+
+Then convert that exact structure into:
+
+```text
+header.php
+```
+
+### Rule
+
+Preserve:
+
+```text
+DOM structure
+class names
+IDs where necessary
+CSS hooks
+JS hooks
+data attributes
+ARIA attributes
+responsive behavior
+```
+
+Only replace hard-coded content with WordPress dynamic functionality.
+
+---
+
+# 5. FOOTER MUST BE INSPECTED BEFORE BUILDING
+
+## DO NOT create a generic WordPress footer.
+
+First inspect the original HTML footer.
+
+Analyze:
+
+- Footer DOM
+- Footer columns
+- Footer navigation
+- Logo
+- Description
+- Contact details
+- Social links
+- Newsletter
+- CTA
+- Legal links
+- Copyright
+- Footer scripts
+- Footer CSS
+- Responsive behavior
+
+Then convert it into:
+
+```text
+footer.php
+```
+
+Preserve the original structure and styling.
+
+---
+
+# 6. HEADER DYNAMIC REQUIREMENTS
+
+The header should support WordPress management where applicable.
+
+Possible dynamic fields:
+
+```text
+Logo
+Mobile Logo
+Primary Menu
+CTA Text
+CTA URL
+CTA visibility
+Announcement bar
+Announcement text
+Announcement URL
+Search
+```
+
+Do not create fields that are not required by the original site.
+
+---
+
+# 7. WORDPRESS MENUS
+
+Register WordPress menu locations based on the actual HTML.
+
+Typical:
+
+```php
+register_nav_menus([
+    'primary' => __('Primary Menu', 'site-theme'),
+    'footer'  => __('Footer Menu', 'site-theme'),
+]);
+```
+
+If the mobile menu uses the same navigation, do not duplicate the menu unnecessarily.
+
+Use:
+
+```php
+wp_nav_menu()
+```
+
+instead of hard-coded navigation links.
+
+### Preserve
+
+- Menu classes where possible
+- Dropdown behavior
+- Existing HTML hooks
+- Mobile menu behavior
+- Active states
+
+If custom walker logic is required to reproduce the existing menu structure, create a proper custom Walker instead of hacking the output with JavaScript.
+
+---
+
+# 8. FOOTER DYNAMIC REQUIREMENTS
+
+Use WordPress settings/custom fields only for content that needs admin control.
+
+Potential settings:
+
+```text
+Footer Logo
+Footer Description
+Email
+Phone
+Address
+Social Links
+Copyright
+Footer CTA
+```
+
+Footer menu should use a registered WordPress menu.
+
+---
+
+# 9. WORDPRESS THEME STRUCTURE
+
+Create a proper custom theme.
+
+Recommended:
+
+```text
+theme-name/
+│
+├── style.css
+├── functions.php
+├── index.php
+├── front-page.php
+├── home.php
+├── page.php
+├── single.php
+├── archive.php
+├── category.php
+├── tag.php
+├── search.php                  ← Search Results, as per design (§106)
+├── searchform.php              ← the site search form, submits to search.php (§106)
+├── 404.php                     ← 404 page, as per design (§106)
+├── header.php
+├── footer.php
+│
+├── single-partner.php
+├── archive-partner.php
+│
+├── page-templates/
+│   └── page-sitemap.php        ← HTML Sitemap page, dynamic (§107)
+│
+├── template-parts/
+│   ├── header/
+│   ├── footer/
+│   ├── content/
+│   ├── blog/
+│   └── partner/
+│
+├── inc/
+│   ├── theme-setup.php
+│   ├── enqueue.php
+│   ├── post-types.php
+│   ├── taxonomies.php
+│   ├── theme-settings.php
+│   ├── custom-fields.php
+│   ├── template-functions.php
+│   └── helpers.php
+│
+└── assets/
+    ├── css/
+    ├── js/
+    ├── images/
+    ├── fonts/
+    └── vendor/
+```
+
+Do not put the entire project into one huge `functions.php`.
+
+---
+
+# 10. FUNCTIONS.PHP
+
+Keep `functions.php` lightweight.
+
+Example:
+
+```php
+require_once get_template_directory() . '/inc/theme-setup.php';
+require_once get_template_directory() . '/inc/enqueue.php';
+require_once get_template_directory() . '/inc/post-types.php';
+require_once get_template_directory() . '/inc/taxonomies.php';
+require_once get_template_directory() . '/inc/theme-settings.php';
+require_once get_template_directory() . '/inc/custom-fields.php';
+require_once get_template_directory() . '/inc/template-functions.php';
+require_once get_template_directory() . '/inc/helpers.php';
+```
+
+Use `require_once`.
+
+---
+
+# 11. PARTNERS — CUSTOM POST TYPE
+
+If the existing site has dedicated Partner pages, create:
+
+```text
+partner
+```
+
+as a Custom Post Type.
+
+Expected admin:
+
+```text
+Partners
+├── All Partners
+└── Add New Partner
+```
+
+Expected URLs:
+
+```text
+/partners/
+/partners/partner-name/
+```
+
+Register with proper:
+
+```text
+labels
+public
+has_archive
+rewrite
+supports
+show_in_rest
+```
+
+Use the WordPress template hierarchy.
+
+Required:
+
+```text
+archive-partner.php
+single-partner.php
+```
+
+---
+
+# 12. PARTNER FIELDS
+
+Inspect the original Partner HTML first.
+
+Only then determine required fields.
+
+Possible:
+
+```text
+Partner Name
+Partner Logo
+Hero Image
+Short Description
+Content
+Website URL
+Location
+Partner Type
+Gallery
+CTA Text
+CTA URL
+Featured Partner
+```
+
+Do not blindly create all fields.
+
+Use an appropriate field system if the project permits it.
+
+If using ACF, do not recreate ACF functionality manually.
+
+If no plugin is permitted, implement secure custom meta fields.
+
+---
+
+# 13. PARTNER TAXONOMIES
+
+Only create taxonomies if the website actually needs them.
+
+Possible:
+
+```text
+Partner Type
+Partner Industry
+Partner Location
+```
+
+Do not create unnecessary database structures.
+
+---
+
+# 14. BLOG
+
+Blog must remain separate from Partners.
+
+Use the native WordPress Post system:
+
+```text
+post
+```
+
+Do NOT create a `blog` CPT unless there is a specific requirement.
+
+Use:
+
+```text
+home.php
+single.php
+archive.php
+category.php
+tag.php
+```
+
+based on the existing design.
+
+---
+
+# 15. BLOG FEATURES
+
+Preserve existing blog functionality:
+
+```text
+Title
+Featured Image
+Content
+Author
+Publish Date
+Categories
+Tags
+Related Posts
+Pagination
+Search
+```
+
+Only implement features that exist or are required.
+
+---
+
+# 16. STANDARD WORDPRESS PAGES
+
+Use native Pages for normal website content:
+
+```text
+About
+Services
+Contact
+Privacy
+Terms
+Other static pages
+```
+
+Use:
+
+```text
+page.php
+```
+
+or specific templates only when necessary.
+
+---
+
+# 17. HOMEPAGE
+
+Use:
+
+```text
+front-page.php
+```
+
+The homepage must be converted from the actual HTML.
+
+Do not redesign.
+
+If homepage sections contain dynamic data, connect them to:
+
+```text
+Pages
+Partners
+Posts
+Theme Settings
+Custom Fields
+```
+
+as appropriate.
+
+---
+
+# 18. TEMPLATE HIERARCHY
+
+Follow WordPress template hierarchy.
+
+Preferred examples:
+
+```text
+front-page.php
+page.php
+page-{slug}.php
+
+home.php
+
+single.php
+single-partner.php
+
+archive.php
+archive-partner.php
+
+category.php
+tag.php
+
+search.php
+404.php
+```
+
+Do not create duplicate templates without a reason.
+
+---
+
+# 19. ASSETS
+
+All existing assets must be audited.
+
+Move theme assets into:
+
+```text
+assets/
+```
+
+For example:
+
+```text
+assets/css/
+assets/js/
+assets/images/
+assets/fonts/
+assets/vendor/
+```
+
+Use WordPress functions to reference them.
+
+Example:
+
+```php
+get_template_directory_uri()
+```
+
+Do not use fragile relative paths such as:
+
+```text
+../../images/
+```
+
+---
+
+# 20. CSS
+
+## CRITICAL
+
+Do not rewrite the CSS unnecessarily.
+
+Preserve:
+
+- Existing selectors
+- Existing classes
+- Existing spacing
+- Existing typography
+- Existing breakpoints
+- Existing animations
+- Existing responsive behavior
+
+Do not add global styles that can break existing components.
+
+Do not use `!important` unless genuinely necessary.
+
+Do not introduce a CSS framework simply because WordPress is being introduced.
+
+For section classes, CSS variables, global spacing and no inline styles, see **§103**.
+
+---
+
+# 21. JAVASCRIPT
+
+Audit all JavaScript before changing it.
+
+Check:
+
+```text
+Navigation
+Mobile menu
+Sliders
+Tabs
+Accordions
+Modals
+Animations
+GSAP
+ScrollTrigger
+Three.js
+AJAX
+Forms
+API integrations
+Lazy loading
+Custom interactions
+```
+
+Preserve existing behavior.
+
+Load scripts with:
+
+```php
+wp_enqueue_script()
+```
+
+Do not duplicate libraries.
+
+Respect dependencies and execution order.
+
+---
+
+# 22. GSAP / THREE.JS / ANIMATIONS
+
+If the existing website uses:
+
+```text
+GSAP
+ScrollTrigger
+Three.js
+Swiper
+AOS
+or other libraries
+```
+
+preserve them.
+
+Do not replace a working animation with a different implementation unless necessary.
+
+After conversion verify:
+
+- animation timing
+- scroll triggers
+- canvas rendering
+- model loading
+- texture loading
+- responsive behavior
+- mobile behavior
+- console errors
+
+---
+
+# 23. PHP SECURITY
+
+All output must be escaped.
+
+Use:
+
+```php
+esc_html()
+esc_attr()
+esc_url()
+wp_kses_post()
+```
+
+Sanitize incoming values.
+
+Use nonces for custom admin forms.
+
+Use capability checks.
+
+Never trust:
+
+```text
+$_GET
+$_POST
+$_REQUEST
+custom fields
+user input
+```
+
+without validation/sanitization.
+
+---
+
+# 24. DATABASE / QUERY SAFETY
+
+Use WordPress APIs and `WP_Query` where possible.
+
+Example:
+
+```php
+$query = new WP_Query([
+    'post_type'      => 'partner',
+    'posts_per_page' => 12,
+]);
+```
+
+Do not write raw SQL unless there is a real requirement.
+
+If raw SQL is required:
+
+- Use `$wpdb`
+- Use `$wpdb->prepare()`
+- Never concatenate user input into SQL
+- Validate input
+- Escape output
+
+Avoid N+1 queries.
+
+Do not run unnecessary database queries on every page.
+
+---
+
+# 25. WORDPRESS LOOP
+
+Use proper loops.
+
+Example:
+
+```php
+if (have_posts()) :
+    while (have_posts()) :
+        the_post();
+
+        // Template output
+
+    endwhile;
+endif;
+```
+
+For custom queries:
+
+```php
+$query = new WP_Query($args);
+
+if ($query->have_posts()) :
+    while ($query->have_posts()) :
+        $query->the_post();
+
+        // Output
+
+    endwhile;
+endif;
+
+wp_reset_postdata();
+```
+
+Never forget:
+
+```php
+wp_reset_postdata();
+```
+
+after custom loops.
+
+---
+
+# 26. IMAGE HANDLING
+
+Use WordPress image functions.
+
+Prefer:
+
+```php
+the_post_thumbnail()
+wp_get_attachment_image()
+get_the_post_thumbnail_url()
+```
+
+Do not hard-code uploaded image URLs.
+
+Register image sizes if needed.
+
+Do not unnecessarily load full-resolution images.
+
+---
+
+# 27. RESPONSIVE DESIGN
+
+The WordPress version must match the original responsive behavior.
+
+Test:
+
+```text
+Mobile
+Tablet
+Laptop
+Desktop
+Large Desktop
+```
+
+Verify:
+
+```text
+Header
+Menu
+Hero
+Cards
+Images
+Partner pages
+Blog pages
+Footer
+Forms
+Animations
+```
+
+---
+
+# 28. FORMS
+
+Inspect all existing forms.
+
+Determine whether they use:
+
+```text
+HTML
+PHP
+AJAX
+API
+CRM
+Third-party service
+WordPress plugin
+```
+
+Do not change the backend integration without understanding it.
+
+Forms must be:
+
+- Secure
+- Validated
+- Responsive
+- Working
+- Spam-protected where appropriate
+
+---
+
+# 29. SEO
+
+Preserve existing SEO.
+
+Check:
+
+```text
+Title
+Meta Description
+Canonical
+H1
+H2/H3 structure
+Image ALT
+Open Graph
+Schema
+Sitemap
+Robots
+URLs
+Redirects
+```
+
+If an SEO plugin exists, integrate with it instead of duplicating its functionality.
+
+---
+
+# 30. URL MIGRATION
+
+Create an old-to-new URL mapping.
+
+Example:
+
+```text
+/about.html
+→
+/about/
+
+/partners.html
+→
+/partners/
+
+/partner-a.html
+→
+/partners/partner-a/
+
+/blog.html
+→
+/blog/
+
+/blog-post.html
+→
+/blog/blog-post/
+```
+
+Do not blindly change URLs.
+
+Preserve existing production URLs whenever practical.
+
+Where URLs must change, implement 301 redirects.
+
+---
+
+# 31. 404 AND REDIRECTS
+
+Create:
+
+```text
+404.php
+```
+
+Build `404.php` (and `search.php`) **as per the design**, not as a default theme page. See §106.
+
+Review old URLs and add required redirects.
+
+Do not create redirect loops.
+
+Test redirects.
+
+---
+
+# 32. WORDPRESS SETTINGS
+
+Use native WordPress functionality where possible.
+
+Do not build a custom setting for something WordPress already manages.
+
+Use custom Theme Settings only for site-specific fields such as:
+
+```text
+Header Logo
+Header CTA
+Footer Contact
+Social Links
+Footer Copyright
+```
+
+---
+
+# 33. ADMIN UX
+
+The WordPress backend should be understandable.
+
+Recommended:
+
+```text
+Dashboard
+
+Posts
+Media
+Pages
+Partners
+Comments
+
+Appearance
+    Menus / Navigation
+    Theme Settings
+
+Users
+Tools
+Settings
+```
+
+Partner editors should not need to edit PHP or HTML.
+
+---
+
+# 34. DO NOT USE ELEMENTOR UNLESS REQUESTED
+
+Default implementation:
+
+```text
+Custom PHP WordPress Theme
+```
+
+Do not convert every HTML section into Elementor widgets unless explicitly requested.
+
+The existing HTML should remain the source of truth for the frontend.
+
+---
+
+# 35. DO NOT USE A GENERIC THEME
+
+Do not install a generic theme and place the HTML inside it.
+
+Build a proper custom theme from the supplied project.
+
+---
+
+# 36. NO REDESIGN RULE
+
+This project is a conversion, not a redesign.
+
+Do NOT:
+
+- Change colors
+- Change typography
+- Change spacing
+- Change layout
+- Change animations
+- Change component appearance
+- Replace icons
+- Replace images
+- Replace navigation
+- Change responsive breakpoints
+
+unless explicitly required.
+
+---
+
+# 37. CODE QUALITY
+
+Write production-quality PHP.
+
+Requirements:
+
+- Clean naming
+- Small reusable functions
+- Proper comments for complex logic
+- No dead code
+- No duplicated code
+- No unnecessary globals
+- No debug output
+- No `var_dump()`
+- No `print_r()`
+- No test code in production
+- No hard-coded environment-specific URLs
+- No hard-coded database credentials
+
+---
+
+# 38. DEBUGGING
+
+During development, WordPress debugging may be enabled.
+
+Use:
+
+```php
+WP_DEBUG
+WP_DEBUG_LOG
+```
+
+where appropriate.
+
+Do not display PHP errors to end users in production.
+
+Before completion:
+
+- Fix PHP warnings
+- Fix PHP notices
+- Fix deprecated calls
+- Fix fatal errors
+- Fix JS console errors
+- Fix broken links
+- Fix missing assets
+
+---
+
+# 39. ACCESSIBILITY
+
+Preserve and improve:
+
+```text
+Semantic HTML
+ARIA attributes
+Keyboard navigation
+Focus states
+Alt text
+Form labels
+Button labels
+Link labels
+Heading hierarchy
+```
+
+Do not remove useful accessibility attributes from the original HTML.
+
+---
+
+# 40. PERFORMANCE
+
+Optimize without changing the design.
+
+Check:
+
+```text
+CSS loading
+JS loading
+Image sizes
+Lazy loading
+Font loading
+Third-party scripts
+Duplicate libraries
+Database queries
+```
+
+Do not load every library on every page if it is only required on a specific page.
+
+Example:
+
+```text
+Three.js
+→ load only on pages that require Three.js
+```
+
+---
+
+# 41. THIRD-PARTY SCRIPTS
+
+Inventory every external script.
+
+Examples:
+
+```text
+Google Analytics
+Tag Manager
+Maps
+Chat widgets
+Tracking
+CDNs
+Libraries
+APIs
+```
+
+Do not remove them without understanding their purpose.
+
+Use WordPress enqueue/hooks appropriately.
+
+---
+
+# 42. NO HARDCODED DOMAIN
+
+Do not use:
+
+```text
+https://example.com/
+```
+
+inside theme code for internal links.
+
+Use:
+
+```php
+home_url()
+site_url()
+get_permalink()
+get_template_directory_uri()
+```
+
+where appropriate.
+
+---
+
+# 43. INTERNAL LINKS
+
+Convert static internal HTML links where required.
+
+Example:
+
+```html
+<a href="/about.html">
+```
+
+should become a WordPress permalink when the destination is a WordPress page.
+
+Prefer:
+
+```php
+get_permalink($page_id)
+```
+
+or:
+
+```php
+get_permalink()
+```
+
+Do not hard-code URLs unnecessarily.
+
+---
+
+# 44. MENU LINK HANDLING
+
+The WordPress menu should handle:
+
+```text
+Pages
+Custom Links
+Partner Archive
+Blog
+Categories
+```
+
+Do not hard-code the navigation in `header.php`.
+
+---
+
+# 45. PARTNER ARCHIVE
+
+Partner archive should reproduce the existing partner listing design.
+
+Use:
+
+```text
+archive-partner.php
+```
+
+Preserve:
+
+```text
+Cards
+Images
+Typography
+Spacing
+Hover effects
+Animations
+Filters
+Pagination
+```
+
+Only implement filters if the original site requires them.
+
+---
+
+# 46. PARTNER SINGLE
+
+Partner detail should reproduce the existing Partner HTML template.
+
+Use:
+
+```text
+single-partner.php
+```
+
+Dynamic fields must populate the existing HTML structure.
+
+Do not create a completely new partner layout.
+
+---
+
+# 47. BLOG ARCHIVE
+
+Blog listing must reproduce the existing blog HTML.
+
+Use:
+
+```text
+home.php
+archive.php
+category.php
+```
+
+as appropriate.
+
+Use WordPress Posts.
+
+---
+
+# 48. BLOG SINGLE
+
+Blog detail must reproduce the existing blog detail HTML.
+
+Use:
+
+```text
+single.php
+```
+
+or a specific post template if required.
+
+Dynamic:
+
+```text
+Title
+Featured Image
+Author
+Date
+Category
+Content
+Related Posts
+```
+
+---
+
+# 49. REUSABLE TEMPLATE PARTS
+
+If the HTML contains repeated sections, extract them.
+
+Example:
+
+```text
+template-parts/
+├── blog/
+│   └── blog-card.php
+├── partner/
+│   └── partner-card.php
+└── content/
+    └── content-card.php
+```
+
+Do not create unnecessary abstraction.
+
+The goal is reusable and readable code.
+
+---
+
+# 50. CSS CLASS PRESERVATION
+
+If JavaScript depends on:
+
+```text
+class names
+IDs
+data attributes
+```
+
+do not rename them without updating the JavaScript.
+
+Before removing a class, search the whole project for its usage.
+
+---
+
+# 51. JAVASCRIPT DEPENDENCY CHECK
+
+Before modifying JS:
+
+Search for:
+
+```text
+querySelector
+querySelectorAll
+getElementById
+jQuery selectors
+classList
+data attributes
+IDs
+```
+
+Ensure PHP conversion does not break selectors.
+
+---
+
+# 52. AJAX
+
+If the existing HTML uses AJAX:
+
+- Identify endpoint.
+- Identify request method.
+- Identify payload.
+- Identify response.
+- Identify authentication.
+- Identify nonce/security requirements.
+
+Convert it to proper WordPress AJAX or REST API architecture if necessary.
+
+Do not break the existing external API integration.
+
+---
+
+# 53. REST API
+
+If custom REST endpoints are required:
+
+- Register with `register_rest_route()`.
+- Use namespaces.
+- Validate parameters.
+- Sanitize parameters.
+- Add permission callbacks.
+- Return proper `WP_REST_Response` / `WP_Error`.
+
+Never expose private data through an unprotected endpoint.
+
+---
+
+# 54. CUSTOM ADMIN SETTINGS
+
+If custom Theme Settings are needed:
+
+Use the WordPress Settings API where appropriate.
+
+Do not create insecure custom admin forms.
+
+Use:
+
+```text
+register_setting()
+add_settings_section()
+add_settings_field()
+```
+
+Use capability checks and sanitization callbacks.
+
+---
+
+# 55. CHILD THEME
+
+Do not create a child theme unless there is a specific reason.
+
+The default target is a standalone custom theme.
+
+---
+
+# 56. PLUGIN VS THEME RESPONSIBILITY
+
+Theme should handle:
+
+```text
+Presentation
+Templates
+Theme-specific settings
+Frontend UI
+```
+
+Site functionality that must survive theme switching should ideally be a plugin.
+
+However, for this conversion, do not unnecessarily create plugins unless the requirement warrants it.
+
+For example:
+
+```text
+Partner CPT
+```
+
+can be implemented in a site plugin if long-term portability is important.
+
+If implementing it in the theme, keep the code isolated in:
+
+```text
+inc/post-types.php
+```
+
+so it can later be moved easily.
+
+---
+
+# 57. DATABASE DESIGN
+
+Do not create custom database tables unless necessary.
+
+Prefer:
+
+```text
+Posts
+Pages
+Custom Post Types
+Post Meta
+Taxonomies
+Options
+```
+
+Use custom tables only for genuinely relational/high-volume data where WordPress post/meta is inappropriate.
+
+---
+
+# 58. QUERY OPTIMIZATION
+
+Avoid:
+
+```text
+query inside query
+query inside loop
+unnecessary get_posts()
+repeated WP_Query
+```
+
+Use efficient queries.
+
+For repeated cards, query once and loop.
+
+Always reset post data after custom loops.
+
+---
+
+# 59. CACHING COMPATIBILITY
+
+Do not write code that prevents normal WordPress caching.
+
+Avoid unnecessary dynamic queries.
+
+Do not depend on PHP session state unless absolutely necessary.
+
+---
+
+# 60. INTERNATIONALIZATION
+
+Use translation-ready strings for theme UI text.
+
+Example:
+
+```php
+__('Read More', 'site-theme');
+```
+
+Text domain:
+
+```text
+site-theme
+```
+
+Use one consistent text domain.
+
+---
+
+# 61. WORDPRESS CODING STANDARDS
+
+Follow WordPress coding conventions:
+
+- Proper indentation
+- Meaningful function names
+- Prefix custom functions/classes
+- Avoid generic function names
+- Avoid naming collisions
+- Escape output
+- Sanitize input
+
+Example prefix:
+
+```text
+site_theme_
+```
+
+Avoid generic names like:
+
+```php
+function setup()
+function helper()
+function options()
+```
+
+---
+
+# 62. FUNCTION / CLASS NAMING
+
+Use project-specific prefixes.
+
+Example:
+
+```php
+site_theme_setup()
+site_theme_enqueue_assets()
+site_theme_register_partner_cpt()
+site_theme_register_menus()
+```
+
+Avoid collisions with plugins or WordPress core.
+
+---
+
+# 63. FILE NAMING
+
+Use predictable names:
+
+```text
+single-partner.php
+archive-partner.php
+partner-card.php
+blog-card.php
+theme-settings.php
+post-types.php
+```
+
+Do not create files with random names.
+
+---
+
+# 64. DEVELOPMENT ORDER
+
+Follow this order:
+
+```text
+1. Inspect complete HTML project
+2. Create site inventory
+3. Identify templates
+4. Identify reusable components
+5. Identify dynamic content
+6. Identify Partner architecture
+7. Identify Blog architecture
+8. Inspect Header HTML
+9. Inspect Footer HTML
+10. Plan WordPress theme
+11. Create theme structure
+12. Create theme setup
+13. Enqueue CSS/JS
+14. Convert Header
+15. Convert Footer
+16. Register Menus
+17. Convert Homepage
+18. Convert standard Pages
+19. Create Partner CPT
+20. Create Partner fields
+21. Create Partner archive
+22. Create Partner single
+23. Convert Blog
+24. Convert forms
+25. Integrate animations
+26. Test responsive behavior
+27. Test URLs
+28. Test SEO
+29. Test PHP
+30. Test JavaScript
+31. Performance review
+32. Build one-click setup importer (sections 96–102)
+33. Final QA
+```
+
+Do not skip the inspection stage.
+
+---
+
+# 65. BEFORE CODING: ARCHITECTURE REPORT
+
+Before making major code changes, create an internal implementation plan containing:
+
+```text
+Page inventory
+Template mapping
+Header structure
+Footer structure
+Menu locations
+Partner CPT structure
+Partner fields
+Blog structure
+Theme settings
+Asset mapping
+JS dependencies
+CSS dependencies
+Potential risks
+Migration/redirect requirements
+```
+
+Do not ask unnecessary questions if the answer can be determined by inspecting the project.
+
+Only ask the user when a business requirement genuinely cannot be inferred from the supplied project.
+
+---
+
+# 66. DO NOT MAKE ASSUMPTIONS
+
+If something is unclear:
+
+First search the project.
+
+For example:
+
+```text
+Search where a class is used.
+Search where an image is referenced.
+Search where a JS function is called.
+Search which HTML pages use a component.
+```
+
+Do not guess.
+
+---
+
+# 67. HEADER / FOOTER SPECIAL RULE
+
+This is mandatory:
+
+```text
+FIRST:
+Inspect original Header HTML + CSS + JS + assets.
+
+THEN:
+Build header.php.
+
+FIRST:
+Inspect original Footer HTML + CSS + JS + assets.
+
+THEN:
+Build footer.php.
+```
+
+The WordPress version must be based on the actual supplied implementation.
+
+---
+
+# 68. CONVERSION RULE
+
+Do not simply copy:
+
+```text
+index.html → index.php
+```
+
+A proper WordPress conversion requires:
+
+```text
+HTML
+↓
+WordPress Template
+↓
+Dynamic Content
+↓
+WordPress APIs
+↓
+Secure PHP
+```
+
+---
+
+# 69. DO NOT BREAK EXISTING HTML
+
+Before modifying any component:
+
+1. Identify its CSS.
+2. Identify its JS.
+3. Identify its assets.
+4. Identify pages using it.
+5. Convert it.
+6. Test it.
+
+---
+
+# 70. FINAL QA CHECKLIST
+
+Before declaring the project complete:
+
+## Theme
+
+- [ ] Theme activates without errors.
+- [ ] No PHP fatal errors.
+- [ ] No PHP warnings/notices.
+- [ ] No deprecated errors caused by theme code.
+- [ ] Theme files are organized.
+
+## Header
+
+- [ ] Header matches original HTML.
+- [ ] Logo works.
+- [ ] Desktop menu works.
+- [ ] Mobile menu works.
+- [ ] Dropdowns work.
+- [ ] CTA works.
+- [ ] Sticky behavior works.
+- [ ] Header animations work.
+
+## Footer
+
+- [ ] Footer matches original HTML.
+- [ ] Footer menu works.
+- [ ] Social links work.
+- [ ] Contact details work.
+- [ ] Copyright works.
+- [ ] Responsive footer works.
+
+## Pages
+
+- [ ] Homepage works.
+- [ ] Every standard page works.
+- [ ] Images work.
+- [ ] Internal links work.
+
+## Partners
+
+- [ ] Partner CPT works.
+- [ ] Partner admin works.
+- [ ] Partner archive works.
+- [ ] Partner single works.
+- [ ] Partner fields work.
+- [ ] Partner images work.
+- [ ] Partner URLs work.
+
+## Blog
+
+- [ ] Blog archive works.
+- [ ] Blog single works.
+- [ ] Categories work.
+- [ ] Tags work if required.
+- [ ] Featured images work.
+- [ ] Pagination works if required.
+
+## Assets
+
+- [ ] CSS loads.
+- [ ] JS loads.
+- [ ] Fonts load.
+- [ ] Images load.
+- [ ] SVGs load.
+- [ ] Vendor libraries load.
+
+## JavaScript
+
+- [ ] No console errors.
+- [ ] Menu JS works.
+- [ ] Sliders work.
+- [ ] Animations work.
+- [ ] GSAP works if present.
+- [ ] Three.js works if present.
+- [ ] Forms work.
+- [ ] AJAX works if present.
+
+## Responsive
+
+- [ ] Mobile tested.
+- [ ] Tablet tested.
+- [ ] Desktop tested.
+- [ ] Safari tested.
+- [ ] Chrome tested.
+- [ ] Firefox tested.
+- [ ] Edge tested.
+
+## SEO
+
+- [ ] Titles preserved.
+- [ ] Heading hierarchy correct.
+- [ ] Meta integration works.
+- [ ] Canonicals work.
+- [ ] Image ALT works.
+- [ ] URLs are correct.
+- [ ] Redirects work.
+
+## Security
+
+- [ ] Output escaped.
+- [ ] Input sanitized.
+- [ ] Admin forms protected.
+- [ ] Nonces implemented where required.
+- [ ] Capability checks implemented.
+- [ ] No credentials in source.
+- [ ] No debug output.
+
+## Performance
+
+- [ ] No unnecessary duplicate assets.
+- [ ] Images optimized.
+- [ ] Libraries loaded only where needed.
+- [ ] Queries reviewed.
+- [ ] No obvious N+1 queries.
+
+## Build lessons (§103–§107)
+
+- [ ] Sections have appropriate section-level classes; no unnecessary inline styles (§103).
+- [ ] Font sizes, colours, spacing and other repeated values use CSS variables (§103).
+- [ ] Section spacing is consistent; container left/right spacing is set once globally (§103).
+- [ ] Meaningful SVG icons have alternative text; decorative ones are `aria-hidden="true"` (§104).
+- [ ] Every image has an SEO-friendly file name and proper alt text — none blank or default (§104).
+- [ ] Images, avatars and SVGs are named after what they show — no Figma layer names (§104).
+- [ ] Every image/icon is in the Media Library **once** — no `-1` / `-2` copies (§105).
+- [ ] `404.php` and `search.php` match the design; search "no results" state works (§106).
+- [ ] HTML Sitemap page exists, lists content automatically and is linked in the footer (§107).
+- [ ] XML sitemap loads with correct URLs (§107).
+
+---
+
+# 71. FINAL DELIVERABLE
+
+The final result must be a complete WordPress theme that can be installed in:
+
+```text
+/wp-content/themes/
+```
+
+and activated from:
+
+```text
+WordPress Admin
+→ Appearance
+→ Themes
+```
+
+The theme must be production-ready.
+
+---
+
+# 72. FINAL PRINCIPLE
+
+Always prioritize:
+
+```text
+EXISTING HTML
+        ↓
+UNDERSTAND
+        ↓
+PRESERVE
+        ↓
+CONVERT
+        ↓
+DYNAMIC WORDPRESS
+        ↓
+SECURE PHP
+        ↓
+TEST
+        ↓
+PRODUCTION
+```
+
+Never prioritize a faster conversion over preserving existing functionality.
+
+Never redesign the site during conversion.
+
+Never guess when the answer can be found by inspecting the supplied files.
+
+Never leave known PHP errors, query issues, broken links, missing assets, or JavaScript console errors unresolved.
+
+**The existing HTML project is the source of truth for the frontend. WordPress is the CMS layer that should be added without breaking the existing website.**
+
+
+---
+
+# 73. EXISTING WORDPRESS THEME — UPDATE / EXTEND MODE
+
+## CRITICAL RULE
+
+The project may already contain a WordPress theme.
+
+If an existing WordPress theme is present, **DO NOT automatically create a new theme**.
+
+First inspect the existing theme completely and determine whether the HTML website should be:
+
+```text
+Existing Theme
+      +
+Existing HTML Website
+      ↓
+Safe Theme Update / Extension
+```
+
+The existing theme becomes the starting point unless there is a clear technical reason to replace it.
+
+---
+
+# 74. DETECT EXISTING THEME
+
+Before creating theme files, check for:
+
+```text
+style.css
+functions.php
+header.php
+footer.php
+index.php
+page.php
+single.php
+archive.php
+front-page.php
+theme.json
+screenshot.png
+wp-content/themes/
+```
+
+Also inspect:
+
+```text
+inc/
+template-parts/
+assets/
+woocommerce/
+acf/
+```
+
+If an existing theme is found, identify:
+
+```text
+Theme Name
+Theme Version
+Theme URI
+Author
+Template hierarchy
+Existing functions
+Existing hooks
+Existing menus
+Existing widgets
+Existing custom post types
+Existing taxonomies
+Existing custom fields
+Existing theme settings
+Existing CSS
+Existing JS
+Existing plugins/dependencies
+```
+
+---
+
+# 75. EXISTING THEME MUST BE BACKED UP
+
+Before modifying an existing theme:
+
+1. Inspect it.
+2. Create a backup/copy.
+3. Record the current structure.
+4. Record important existing functionality.
+5. Identify files that will be modified.
+6. Avoid destructive changes.
+
+Never delete existing theme functionality simply because it is not immediately understood.
+
+---
+
+# 76. DO NOT OVERWRITE EXISTING FUNCTIONALITY
+
+Before changing any existing PHP file:
+
+Search where its functions/hooks/classes are used.
+
+Check:
+
+```text
+functions.php
+inc/
+template-parts/
+hooks
+filters
+actions
+shortcodes
+REST endpoints
+AJAX
+custom post types
+taxonomies
+widgets
+menus
+theme settings
+```
+
+Do not remove existing code unless it is proven obsolete and safe to remove.
+
+---
+
+# 77. EXISTING THEME + HTML CONVERSION STRATEGY
+
+If the existing theme already provides:
+
+```text
+Header
+Footer
+Menus
+Theme Settings
+Page templates
+Blog templates
+```
+
+reuse them where appropriate.
+
+Do not create duplicate systems.
+
+Example:
+
+If the theme already has:
+
+```text
+site-header.php
+```
+
+do not automatically create a second unrelated:
+
+```text
+header-new.php
+```
+
+Instead, update the existing implementation safely.
+
+---
+
+# 78. EXISTING HEADER UPDATE
+
+If an existing `header.php` exists:
+
+1. Read the existing `header.php`.
+2. Read related CSS.
+3. Read related JS.
+4. Identify existing WordPress hooks.
+5. Identify existing menu locations.
+6. Identify existing logo/settings.
+7. Compare it with the supplied HTML Header.
+8. Adapt the existing WordPress Header to match the supplied HTML.
+
+Do NOT blindly replace the existing header.
+
+Target:
+
+```text
+Existing WordPress Header
+        +
+Original HTML Header Design
+        ↓
+Updated Dynamic WordPress Header
+```
+
+Preserve working functionality.
+
+---
+
+# 79. EXISTING FOOTER UPDATE
+
+If an existing `footer.php` exists:
+
+1. Read the existing footer.
+2. Read footer CSS.
+3. Read footer JS.
+4. Identify widgets/menu locations.
+5. Identify existing theme settings.
+6. Compare with original HTML Footer.
+7. Update the existing implementation safely.
+
+Do not blindly replace the footer.
+
+---
+
+# 80. EXISTING MENU SYSTEM
+
+If the theme already has registered menus:
+
+```php
+register_nav_menus()
+```
+
+inspect and reuse them.
+
+Do not register duplicate menu locations such as:
+
+```text
+primary
+main
+header-menu
+main-menu
+primary-menu
+```
+
+all for the same purpose.
+
+Consolidate only when safe.
+
+Preserve existing menu behavior and custom walkers.
+
+---
+
+# 81. EXISTING THEME SETTINGS
+
+If the theme already has:
+
+```text
+Customizer
+Theme Options
+Settings API
+ACF Options Page
+theme.json
+```
+
+reuse the existing settings architecture where practical.
+
+Do not create duplicate settings such as:
+
+```text
+Existing Logo Setting
+New Logo Setting
+Another Logo Setting
+```
+
+Use the existing source of truth.
+
+---
+
+# 82. EXISTING CUSTOM POST TYPES
+
+Before registering a new Partner CPT, check whether the existing theme/plugin already has:
+
+```text
+partner
+partners
+client
+clients
+case-study
+```
+
+or another equivalent CPT.
+
+If an existing CPT already represents Partners, reuse it rather than registering a duplicate post type.
+
+Do not create:
+
+```text
+partner
+partners
+partner_item
+partner_profile
+```
+
+all for the same content.
+
+---
+
+# 83. EXISTING BLOG SYSTEM
+
+Check whether the existing theme already modifies:
+
+```text
+Posts
+Categories
+Tags
+Blog archive
+Single post
+```
+
+Reuse the native WordPress Post system unless the existing project has a valid custom architecture.
+
+Do not create a duplicate Blog CPT.
+
+---
+
+# 84. EXISTING PLUGINS
+
+Before adding functionality, inspect installed/required plugins.
+
+Check whether functionality is already provided by:
+
+```text
+ACF
+Yoast SEO
+Rank Math
+WooCommerce
+Contact Form 7
+Gravity Forms
+Elementor
+WPForms
+custom plugins
+```
+
+Do not recreate functionality already provided by an installed plugin.
+
+Do not remove plugin dependencies without checking their usage.
+
+---
+
+# 85. EXISTING ACF
+
+If ACF is already being used:
+
+- Inspect existing field groups.
+- Reuse existing fields.
+- Extend existing field groups when appropriate.
+- Do not duplicate fields unnecessarily.
+- Preserve field names if existing templates depend on them.
+
+If ACF is not installed and the project does not permit adding it, use secure native WordPress meta/settings.
+
+---
+
+# 86. EXISTING THEME CHILD THEME
+
+If the current setup uses a child theme:
+
+```text
+parent-theme/
+child-theme/
+```
+
+determine whether the conversion should be implemented in the child theme.
+
+Do not modify a third-party parent theme unnecessarily.
+
+Preferred approach:
+
+```text
+Parent Theme
+      ↓
+Existing Child Theme
+      ↓
+Custom HTML → WordPress Changes
+```
+
+This protects parent-theme updates.
+
+---
+
+# 87. THIRD-PARTY THEME
+
+If the existing theme is a commercial/third-party theme:
+
+1. Identify it.
+2. Do not modify vendor files unless unavoidable.
+3. Prefer child-theme overrides.
+4. Preserve vendor update compatibility.
+5. Document any required overrides.
+
+Never destroy third-party theme functionality without a clear reason.
+
+---
+
+# 88. EXISTING THEME FILE MODIFICATION RULE
+
+Before modifying any existing file, classify it:
+
+```text
+SAFE TO MODIFY
+NEEDS CARE
+DO NOT MODIFY
+```
+
+Examples:
+
+```text
+Custom child theme files       → Safe with review
+Custom theme files             → Safe with review
+Third-party parent files       → Avoid
+WordPress core files            → NEVER
+Plugin core files               → NEVER
+```
+
+---
+
+# 89. NO DUPLICATE ARCHITECTURE
+
+The final project must have one clear source of truth.
+
+Avoid duplicates such as:
+
+```text
+Two headers
+Two footers
+Two partner CPTs
+Two blog systems
+Two menu systems
+Two logo settings
+Two theme option systems
+Two versions of the same JS library
+Two copies of the same CSS
+```
+
+If duplicates already exist, inspect dependencies before consolidating.
+
+---
+
+# 90. SAFE UPDATE PRINCIPLE
+
+When an existing theme is present:
+
+```text
+Inspect
+   ↓
+Understand
+   ↓
+Backup
+   ↓
+Compare with HTML
+   ↓
+Reuse existing architecture
+   ↓
+Update only what is required
+   ↓
+Test existing functionality
+   ↓
+Test new functionality
+```
+
+Never:
+
+```text
+Delete theme
+↓
+Start from zero
+```
+
+unless explicitly instructed or technically necessary.
+
+---
+
+# 91. EXISTING THEME REGRESSION TEST
+
+After updating an existing theme, verify that all previous functionality still works.
+
+Test:
+
+```text
+Existing pages
+Existing posts
+Existing menus
+Existing forms
+Existing widgets
+Existing shortcodes
+Existing CPTs
+Existing taxonomies
+Existing settings
+Existing integrations
+Existing scripts
+Existing responsive behavior
+```
+
+The HTML conversion must not break unrelated existing functionality.
+
+---
+
+# 92. EXISTING THEME VERSION CONTROL
+
+If the project contains Git:
+
+First inspect:
+
+```text
+.git/
+.gitignore
+branch
+status
+recent changes
+```
+
+Do not overwrite or discard user changes.
+
+Do not reset or force-delete existing work.
+
+If Git is not available, create a safe backup before major modifications.
+
+---
+
+# 93. EXISTING THEME FINAL ARCHITECTURE
+
+The final architecture should be:
+
+```text
+Existing WordPress Theme
+          +
+Existing HTML Website
+          ↓
+        Merge
+          ↓
+Updated Custom Theme
+          ↓
+Dynamic WordPress CMS
+```
+
+The existing theme's valid functionality must be retained unless explicitly replaced.
+
+---
+
+# 94. DECISION RULE
+
+Use this decision tree:
+
+```text
+Is an existing WordPress theme present?
+            │
+          YES
+            ↓
+   Inspect existing theme
+            │
+            ↓
+Can existing architecture support the HTML?
+       │                 │
+      YES                NO
+       ↓                  ↓
+Update/extend       Safely refactor only
+existing theme      required architecture
+       │                  │
+       └────────┬─────────┘
+                ↓
+        Test existing features
+                ↓
+        Test converted pages
+                ↓
+          Final QA
+```
+
+If no existing WordPress theme is present:
+
+```text
+Create a new custom theme
+```
+
+---
+
+# 95. FINAL INSTRUCTION FOR THE CODING AGENT
+
+If an existing WordPress theme is supplied, your first responsibility is **not to create another theme**.
+
+Your first responsibility is to:
+
+1. Inspect the existing theme.
+2. Understand its architecture.
+3. Identify what can be reused.
+4. Identify what must be updated.
+5. Compare it with the complete HTML project.
+6. Safely integrate the HTML design.
+7. Preserve existing WordPress functionality.
+8. Avoid duplicate systems.
+9. Test the complete site.
+10. Deliver a production-ready updated theme.
+
+**Never destroy an existing working theme architecture just to make the conversion easier.**
+
+---
+
+# 96. ONE-CLICK SETUP — TOOLS → {PROJECT} SETUP (MANDATORY)
+
+Every ACF theme must ship with a **one-click content importer**, so a fresh WordPress install becomes the complete website with one button and no manual page building or data entry.
+
+```text
+Install theme  →  Install ACF Pro / Secure Custom Fields  →  Tools → {Project} Setup  →  Import
+        ↓
+Pages + templates, front page, posts page, posts, CPT entries,
+Media Library images, ACF field values, SEO, menus — all created
+```
+
+Reference implementation: the Agency Core theme (`ag-theme/inc/importer.php` + `inc/seed/*.json`). Follow the same pattern.
+
+---
+
+# 97. IMPORTER FILE STRUCTURE
+
+```text
+theme-name/
+├── inc/
+│   ├── importer.php          ← admin screen, handler, WP-CLI command, import functions
+│   ├── custom-fields.php     ← ACF field groups registered in PHP (single source of truth)
+│   └── seed/
+│       ├── pages.json        ← pages: slug, title, template, status, SEO, optional content
+│       ├── posts.json        ← blog posts: slug, title, date, excerpt, content, image, alt, SEO
+│       ├── {cpt}.json        ← one file per CPT (partners.json, webinars.json …) incl. ACF field values
+│       └── menus.json        ← menus: name, location, nested items
+└── assets/images/            ← every image the seed references (imported into the Media Library)
+```
+
+- Load `inc/importer.php` from `functions.php` like every other `inc/` file.
+- Use the theme prefix for every function, option, nonce, transient and meta key (`{prefix}_import_*`).
+
+---
+
+# 98. SEED DATA — EXTRACTED FROM THE HTML, NEVER RETYPED
+
+- Build the `inc/seed/*.json` files by **parsing the finished HTML** (and its source data, if any). Never retype or rewrite content.
+- Content must be identical to the HTML: titles, copy, headings, links, dates, image file names and alt text.
+- Each page entry: `slug`, `title`, `template` (path in `page-templates/` or empty for default), `status`, `seo_title`, `seo_description`, optional `content`.
+- Each post / CPT entry: `slug`, `title`, `date`, `excerpt`, `content`, `image`, `image_alt`, SEO, and **every ACF field value keyed by the field `name`** (repeaters as arrays of rows).
+- Menus: `name`, `location`, `items` as `[ title, target, extra, children ]`, where target is `page:slug`, `{cpt}:slug`, `archive:{cpt}`, `blog`, or a URL.
+- Images referenced by file name only; the files live in `assets/images/`. File names and alt text
+  follow §104, and each image appears in the seed's Media Library list once (§105).
+- `pages.json` includes the **Sitemap** page (slug `sitemap`, template `page-templates/page-sitemap.php`, §107).
+- Never put credentials, private URLs, form API keys or personal data in seed files.
+
+---
+
+# 99. ADMIN SCREEN — TOOLS → {PROJECT} SETUP
+
+Register with `add_management_page()` under **Tools**, capability `manage_options`.
+
+The screen must show:
+
+1. A short description of what is imported.
+2. A **status table**: for each content type, `count in seed / count on site`.
+3. An **"Update existing content to match the seed"** checkbox (off by default), with a warning that edits made on the site to those items will be lost.
+4. One **Import {Project} content** button.
+5. A **live progress area** while the import runs: progress bar + log line per step (e.g. `Pages 4/12 — Home created, set as front page`).
+6. After the run, a **report**: per content type `X created, Y updated, Z existing kept`, plus front page / posts page / menus status.
+7. A short "after importing" note listing the manual steps that remain (site title, form shortcodes, etc.).
+
+**Step-by-step processing — never one long request (MANDATORY)**
+
+*Noted during a real build: a single-request import timed out ("first pass is still creating pages")
+and the front page was left unset. One click must still do everything, but the work is split into
+small steps so no request comes near the PHP / server timeout.*
+
+- The button starts a JS runner. It calls `admin-ajax.php` (custom action) **once per step** and
+  only sends the next request after the previous one has returned.
+- Each request does **one small batch** and returns quickly: e.g. 1–5 pages, 1–5 posts / CPT
+  entries, 1–3 images, one menu. Never import a whole content type, or all images, in one request.
+- Step queue, in the §100 order: `pages` → `posts` → `{cpt}` (one queue per CPT) → `menus` →
+  `finalize` (settings check, `flush_rewrite_rules()`, final report).
+- The server returns JSON: `{ step, offset, done, total, log[], next }`. The runner updates the
+  progress bar and log, then requests `next`.
+- Progress and the running report live in a per-user option / transient (`{prefix}_import_state`),
+  so a failed or closed tab can **resume** from the last finished step instead of starting over.
+- A failed request is retried (max 3) and then shown in the log with a **Resume** button. One
+  failed item never stops the rest of the import.
+- Image processing (`wp_generate_attachment_metadata`) is the slowest part — keep image batches the
+  smallest, or generate an item's images in its own step.
+
+Handler rules (every AJAX step):
+
+- `current_user_can( 'manage_options' )` + `check_ajax_referer()` nonce on **every** request.
+- Sanitize `step` against a whitelist and `offset` with `absint()`.
+- Return with `wp_send_json_success()` / `wp_send_json_error()`; never echo HTML.
+- Escape every output on the screen (`esc_html`, `esc_url`, `esc_attr`).
+
+Also register a WP-CLI command: `wp {prefix} import [--overwrite]`. It runs the **same step
+functions** in a loop (CLI has no web timeout), printing one line per step.
+
+---
+
+# 100. IMPORT ORDER
+
+```text
+1. Pages           → create (Home first), set _wp_page_template, SEO;
+                     set front page the moment Home exists, posts page the moment Blog exists
+2. Posts           → create, category, date, featured image, SEO
+3. CPT entries     → create, featured image, ACF fields (incl. repeaters + images), SEO
+4. Menus           → build from menus.json, assign to theme locations
+5. Finalize        → re-check front page / posts page / menu locations, flush_rewrite_rules()
+```
+
+Each line is split into small AJAX steps (§99). Pages must exist before menus, because menu items link to them by slug.
+
+**Front page — set it as soon as the Home page exists**
+
+- Put the Home page **first** in `pages.json` (and the Blog / posts page early), so they are created in the first batch.
+- Right after Home is created (or found), set `show_on_front = page` + `page_on_front` in the **same step**. Do the same for `page_for_posts` when the Blog page is created.
+- Never wait until all pages exist. If the import stops halfway, the front page must already be set.
+- The `finalize` step only re-checks it (fills it if still empty) — it is a safety net, not the place where it is first set.
+
+---
+
+# 101. IMPORTER RULES
+
+**Safe to run again (idempotent)**
+
+- Find existing items by **slug + post type**, checking all statuses (`publish`, `private`, `draft`, `pending`, `future`) — `'any'` skips private items and creates duplicates.
+- Default mode: existing items are **kept**, never overwritten. Only missing items are created.
+- Overwrite mode (checkbox / `--overwrite`): existing items are updated to match the seed; menus are emptied and rebuilt; front page / posts page are reset.
+- Front page, posts page, menu locations and other settings are only filled **where empty**, unless overwrite mode is on.
+
+**Images**
+
+- Copy each file from `assets/images/` into the Media Library **once** (`wp_upload_bits` + `wp_insert_attachment` + `wp_generate_attachment_metadata`).
+- Tag the attachment with a source meta key (`_{prefix}_source` = file name) and reuse it on every later run.
+- Set the alt text from the seed.
+
+**ACF fields**
+
+- Write values using the **same field definitions** as `custom-fields.php` — never a second copy of the field list.
+- Store `{name}` = value and `_{name}` = field key, so ACF recognises the value.
+- Repeaters: store the row count in `{name}` and each sub-field as `{name}_{i}_{sub}`.
+- Image fields: convert the file name to an attachment ID through the image importer.
+
+**SEO**
+
+- Fill the theme's own SEO fields, and Yoast / Rank Math meta when either plugin is active.
+
+**Robustness**
+
+- Avoid timeouts by **small step batches (§99)**, not by one long request. `set_time_limit()` may be
+  added per step as a safety margin, but it is not the fix (many hosts ignore it).
+- `require_once wp-admin/includes/image.php`.
+- `wp_slash()` data passed to `wp_insert_post` / `update_post_meta`.
+- Check `is_wp_error()` on every insert; skip and report failures instead of stopping.
+- Never delete content that is not in the seed.
+
+---
+
+# 102. IMPORTER QA
+
+Before delivery, test on a **fresh** WordPress install and on staging:
+
+- [ ] Fresh install → Import creates every page, post, CPT entry, image and menu; site matches the HTML.
+- [ ] Second run (default mode) → nothing duplicated; report shows everything "kept".
+- [ ] Overwrite run → items updated, menus rebuilt, no duplicates.
+- [ ] Every ACF field (incl. repeaters and images) shows its value in the edit screen.
+- [ ] Front page, posts page and all menu locations are set.
+- [ ] Import runs step by step via AJAX with a live progress log; no request times out, even on a slow host with all images.
+- [ ] Front page is set right after the Home page is created (check it while the import is still on Pages).
+- [ ] Closing the tab mid-import and clicking Import / Resume continues from the last step — no duplicates.
+- [ ] Images appear once in the Media Library, with alt text.
+- [ ] `wp {prefix} import` works from WP-CLI.
+- [ ] No PHP warnings or notices during import.
+
+Add the importer to the README **Install** steps:
+
+```text
+1. Copy theme to wp-content/themes/ and activate it.
+2. Install ACF Pro or Secure Custom Fields.
+3. Tools → {Project} Setup → Import {Project} content.
+4. Settings → Permalinks → Post name.
+5. Remaining manual steps (site title, form shortcodes …).
+```
+
+---
+
+# 103. CSS & GLOBAL STRUCTURE
+
+*Noted during real builds. §20 still applies: preserve the original look and do not rewrite CSS for
+its own sake. These rules decide **how** the CSS is organised while the output stays identical.*
+
+**Section-level classes, wherever required**
+- Every template section gets an appropriate section-level class (e.g. `about-section`,
+  `partners-section`). Keep the original HTML class if it already has one.
+- Shared components get a reusable class (e.g. `card`, `logo-grid`).
+- Name classes by role. Never name them after a page or a colour.
+
+**No unnecessary inline styles**
+- Styling goes in the theme CSS (`assets/css/`), managed through reusable classes. No `style=""` in
+  PHP templates.
+- If the original HTML has inline styles, move them into classes. The visual result must not change.
+- Only exception: a **dynamic value from the admin** (e.g. an ACF background image or colour) may be
+  passed as a CSS variable, nothing else: `style="--section-bg: url(<?php echo esc_url( $bg ); ?>)"`.
+  The CSS rule itself still lives in the stylesheet.
+
+**CSS variables for common values**
+- Font sizes, colours, spacing, radius, shadows and other repeated values live in one `:root` block
+  at the top of the main stylesheet. Reuse the original HTML's variables if it has them.
+- Section CSS uses `var(--…)`, not the same raw value repeated in many rules.
+
+**Consistent spacing**
+- Section top/bottom spacing is one variable (e.g. `--section-space`) applied the same way to every
+  section.
+- Container left/right spacing (gutter) is set **once** globally on the container class through
+  CSS. Never re-declare it in each section.
+
+**Clean, scalable, reusable**
+- One comment banner per section or component.
+- No duplicate rules, no dead CSS. Avoid `!important`.
+- Responsive rules sit next to the section they belong to, using the original breakpoints.
+
+---
+
+# 104. SVG & IMAGE ACCESSIBILITY + NAMING
+
+*Noted during real builds — image names and accessibility attributes were left incomplete before.*
+
+### SVG icons
+
+- **Meaningful SVG** (it carries information or is the only content of a link/button):
+  - Inline SVG in a template: `role="img"` + `aria-label="<?php esc_attr_e( 'Phone', 'textdomain' ); ?>"`
+    (or a `<title>` inside it).
+  - Icon-only link/button: put the `aria-label` on the link/button and `aria-hidden="true"`
+    `focusable="false"` on the SVG.
+  - SVG `<img>`: proper `alt`.
+- **Decorative SVG** (the text next to it already says the same thing): `aria-hidden="true"`, and
+  no alt text.
+- Never leave an icon-only control without an accessible name.
+
+### Images — every image gets a proper name and alt text
+
+- **Rename every image, avatar and SVG by what it actually shows.** Open or view the file first.
+  - Use lowercase, hyphens, 2–5 meaningful words.
+  - Never keep Figma or export names (`Ellipse 3`, `Group 1000004521`, `Frame 12`, `IMG_1234`,
+    `image (1)`).
+  - Rename **before** the file is referenced in the templates or the seed, and update every
+    reference.
+
+| File type | Pattern | Example | Alt text |
+|---|---|---|---|
+| Content image | `<what-it-shows>.webp` | `doctor-consulting-patient.webp` | `Doctor consulting a patient at a clinic desk` |
+| Hero image | `<page>-hero-<subject>.webp` | `about-hero-team-workshop.webp` | describe the scene |
+| Avatar — real person | `<first>-<last>-avatar.webp` | `priya-shah-avatar.webp` | `Priya Shah, Marketing Director at Acme` |
+| Avatar — dummy | `<context>-avatar-<n>.webp` | `testimonial-avatar-01.webp` | `Testimonial author photo` (never invent a name) |
+| Logo | `<brand>-logo.svg` | `acme-logo.svg` | `Acme` |
+| SVG icon | `icon-<what-it-shows>.svg` | `icon-phone.svg`, `icon-arrow-right.svg` | its meaning, or empty if decorative |
+| Decorative background | `bg-<what-it-is>.svg/webp` | `bg-wave-pattern.svg` | `alt=""` |
+
+- **Alt text:** describe what is in the image and why it is there.
+  - Keep it under ~125 characters. Don't start with "image of", and don't stuff keywords.
+  - A purely decorative image gets `alt=""`. The `alt` attribute is never missing.
+- **Where the alt comes from:**
+  - Media Library images: use `wp_get_attachment_image()` / `the_post_thumbnail()` so the library's
+    Alt Text is printed.
+  - Set Alt Text and Title on every attachment (the importer sets it from the seed, §101).
+  - Static theme images: write the alt in the template with `esc_attr()`.
+- Do not leave image names or accessibility attributes incomplete. A build with default file names
+  or blank alt text is not done.
+
+---
+
+# 105. MEDIA LIBRARY — UPLOAD EVERY IMAGE / ICON ONLY ONCE
+
+*Noted during real builds — the same images and icons were uploaded to the Media Library twice.*
+
+**Rule: one file = one Media Library item.** The same image used in five places is uploaded once
+and reused by its attachment ID.
+
+**Decide each file's home — theme or Media Library, never both:**
+- **Fixed UI files** that admins never change stay in the theme's `assets/images/` and are **not**
+  uploaded to the Media Library. These are UI icons, arrows, decorative shapes and the SVG sprite.
+- **Content images** that admins can change go into the Media Library (through the importer). These
+  are page images, post/CPT images, ACF image fields, partner logos and avatars.
+
+**Before every upload (manual, script, WP-CLI or importer):**
+1. Look the file up first: by the source meta key (`_{prefix}_source`, §101), by file name or by
+   title.
+2. Found → reuse that attachment ID. Not found → upload it once with its §104 name, alt and title.
+3. Re-running the importer or a build step must not upload anything that already exists.
+
+**Signs of a duplicate:**
+- The same name with a WordPress suffix: `acme-logo-1.webp`, `acme-logo-2.webp`.
+- Two items with the same title or the same thumbnail.
+
+**Clean-up:**
+1. Find every post, page, ACF field and option that uses the copy.
+2. Re-point each one to the original attachment.
+3. Only then delete the copy.
+
+Never delete an attachment that is still in use.
+
+---
+
+# 106. ADDITIONAL PAGES — 404 AND SEARCH
+
+*Noted during real builds — these two pages were missed before. They are part of every build.*
+
+### 404 Page — `404.php`
+
+- Build it **as per the design**: heading, message, button back to the homepage
+  (`home_url( '/' )`), and the search form if the design has one.
+- Use the normal `get_header()` / `get_footer()`, global classes, variables and buttons.
+- Test it by opening a URL that does not exist. The response must be a real 404 status.
+
+### Search Page — `search.php` + `searchform.php`
+
+- Build `search.php` **as per the design**:
+  - A heading with the search term (`get_search_query()`, escaped).
+  - The results loop: title, excerpt/meta, and image if the design shows one.
+  - Pagination (`the_posts_pagination()`).
+  - A clear **"no results"** state, with the search form again.
+- `searchform.php` holds the site's search form. It uses `role="search"`, a labelled input with
+  `name="s"`, and `action="<?php echo esc_url( home_url( '/' ) ); ?>"`. The header/site search uses
+  it via `get_search_form()`.
+- Decide which post types search includes (Posts, Pages, Partners), using `pre_get_posts` on the
+  main query only.
+- Test it with a term that returns results, a term that returns nothing, and a term containing
+  special characters.
+
+If the design has no 404 or Search layout, build a simple one from the global design system, and
+say so in the handover report.
+
+---
+
+# 107. SITEMAP PAGE
+
+*Noted during real builds — the sitemap page was missed before. It is part of every build.*
+
+### HTML Sitemap page (for visitors) — `page-templates/page-sitemap.php`
+
+- A page template named "Sitemap", assigned to a Page with slug `sitemap`. The importer creates it
+  (§98).
+- The list must be **dynamic**. Never hardcode links. New pages and posts appear automatically.
+  - Pages: `wp_list_pages( [ 'title_li' => '', 'exclude' => … ] )`.
+  - Posts and the Partner CPT: `WP_Query` / `get_posts()`, grouped under headings.
+  - Categories, if the design uses them.
+- Leave out Thank You, 404, private/draft and utility pages.
+- Style it with the global section classes and variables (§103).
+- Link it in the footer (usually next to Privacy / Terms) through the WordPress footer menu.
+
+### XML Sitemap (for search engines)
+
+- If Yoast or Rank Math is active, use **its** XML sitemap and do not add another one.
+- If neither is active, WordPress core's `/wp-sitemap.xml` is enough. Don't add a sitemap plugin, and
+  don't build a custom XML sitemap.
+- Check that Pages, Posts and the Partner CPT are included, and that Thank You / utility pages are
+  excluded. Use the `wp_sitemaps_*` filters, or the SEO plugin's settings.
+- Open the sitemap URL after the build and confirm it loads with the correct (Post name) URLs.

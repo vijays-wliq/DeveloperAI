@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skills Build Time</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--text:#1d2330;--muted:#5d6675;--line:#e2e6ec;
+  --accent:#1f4e79;--accent-soft:#eaf1f8;--you:#b54708;--you-soft:#fff4e5;
+  --bar:#1f4e79;--bar2:#d08a3a;--bar-bg:#e6ebf1;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161c;--card:#1b2129;--text:#e6e9ee;--muted:#9aa3b2;--line:#2c3440;
+  --accent:#8db8e6;--accent-soft:#1f2a37;--you:#ffb366;--you-soft:#3a2a17;
+  --bar:#8db8e6;--bar2:#e0a35c;--bar-bg:#2c3440;}}
+:root[data-theme="dark"]{
+  --bg:#12161c;--card:#1b2129;--text:#e6e9ee;--muted:#9aa3b2;--line:#2c3440;
+  --accent:#8db8e6;--accent-soft:#1f2a37;--you:#ffb366;--you-soft:#3a2a17;
+  --bar:#8db8e6;--bar2:#e0a35c;--bar-bg:#2c3440;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:28px;margin:0 0 4px;color:var(--accent)}
+h2{font-size:21px;margin:38px 0 12px;color:var(--accent)}
+h3{font-size:17px;margin:4px 0 8px}
+p{margin:6px 0}.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.big{font-size:30px;font-weight:700;line-height:1.1;margin:8px 0 2px}
+.sub{font-size:14px;margin:2px 0}
+.you{color:var(--you)}
+.tbl{width:100%;overflow-x:auto;margin-bottom:6px}
+table{border-collapse:collapse;width:100%;min-width:640px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;font-size:14px}
+th{background:var(--accent-soft)}
+td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.total td{font-weight:700;background:var(--accent-soft)}
+.note{border-left:4px solid var(--you);background:var(--you-soft);padding:12px 14px;border-radius:6px;margin:14px 0}
+.hbar{display:flex;align-items:center;gap:10px;margin:10px 0}
+.hbar .lbl{width:160px;flex:none;font-size:14px}
+.hbar .track{flex:1;position:relative;height:20px;background:var(--bar-bg);border-radius:4px}
+.hbar .rng{position:absolute;top:0;bottom:0;background:var(--bar);border-radius:4px}
+.hbar .rng.m{background:var(--bar2);opacity:.9}
+.hbar .val{width:120px;flex:none;font-size:13px;text-align:right}
+.legend span{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin:0 4px 0 12px}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:12px 0;padding:0 18px 6px}
+summary{cursor:pointer;padding:14px 0;font-weight:600;font-size:16px}
+ul{margin:6px 0 10px;padding-left:20px}li{margin:4px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--accent-soft);padding:1px 5px;border-radius:4px}
+@media (max-width:560px){.hbar .lbl{width:100px}.hbar .val{width:86px}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Build Time — All 4 Skills with Claude Code</h1>
+<p class="muted">How long each skill takes when Claude builds a complex project with it · 29 Oct 2026</p>
+
+<div class="note"><b>These are estimates, not measured times.</b> They come from each skill's steps and typical Claude Code speed. <b>Claude time</b> = Claude building, checking and fixing. <b>Your time</b> = answering questions, approvals, reviews, feedback and any manual work Claude cannot do. Log the real times in Orbit on the first projects to calibrate.</div>
+
+<p class="muted"><b>Complex project assumed:</b> 15 pages (~7 sections each), header with mega menu + footer, 2–3 custom post types, blog, 3–5 forms, scroll animations, staging site, one feedback round.</p>
+
+<h2>1. Summary — complex project</h2>
+<div class="grid">
+  <div class="card"><h3>1 · HTML Design</h3><div class="big">20–38 h</div><p class="sub">Claude time</p><p class="sub you">Your time: 8–14 h</p><p class="sub muted">Calendar: 5–8 days</p></div>
+  <div class="card"><h3>2 · WordPress ACF</h3><div class="big">25–50 h</div><p class="sub">Claude time</p><p class="sub you">Your time: 8–14 h</p><p class="sub muted">Calendar: 6–10 days</p></div>
+  <div class="card"><h3>3 · Elementor Pro</h3><div class="big">35–68 h</div><p class="sub">Claude time</p><p class="sub you">Your time: 25–48 h*</p><p class="sub muted">Calendar: 10–16 days</p></div>
+  <div class="card"><h3>4 · Theme-Based</h3><div class="big">37–75 h</div><p class="sub">Claude time</p><p class="sub you">Your time: 12–20 h</p><p class="sub muted">Calendar: 9–15 days</p></div>
+</div>
+<p class="muted">* Elementor includes 20–40 h of manual work in the Elementor editor (layout tuning per breakpoint, mega menu, Loop Item design, form actions), because the skill does not yet give Claude a reliable way to write Elementor page data. Skills 2 and 3 start from finished HTML (Skill 1).</p>
+
+<div class="card" style="margin-top:14px">
+  <p class="legend"><b>Hours, complex project</b><span style="background:var(--bar)"></span>Claude<span style="background:var(--bar2)"></span>You (incl. manual work)</p>
+  <div class="hbar"><div class="lbl">HTML Design</div><div class="track"><div class="rng" style="left:20%;width:18%"></div></div><div class="val">20–38 h</div></div>
+  <div class="hbar"><div class="lbl"></div><div class="track"><div class="rng m" style="left:8%;width:6%"></div></div><div class="val">8–14 h</div></div>
+  <div class="hbar"><div class="lbl">WordPress ACF</div><div class="track"><div class="rng" style="left:25%;width:25%"></div></div><div class="val">25–50 h</div></div>
+  <div class="hbar"><div class="lbl"></div><div class="track"><div class="rng m" style="left:8%;width:6%"></div></div><div class="val">8–14 h</div></div>
+  <div class="hbar"><div class="lbl">Elementor Pro</div><div class="track"><div class="rng" style="left:35%;width:33%"></div></div><div class="val">35–68 h</div></div>
+  <div class="hbar"><div class="lbl"></div><div class="track"><div class="rng m" style="left:25%;width:23%"></div></div><div class="val">25–48 h</div></div>
+  <div class="hbar"><div class="lbl">Theme-Based</div><div class="track"><div class="rng" style="left:37%;width:38%"></div></div><div class="val">37–75 h</div></div>
+  <div class="hbar"><div class="lbl"></div><div class="track"><div class="rng m" style="left:12%;width:8%"></div></div><div class="val">12–20 h</div></div>
+  <p class="muted">Scale 0–100 h.</p>
+</div>
+
+<h2>2. Full project — HTML first, then WordPress</h2>
+<div class="tbl"><table>
+<tr><th>Workflow</th><th>Skills used</th><th>Claude time</th><th>Your time</th><th>Calendar</th></tr>
+<tr><td>Static HTML site only</td><td>1</td><td class="n">20–38 h</td><td class="n">8–14 h</td><td class="n">5–8 days</td></tr>
+<tr><td>Custom WordPress theme with ACF</td><td>1 → 2</td><td class="n">45–88 h</td><td class="n">16–28 h</td><td class="n">11–18 days</td></tr>
+<tr><td>WordPress with Elementor Pro</td><td>1 → 3</td><td class="n">55–106 h</td><td class="n">33–62 h</td><td class="n">15–24 days</td></tr>
+<tr><td>Client's existing theme</td><td>4 (+1 only if HTML is needed)</td><td class="n">37–75 h</td><td class="n">12–20 h</td><td class="n">9–15 days</td></tr>
+</table></div>
+<p class="muted">Calendar days assume one developer supervising and reviewing as work finishes. Waiting for client approvals adds days but not working hours.</p>
+
+<h2>3. By project size (Claude time)</h2>
+<div class="tbl"><table>
+<tr><th>Skill</th><th>Small (3–5 pages)</th><th>Medium (8–10 pages)</th><th>Complex (12–15 pages)</th></tr>
+<tr><td>1 · HTML Design</td><td class="n">6–11 h</td><td class="n">12–22 h</td><td class="n">20–38 h</td></tr>
+<tr><td>2 · WordPress ACF</td><td class="n">9–18 h</td><td class="n">16–32 h</td><td class="n">25–50 h</td></tr>
+<tr><td>3 · Elementor Pro</td><td class="n">12–24 h</td><td class="n">22–42 h</td><td class="n">35–68 h</td></tr>
+<tr><td>4 · Theme-Based</td><td class="n">14–28 h</td><td class="n">24–46 h</td><td class="n">37–75 h</td></tr>
+</table></div>
+
+<h2>4. Step-by-step per skill (complex project)</h2>
+
+<details open>
+<summary>Skill 1 — HTML Design · Claude 20–38 h · You 8–14 h</summary>
+<div class="tbl"><table>
+<tr><th>Step</th><th>Claude</th><th>You</th></tr>
+<tr><td>Inputs & questions</td><td class="n">5–10 min</td><td class="n">10–15 min</td></tr>
+<tr><td>Extract design from Figma (all pages)</td><td class="n">30–60 min</td><td class="n">—</td></tr>
+<tr><td>Normalise into tokens</td><td class="n">20–40 min</td><td class="n">—</td></tr>
+<tr><td><b>Approval gate</b> — TOKENS.md</td><td class="n">10–20 min</td><td class="n">30–60 min</td></tr>
+<tr><td>Global setup: folders, vendor.css, animations.js, global.html, CLAUDE.md</td><td class="n">45–90 min</td><td class="n">15 min</td></tr>
+<tr><td>Proving section + screenshot check</td><td class="n">20–40 min</td><td class="n">10–15 min</td></tr>
+<tr><td>Header + mega menu + footer</td><td class="n">1.5–3 h</td><td class="n">20–30 min</td></tr>
+<tr><td>Pages: ~70 unique sections (8–15 min each)</td><td class="n">9–17.5 h</td><td rowspan="2" class="n">5–8 h</td></tr>
+<tr><td>Pages: ~35 reused sections (2–4 min each)</td><td class="n">1–2.5 h</td></tr>
+<tr><td>Forms</td><td class="n">1–2 h</td><td class="n">—</td></tr>
+<tr><td>Animations (data-anim attributes, tuning)</td><td class="n">1–2 h</td><td class="n">15 min</td></tr>
+<tr><td>Images → WebP</td><td class="n">30–60 min</td><td class="n">—</td></tr>
+<tr><td>Responsive QA, all pages × 3 widths</td><td class="n">3–6 h</td><td class="n">1–2 h</td></tr>
+<tr><td>Accessibility + final checks</td><td class="n">1–2 h</td><td class="n">15 min</td></tr>
+<tr><td>Feedback round</td><td class="n">2–4 h</td><td class="n">1–2 h</td></tr>
+<tr class="total"><td>Total</td><td class="n">≈ 20–38 h</td><td class="n">≈ 8–14 h</td></tr>
+</table></div>
+</details>
+
+<details>
+<summary>Skill 2 — WordPress ACF · Claude 25–50 h · You 8–14 h</summary>
+<div class="tbl"><table>
+<tr><th>Step</th><th>Claude</th><th>You</th></tr>
+<tr><td>Inspect full HTML + architecture report</td><td class="n">1–2 h</td><td class="n">—</td></tr>
+<tr><td><b>Gate 1</b> — approve architecture</td><td class="n">15–30 min</td><td class="n">30–60 min</td></tr>
+<tr><td>Theme scaffold, setup, enqueue CSS/JS</td><td class="n">1–2 h</td><td class="n">—</td></tr>
+<tr><td>Header, footer, menus (nav walker)</td><td class="n">2–4 h</td><td class="n">20–30 min</td></tr>
+<tr><td>15 page templates + ACF field groups (30–60 min each)</td><td class="n">7.5–15 h</td><td class="n">3–5 h</td></tr>
+<tr><td>2–3 CPTs: fields, archive, single, taxonomies</td><td class="n">3–6 h</td><td class="n">30–60 min</td></tr>
+<tr><td>Blog: home, single, archive, search</td><td class="n">1.5–3 h</td><td class="n">20 min</td></tr>
+<tr><td>Forms integration</td><td class="n">1–2 h</td><td class="n">15 min</td></tr>
+<tr><td>Animations + assets (reused from HTML)</td><td class="n">0.5–1 h</td><td class="n">—</td></tr>
+<tr><td>Seed extraction + one-click importer (Tools → Setup)</td><td class="n">3–6 h</td><td class="n">15 min</td></tr>
+<tr><td>SEO, URL map, redirects</td><td class="n">1–2 h</td><td class="n">—</td></tr>
+<tr><td>Staging install, run importer, QA all pages</td><td class="n">3–6 h</td><td class="n">1–2 h</td></tr>
+<tr><td>Feedback round</td><td class="n">2–4 h</td><td class="n">1–2 h</td></tr>
+<tr class="total"><td>Total</td><td class="n">≈ 25–50 h</td><td class="n">≈ 8–14 h</td></tr>
+</table></div>
+</details>
+
+<details>
+<summary>Skill 3 — Elementor Pro · Claude 35–68 h · You 25–48 h (incl. editor work)</summary>
+<div class="tbl"><table>
+<tr><th>Step</th><th>Claude</th><th>You / developer</th></tr>
+<tr><td>Inspect HTML + extract design system</td><td class="n">2–3 h</td><td class="n">—</td></tr>
+<tr><td><b>Gate 1</b> — approve design system</td><td class="n">15–30 min</td><td class="n">30–60 min</td></tr>
+<tr><td>Site Settings: global colours, fonts, buttons, layout, permalinks</td><td class="n">1–2 h</td><td class="n">30–60 min</td></tr>
+<tr><td>CPTs + ACF fields</td><td class="n">1.5–3 h</td><td class="n">—</td></tr>
+<tr><td>Header (mega menu) + footer in Theme Builder</td><td class="n">2–4 h</td><td class="n">3–6 h</td></tr>
+<tr><td>Reusable components / saved templates</td><td class="n">2–4 h</td><td class="n">1–2 h</td></tr>
+<tr><td>15 pages (1–2 h each for Claude)</td><td class="n">15–30 h</td><td class="n">10–20 h</td></tr>
+<tr><td>CPT + blog templates (Loop Grid / Loop Items)</td><td class="n">2–4 h</td><td class="n">2–4 h</td></tr>
+<tr><td>Forms (Pro Form widget, actions)</td><td class="n">1–2 h</td><td class="n">1–2 h</td></tr>
+<tr><td>Content migration (no importer in this skill yet)</td><td class="n">3–6 h</td><td class="n">1–2 h</td></tr>
+<tr><td>WebP, dynamic links, redirects</td><td class="n">1–2 h</td><td class="n">—</td></tr>
+<tr><td>QA all pages, responsive</td><td class="n">4–8 h</td><td class="n">3–6 h</td></tr>
+<tr><td>Feedback round</td><td class="n">2–4 h</td><td class="n">2–4 h</td></tr>
+<tr class="total"><td>Total</td><td class="n">≈ 35–68 h</td><td class="n">≈ 25–48 h</td></tr>
+</table></div>
+<p class="muted">Why your time is higher here: per-breakpoint layout tuning, mega menu content, motion effects and Loop Item design are faster to finish by hand in the Elementor editor than to script.</p>
+</details>
+
+<details>
+<summary>Skill 4 — Theme-Based · Claude 37–75 h · You 12–20 h</summary>
+<div class="tbl"><table>
+<tr><th>Phase</th><th>Claude</th><th>You</th></tr>
+<tr><td>0 · Access, backup, child theme, versions</td><td class="n">0.5–1 h</td><td class="n">15–30 min</td></tr>
+<tr><td>1 · Requirements register + questions</td><td class="n">1–2 h</td><td class="n">1–2 h</td></tr>
+<tr><td>2 · Audit every page and section</td><td class="n">2–4 h</td><td class="n">—</td></tr>
+<tr><td>3 · Architecture plan — <b>your approval</b></td><td class="n">1–2 h</td><td class="n">1–2 h</td></tr>
+<tr><td>4 · Global brand setup, header, footer</td><td class="n">1.5–3 h</td><td class="n">30 min</td></tr>
+<tr><td>5 · 10–14 child-theme widgets + global templates</td><td class="n">12–24 h</td><td class="n">2–3 h</td></tr>
+<tr><td>6 · Build all pages, convert HTML sections</td><td class="n">10–20 h</td><td class="n">3–5 h</td></tr>
+<tr><td>7 · QA + second review of all pages</td><td class="n">4–8 h</td><td class="n">1–2 h</td></tr>
+<tr><td>8 · Theme-update safety test</td><td class="n">1–2 h</td><td class="n">15 min</td></tr>
+<tr><td>9 · Site documentation (Notion)</td><td class="n">2–4 h</td><td class="n">30–60 min</td></tr>
+<tr><td>10 · Handoff report</td><td class="n">0.5–1 h</td><td class="n">15 min</td></tr>
+<tr><td>Feedback round</td><td class="n">2–4 h</td><td class="n">1–2 h</td></tr>
+<tr class="total"><td>Total</td><td class="n">≈ 37–75 h</td><td class="n">≈ 12–20 h</td></tr>
+</table></div>
+<p class="muted">The range is wide because it depends on how many sections the theme's own widgets can cover. If most need custom child-theme widgets, expect the high end.</p>
+</details>
+
+<h2>5. What changes the time</h2>
+<div class="grid">
+<div class="card"><b>Slower</b>
+<ul>
+<li>Figma link fails → measuring from PDF (+3–6 h on Skill 1).</li>
+<li>Inconsistent design: fewer reusable sections and widgets.</li>
+<li>Heavy animation: timelines, pinning, 3D (+3–8 h).</li>
+<li>Premium theme whose widgets rarely match the design (Skill 4).</li>
+<li>Large content volume without an importer (Skills 3, 4).</li>
+<li>Late, large changes after pages are built.</li>
+</ul></div>
+<div class="card"><b>Faster</b>
+<ul>
+<li>Figma variables and styles used by the designer.</li>
+<li>Real copy and images ready before the build.</li>
+<li>Review each page as it finishes, not all at the end.</li>
+<li>ACF one-click importer (Skill 2) removes manual data entry.</li>
+<li>Fixing the open skill issues (especially Elementor build method) cuts manual editor work.</li>
+</ul></div>
+</div>
+
+</div>
+</body>
+</html>

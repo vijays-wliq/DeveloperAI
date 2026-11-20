@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTML Build Time</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--text:#1d2330;--muted:#5d6675;--line:#e2e6ec;
+  --accent:#1f4e79;--accent-soft:#eaf1f8;--you:#b54708;--you-soft:#fff4e5;
+  --bar:#1f4e79;--bar-bg:#e6ebf1;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161c;--card:#1b2129;--text:#e6e9ee;--muted:#9aa3b2;--line:#2c3440;
+  --accent:#8db8e6;--accent-soft:#1f2a37;--you:#ffb366;--you-soft:#3a2a17;
+  --bar:#8db8e6;--bar-bg:#2c3440;}}
+:root[data-theme="dark"]{
+  --bg:#12161c;--card:#1b2129;--text:#e6e9ee;--muted:#9aa3b2;--line:#2c3440;
+  --accent:#8db8e6;--accent-soft:#1f2a37;--you:#ffb366;--you-soft:#3a2a17;
+  --bar:#8db8e6;--bar-bg:#2c3440;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:28px;margin:0 0 4px;color:var(--accent)}
+h2{font-size:21px;margin:36px 0 12px;color:var(--accent)}
+p{margin:6px 0}.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.big{font-size:34px;font-weight:700;line-height:1.1;margin:8px 0 2px}
+.you{color:var(--you)}
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:620px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;font-size:14px}
+th{background:var(--accent-soft)}
+td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.total td{font-weight:700;background:var(--accent-soft)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent)}
+.pill.y{background:var(--you-soft);color:var(--you)}
+.note{border-left:4px solid var(--you);background:var(--you-soft);padding:12px 14px;border-radius:6px;margin:14px 0}
+.hbar{display:flex;align-items:center;gap:10px;margin:8px 0}
+.hbar .lbl{width:150px;flex:none;font-size:14px}
+.hbar .track{flex:1;position:relative;height:18px;background:var(--bar-bg);border-radius:4px}
+.hbar .rng{position:absolute;top:0;bottom:0;background:var(--bar);border-radius:4px}
+.hbar .val{width:90px;flex:none;font-size:13px;text-align:right}
+ul{margin:6px 0 10px;padding-left:20px}li{margin:4px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--accent-soft);padding:1px 5px;border-radius:4px}
+@media (max-width:560px){.hbar .lbl{width:95px}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>HTML Build Time — Claude + PROJECT-BOOTSTRAP skill</h1>
+<p class="muted">How long it takes Claude Code to build the full HTML site (global setup + all pages) with Skill 1 · updated 18 Nov 2026</p>
+
+<div class="note"><b>Updated with a real, measured build.</b> A recent test project of <b>80+ pages</b> was built end to end in <b>about 8 hours at most</b>, using Claude Code with <code>PROJECT-BOOTSTRAP.md</code> and the skills. The earlier figures in this report (20–38 h for a 15-page site) were estimates made before any real build and were far too high, so they have been replaced. The 80+ page figure is measured. Every other number below is <b>scaled from that one project</b> and is still an estimate. Log the next 1–2 projects in Orbit to confirm it.</div>
+
+<h2>1. Answer in short — measured project (80+ pages)</h2>
+<div class="grid">
+  <div class="card"><span class="pill">Total build time</span><div class="big">≤ ~8 h</div><p class="muted">Measured — the whole HTML site, start to finish</p></div>
+  <div class="card"><span class="pill">Average per page</span><div class="big">≈ 6 min</div><p class="muted">~8 h ÷ 80+ pages, including global setup</p></div>
+  <div class="card"><span class="pill y">Calendar time</span><div class="big you">~1 day</div><p class="muted">One working day for the full build</p></div>
+</div>
+
+<h2>2. Why it is this fast</h2>
+<div class="card">
+<ul>
+<li><b>The design system is built once, up front.</b> Tokens, <code>vendor.css</code>, <code>global.html</code> and the project <code>CLAUDE.md</code> are done in the first phases. After that every page reuses them, so nothing is re-decided per page.</li>
+<li><b>Most sections are reused.</b> On a large site the same headers, cards, CTAs and layouts repeat across many pages. A reused section takes minutes, not a fresh build.</li>
+<li><b>Fixed rules remove back-and-forth.</b> Breakpoints, naming, animation attributes and the delivery checklist are already decided in the bootstrap, so Claude does not stop to ask.</li>
+<li><b>Global setup is a one-time cost.</b> It takes about the same time for 5 pages or 80, so the per-page cost drops as the site grows.</li>
+</ul>
+</div>
+
+<h2>3. Where the 8 hours go (estimated split)</h2>
+<p class="muted">Only the total was measured. This split is an estimate of how the ~8 h divides across the bootstrap phases.</p>
+<div class="tbl"><table>
+<tr><th>Phase</th><th>Step</th><th>Approx. time</th><th>What happens</th></tr>
+<tr><td>0–3</td><td>Inputs, Figma extraction, tokens, <b>approval gate</b></td><td class="n">~45–60 min</td><td>Project name, pages, Figma link. Colours, fonts, spacing and breakpoints pulled into <code>TOKENS.md</code>, then you approve it</td></tr>
+<tr><td>4–7</td><td>Global setup + proving section</td><td class="n">~30–45 min</td><td>Folders, <code>vendor.css</code>, <code>animations.js</code>, sliders, <code>global.html</code>, project <code>CLAUDE.md</code>, one section screenshot-checked</td></tr>
+<tr><td>8</td><td>Header + footer</td><td class="n">~30–45 min</td><td>Desktop + mobile menu, keyboard access, footer</td></tr>
+<tr><td>9</td><td>All pages (80+)</td><td class="n">~5–5.5 h</td><td>New sections built and checked. Repeated sections reused from <code>global.html</code>. Animations and images added as each page is built</td></tr>
+<tr><td>10</td><td>Responsive QA + final checks</td><td class="n">~45–60 min</td><td>Desktop / tablet / mobile pass, alt text, headings, no horizontal scroll</td></tr>
+<tr class="total"><td></td><td>Total</td><td class="n">≤ ~8 h</td><td>Measured total · pages ≈ two-thirds of the time</td></tr>
+</table></div>
+
+<h2>4. By project size</h2>
+<p class="muted">Only the 80+ page row is measured. The other rows are estimates: the one-time setup (~1.5–2.5 h) plus the page time, with extra margin because smaller sites usually reuse fewer sections.</p>
+<div class="tbl"><table>
+<tr><th>Project size</th><th>Pages</th><th>Build time</th><th>Calendar</th><th>Basis</th></tr>
+<tr><td>Small</td><td>3–5</td><td class="n">~2–3 h</td><td class="n">same day</td><td>Estimate</td></tr>
+<tr><td>Medium</td><td>8–10</td><td class="n">~3–4 h</td><td class="n">same day</td><td>Estimate</td></tr>
+<tr><td>Complex</td><td>12–15</td><td class="n">~3–5 h</td><td class="n">same day</td><td>Estimate</td></tr>
+<tr><td>Large</td><td>80+</td><td class="n">≤ ~8 h</td><td class="n">~1 day</td><td><b>Measured</b></td></tr>
+</table></div>
+<div class="card" style="margin-top:14px">
+  <div class="hbar"><div class="lbl">Small</div><div class="track"><div class="rng" style="left:25%;width:12.5%"></div></div><div class="val">~2–3 h</div></div>
+  <div class="hbar"><div class="lbl">Medium</div><div class="track"><div class="rng" style="left:37.5%;width:12.5%"></div></div><div class="val">~3–4 h</div></div>
+  <div class="hbar"><div class="lbl">Complex</div><div class="track"><div class="rng" style="left:37.5%;width:25%"></div></div><div class="val">~3–5 h</div></div>
+  <div class="hbar"><div class="lbl">Large (80+)</div><div class="track"><div class="rng" style="left:0;width:100%"></div></div><div class="val">≤ ~8 h</div></div>
+  <p class="muted">Build time, scale 0–8 h.</p>
+</div>
+
+<h2>5. What makes it faster or slower</h2>
+<div class="grid">
+<div class="card"><b>Slower</b>
+<ul>
+<li><b>Figma link fails → PDF only:</b> values are measured instead of read, so extraction and corrections take longer.</li>
+<li><b>Inconsistent design</b> (many one-off sizes, every section different): fewer reused sections.</li>
+<li><b>Heavy animation</b> (timelines, pinning, 3D) or custom interactions.</li>
+<li><b>Slow approvals:</b> Claude stops at the TOKENS gate and waits. Calendar time grows, build time does not.</li>
+<li><b>Big feedback changes</b> after pages are built. A full feedback round is not included in the 8 h.</li>
+</ul></div>
+<div class="card"><b>Faster</b>
+<ul>
+<li>The designer used <b>Figma variables and styles</b>, so tokens come out almost exact.</li>
+<li>A consistent design system, so more sections are reused.</li>
+<li>Real copy and images are ready, so there is no placeholder rework.</li>
+<li>You review each page as it finishes instead of all at the end.</li>
+</ul></div>
+</div>
+
+<h2>6. What changed from the earlier report</h2>
+<div class="card">
+<p>The earlier version estimated <b>20–38 h of Claude time for a 15-page site</b> (8–15 min per new section), plus 8–14 h of your time over 5–8 days. Those numbers were written before any real build. The first measured build did <b>80+ pages in about 8 hours</b>, roughly 5× the pages in a fraction of the estimated time. The main gap was how much the shared global setup and section reuse speed up every page after the first few.</p>
+<p>Long builds can still run over more than one Claude session. Each new session re-reads <code>CLAUDE.md</code> and <code>global.html</code> first, which takes a few minutes and is included in the measured time.</p>
+</div>
+
+</div>
+</body>
+</html>
