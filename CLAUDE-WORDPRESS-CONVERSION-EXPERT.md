@@ -343,6 +343,8 @@ theme-name/
 │   ├── blog/
 │   └── partner/
 │
+├── acf-json/                   ← ACF field groups as JSON, synced (§111)
+│
 ├── inc/
 │   ├── theme-setup.php
 │   ├── enqueue.php
@@ -923,6 +925,9 @@ Forms must be:
 - Responsive
 - Working
 - Spam-protected where appropriate
+
+Build every form with the forms plugin the user chose at the start — Gravity Forms or Contact
+Form 7 (§109).
 
 ---
 
@@ -1654,6 +1659,7 @@ Follow this order:
 
 ```text
 0. Ask: ACF PRO Flexible Content / Gutenberg (ACF Blocks) / Both (§108)
+   Ask: Gravity Forms or Contact Form 7 (§109)
 1. Inspect complete HTML project
 2. Create site inventory
 3. Identify templates
@@ -1677,7 +1683,7 @@ Follow this order:
 21. Create Partner archive
 22. Create Partner single
 23. Convert Blog
-24. Convert forms
+24. Convert forms with the chosen plugin (§109)
 25. Integrate animations
 26. Test responsive behavior
 27. Test URLs
@@ -1718,8 +1724,8 @@ Do not ask unnecessary questions if the answer can be determined by inspecting t
 
 Only ask the user when a business requirement genuinely cannot be inferred from the supplied project.
 
-Exception: the page-builder choice (Flexible Content / Gutenberg / Both) is **always** asked first
-(§108) and recorded in this report.
+Exception: the page-builder choice (Flexible Content / Gutenberg / Both, §108) and the forms plugin
+(Gravity Forms / Contact Form 7, §109) are **always** asked first and recorded in this report.
 
 ---
 
@@ -1930,6 +1936,8 @@ Before declaring the project complete:
 - [ ] HTML Sitemap page exists, lists content automatically and is linked in the footer (§107).
 - [ ] XML sitemap loads with correct URLs (§107).
 - [ ] Page builder (§108) passes its own QA list: any section, any page, any order.
+- [ ] Forms use the chosen plugin (Gravity Forms / Contact Form 7) and pass the §109 QA list.
+- [ ] Only ACF PRO is used, SCF is not installed (§110); all field groups are in `acf-json/` and synced (§111).
 
 ---
 
@@ -2573,7 +2581,7 @@ Your first responsibility is to:
 Every ACF theme must ship with a **one-click content importer**, so a fresh WordPress install becomes the complete website with one button and no manual page building or data entry.
 
 ```text
-Install theme  →  Install ACF Pro / Secure Custom Fields  →  Tools → {Project} Setup  →  Import
+Install theme  →  ACF PRO active (never SCF, §110)  →  Sync ACF field groups (§111)  →  Tools → {Project} Setup  →  Import
         ↓
 Pages + templates, front page, posts page, posts, CPT entries,
 Media Library images, ACF field values, SEO, menus — all created
@@ -2589,7 +2597,7 @@ Reference implementation: the Agency Core theme (`ag-theme/inc/importer.php` + `
 theme-name/
 ├── inc/
 │   ├── importer.php          ← admin screen, handler, WP-CLI command, import functions
-│   ├── custom-fields.php     ← ACF field groups registered in PHP (single source of truth)
+│   ├── custom-fields.php     ← ACF JSON save/load paths + field helpers (§111)
 │   └── seed/
 │       ├── pages.json        ← pages: slug, title, template, status, SEO, optional content
 │       ├── posts.json        ← blog posts: slug, title, date, excerpt, content, image, alt, SEO
@@ -2703,7 +2711,7 @@ Each line is split into small AJAX steps (§99). Pages must exist before menus, 
 
 **ACF fields**
 
-- Write values using the **same field definitions** as `custom-fields.php` — never a second copy of the field list.
+- Write values using the **same field definitions** as the `acf-json/` files (§111) — never a second copy of the field list.
 - Store `{name}` = value and `_{name}` = field key, so ACF recognises the value.
 - Repeaters: store the row count in `{name}` and each sub-field as `{name}_{i}_{sub}`.
 - Image fields: convert the file name to an attachment ID through the image importer.
@@ -2744,7 +2752,7 @@ Add the importer to the README **Install** steps:
 
 ```text
 1. Copy theme to wp-content/themes/ and activate it.
-2. Install ACF Pro or Secure Custom Fields.
+2. Make sure ACF PRO is active (never install SCF, §110), then ACF → Field Groups → Sync (§111).
 3. Tools → {Project} Setup → Import {Project} content.
 4. Settings → Permalinks → Post name.
 5. Remaining manual steps (site title, form shortcodes …).
@@ -2946,8 +2954,8 @@ How should editors build the pages?
 ```
 
 Write the answer into the architecture report (§65) and build only what was chosen.
-All three options need **ACF PRO or Secure Custom Fields** — free ACF has no Flexible Content and
-no ACF Blocks.
+All three options need **ACF PRO** — free ACF has no Flexible Content and no ACF Blocks. Never
+install SCF (§110).
 
 ## Step 2 — Rules for every option
 
@@ -2957,9 +2965,8 @@ no ACF Blocks.
 - **One render file per section:** `template-parts/sections/{section-name}.php`. It receives its
   values through `$args` and outputs the original HTML with the original classes (§50, §69, §103).
   Flexible Content and ACF Blocks both call this same file — never two copies of the markup.
-- **One field definition per section,** in `inc/custom-fields.php` (PHP, single source of truth).
-  The Flexible Content layout and the ACF Block field group are both generated from that same
-  definition.
+- **One field group per section,** saved as JSON in `acf-json/` and synced (§111, single source of truth).
+  The Flexible Content layout and the ACF Block field group both reuse it through a Clone field.
 - Name sections by role (`hero`, `logo_grid`, `cta_banner`), never by page (`home_hero`).
 - Each section gets an optional **Section ID** field (anchor), so in-page links from the HTML
   (`#contact`) keep working.
@@ -2976,7 +2983,7 @@ theme-name/
 ├── blocks/{section-name}/     ← block.json per section (options 2 and 3 only)
 ├── theme.json                 ← options 2 and 3 only
 └── inc/
-    ├── custom-fields.php      ← section definitions → Flexible layouts and/or block field groups
+    ├── custom-fields.php      ← ACF JSON paths (field groups live in acf-json/, §111)
     └── page-builder.php       ← section loop, block registration, editor settings
 ```
 
@@ -3027,7 +3034,7 @@ theme-name/
 - **ACF Blocks:** build `post_content` with `serialize_block()` — one
   `<!-- wp:acf/{section-name} {"name":"acf/{section-name}","data":{…},"mode":"preview"} /-->` per
   section, where `data` holds `{field_name}` + `_{field_name}` (field key).
-- The importer uses the same section definitions as `custom-fields.php` — never a second list.
+- The importer uses the same field keys as the `acf-json/` files (§111) — never a second list.
 
 ## QA
 
@@ -3039,3 +3046,132 @@ theme-name/
 - [ ] Gutenberg: editor preview matches the frontend; only allowed blocks appear; `theme.json`
       presets match the design.
 - [ ] Importer recreates every page with its sections in the original order, using the chosen builder.
+
+---
+
+# 109. FORMS PLUGIN — GRAVITY FORMS OR CONTACT FORM 7
+
+*Added after a real build: the forms plugin was guessed. The choice must come from the user.*
+
+## Ask before building (MANDATORY)
+
+Ask this together with the page-builder question (§108), at the very start of the project. Never
+assume the answer, even if one plugin looks like the obvious choice.
+
+```text
+Which forms plugin should the site use?
+  1. Gravity Forms
+  2. Contact Form 7
+```
+
+- Write the answer into the architecture report (§65) and use **only** that plugin for every form on
+  the site. Never mix two form plugins.
+- If the existing WordPress site already uses a forms plugin (§84), say so in the question, so the
+  user can decide whether to keep it.
+- If the HTML form posts to a CRM / API / third-party service, keep that integration (§28) and
+  connect it through the chosen plugin (Gravity Forms add-on / webhook, or a CF7 integration).
+
+## Rules for both plugins
+
+- Every form in the HTML (contact, newsletter, demo request, …) becomes one form in the chosen
+  plugin, with the same fields, labels, placeholders, required fields, order and button text.
+- **The form must look like the HTML form.** Use the original classes and styles from the theme CSS
+  (§103). No default plugin look.
+- Place the form through a field, not hardcoded in a template: a **Form** field in the section
+  (§108) or in Theme Settings holds the form ID / shortcode.
+- Success message, error messages and redirect (e.g. Thank You page) match the HTML site.
+- Spam protection on every form (Gravity Forms honeypot / reCAPTCHA / Turnstile; CF7 reCAPTCHA /
+  Turnstile / Akismet).
+- Email notification goes to the admin email from Settings, never a hardcoded address.
+- No API keys or credentials in the theme or seed files (§98).
+
+## Gravity Forms
+
+- Output with `gravity_form( $id, false, false, false, null, true )` or the `[gravityform]`
+  shortcode (AJAX on).
+- Turn off the default Gravity Forms theme CSS for these forms (form theme "None" / no-conflict
+  styles) and style with the theme classes. Add the original classes through the field's
+  **Custom CSS Class** setting.
+
+## Contact Form 7
+
+- Output with `[contact-form-7 id="…"]`.
+- Write the form template in CF7 with the original HTML wrapper and classes, so the theme CSS
+  applies directly.
+- Load CF7 CSS/JS only on pages that have a form (`wpcf7_load_css` / `wpcf7_load_js` filters +
+  enqueue where needed, §40).
+
+## QA
+
+- [ ] The forms plugin (Gravity Forms / Contact Form 7) was asked and recorded before building.
+- [ ] Only the chosen plugin is used; every HTML form exists in it.
+- [ ] Every form looks like the HTML form on mobile, tablet and desktop.
+- [ ] Submissions arrive by email; success / error messages and redirects work.
+- [ ] Spam protection is on; no console errors on pages with forms.
+
+---
+
+# 110. LOCAL SERVER — ACF PRO ONLY, NEVER INSTALL SCF
+
+*Added after a real build: the site already runs **ACF PRO**. Installing Secure Custom Fields (SCF)
+next to it causes plugin conflicts and duplicate field systems.*
+
+## ACF PRO only (STRICT)
+
+- **Never install, activate or require Secure Custom Fields (SCF)** — not on the local server, not on
+  staging, not in the README. Not even "as a fallback".
+- The theme is built for **ACF PRO**, which is already installed on the site. Check that it is active
+  before building; if it is not active, stop and tell the user — do not install anything in its place.
+- Never install any other plugin on the site without asking the user first.
+
+## Local server login — `login.md`
+
+- When working on the local server, the WordPress admin URL and login are in **`login.md`** in the
+  project folder. Use it to log in to the admin.
+- With that login you may: upload / update the theme, **activate (change) the theme**, run the
+  importer (§96–§102), and sync ACF field groups (§111).
+- Never print, copy or commit the credentials from `login.md` — not in code, seed files, logs,
+  reports or chat replies. Add `login.md` to `.gitignore`.
+- If `login.md` is missing or the login fails, stop and ask the user. Never guess passwords or
+  create new admin users.
+
+---
+
+# 111. ACF FIELDS — LOCAL JSON + SYNC (MANDATORY)
+
+*Added after a real build: field groups existed only in PHP, so they could not be edited or synced
+in the admin. Every ACF field group must also be saved as a JSON file and synced.*
+
+## Local JSON
+
+- The theme has an **`acf-json/`** folder. Every field group is saved there as one JSON file
+  (`group_{key}.json`) — Partner fields, page sections (§108), Theme Settings, blocks, everything.
+- Point ACF to that folder in `inc/custom-fields.php`:
+  - `acf/settings/save_json` → `get_stylesheet_directory() . '/acf-json'`
+  - `acf/settings/load_json` → add the same path.
+- The `acf-json/` files are the **single source of truth** for fields. Do not also register the same
+  groups in PHP with `acf_add_local_field_group()` — that creates a second copy that cannot be
+  synced or edited in the admin.
+- Field keys are fixed and unique (`field_{prefix}_{name}`, `group_{prefix}_{name}`) and never change
+  after the first build — the importer and saved content depend on them.
+- Section fields for §108: one field group per section in `acf-json/`. The Flexible Content layout
+  and the ACF Block field group reuse it through an ACF PRO **Clone** field (seamless), so each
+  section's fields exist once.
+
+## Sync
+
+- After the field groups are created, **sync them into the database**: WP Admin → ACF → Field
+  Groups → **Sync available** → Sync all (log in with `login.md`, §110). Then every group is
+  visible and editable in the admin.
+- After any change to a field group in the admin, ACF writes the change back to `acf-json/`
+  automatically. Keep those updated JSON files in the theme.
+- After the theme is updated on another site, run Sync again there.
+- The importer (§101) reads field keys from the same `acf-json/` files — never a second list.
+
+## QA
+
+- [ ] Every field group has a JSON file in `acf-json/`; no field group exists only in PHP or only in
+      the database.
+- [ ] ACF → Field Groups shows **no "Sync available"** items after the sync.
+- [ ] Editing a field group in the admin updates its JSON file in the theme.
+- [ ] Only ACF PRO is installed — SCF is not installed on the site (§110).
