@@ -564,6 +564,9 @@ The homepage must be converted from the actual HTML.
 
 Do not redesign.
 
+Homepage sections are built with the page builder chosen in §108 (Flexible Content and/or ACF
+Blocks). `front-page.php` loops the sections; it does not hardcode them.
+
 If homepage sections contain dynamic data, connect them to:
 
 ```text
@@ -1650,6 +1653,7 @@ Do not create files with random names.
 Follow this order:
 
 ```text
+0. Ask: ACF PRO Flexible Content / Gutenberg (ACF Blocks) / Both (§108)
 1. Inspect complete HTML project
 2. Create site inventory
 3. Identify templates
@@ -1666,8 +1670,8 @@ Follow this order:
 14. Convert Header
 15. Convert Footer
 16. Register Menus
-17. Convert Homepage
-18. Convert standard Pages
+17. Build reusable sections + page builder (§108), then convert Homepage
+18. Convert standard Pages (same sections, §108)
 19. Create Partner CPT
 20. Create Partner fields
 21. Create Partner archive
@@ -1713,6 +1717,9 @@ Migration/redirect requirements
 Do not ask unnecessary questions if the answer can be determined by inspecting the project.
 
 Only ask the user when a business requirement genuinely cannot be inferred from the supplied project.
+
+Exception: the page-builder choice (Flexible Content / Gutenberg / Both) is **always** asked first
+(§108) and recorded in this report.
 
 ---
 
@@ -1922,6 +1929,7 @@ Before declaring the project complete:
 - [ ] `404.php` and `search.php` match the design; search "no results" state works (§106).
 - [ ] HTML Sitemap page exists, lists content automatically and is linked in the footer (§107).
 - [ ] XML sitemap loads with correct URLs (§107).
+- [ ] Page builder (§108) passes its own QA list: any section, any page, any order.
 
 ---
 
@@ -2599,7 +2607,7 @@ theme-name/
 
 - Build the `inc/seed/*.json` files by **parsing the finished HTML** (and its source data, if any). Never retype or rewrite content.
 - Content must be identical to the HTML: titles, copy, headings, links, dates, image file names and alt text.
-- Each page entry: `slug`, `title`, `template` (path in `page-templates/` or empty for default), `status`, `seo_title`, `seo_description`, optional `content`.
+- Each page entry: `slug`, `title`, `template` (path in `page-templates/` or empty for default), `status`, `seo_title`, `seo_description`, optional `content`, plus `builder` and `sections` (§108).
 - Each post / CPT entry: `slug`, `title`, `date`, `excerpt`, `content`, `image`, `image_alt`, SEO, and **every ACF field value keyed by the field `name`** (repeaters as arrays of rows).
 - Menus: `name`, `location`, `items` as `[ title, target, extra, children ]`, where target is `page:slug`, `{cpt}:slug`, `archive:{cpt}`, `blog`, or a URL.
 - Images referenced by file name only; the files live in `assets/images/`. File names and alt text
@@ -2723,6 +2731,7 @@ Before delivery, test on a **fresh** WordPress install and on staging:
 - [ ] Second run (default mode) → nothing duplicated; report shows everything "kept".
 - [ ] Overwrite run → items updated, menus rebuilt, no duplicates.
 - [ ] Every ACF field (incl. repeaters and images) shows its value in the edit screen.
+- [ ] Every page shows its sections in the original order, in Flexible Content and/or as ACF Blocks (§108).
 - [ ] Front page, posts page and all menu locations are set.
 - [ ] Import runs step by step via AJAX with a live progress log; no request times out, even on a slow host with all images.
 - [ ] Front page is set right after the Home page is created (check it while the import is still on Pages).
@@ -2915,3 +2924,118 @@ say so in the handover report.
 - Check that Pages, Posts and the Partner CPT are included, and that Thank You / utility pages are
   excluded. Use the `wp_sitemaps_*` filters, or the SEO plugin's settings.
 - Open the sitemap URL after the build and confirm it loads with the correct (Post name) URLs.
+
+---
+
+# 108. PAGE BUILDER — ACF FLEXIBLE CONTENT / GUTENBERG (ACF BLOCKS) / BOTH
+
+*Added after a real build: pages were hardcoded in `front-page.php` / `page-{slug}.php`, so editors
+could not add, remove or reorder sections, and the theme did not work in Gutenberg. Every page
+section must now be reusable: **any section can go on any page, in any order.***
+
+## Step 1 — Ask before building (MANDATORY)
+
+This is the one question that must **always** be asked at the start of the project, even when
+§65 says not to ask. Ask it before planning the architecture (§64 step 0). Never assume the answer.
+
+```text
+How should editors build the pages?
+  1. ACF PRO — Flexible Content   (page sections as Flexible Content layouts, classic editor screen)
+  2. Gutenberg — ACF Blocks       (every section is a Gutenberg block)
+  3. Both                         (same sections available as Flexible Content layouts AND blocks)
+```
+
+Write the answer into the architecture report (§65) and build only what was chosen.
+All three options need **ACF PRO or Secure Custom Fields** — free ACF has no Flexible Content and
+no ACF Blocks.
+
+## Step 2 — Rules for every option
+
+- **One HTML section = one reusable section.** Go through the site inventory (§3) and list every
+  page section (hero, logo grid, CTA, testimonials, FAQ, …). The same section on several pages is
+  **one** section, not a copy per page.
+- **One render file per section:** `template-parts/sections/{section-name}.php`. It receives its
+  values through `$args` and outputs the original HTML with the original classes (§50, §69, §103).
+  Flexible Content and ACF Blocks both call this same file — never two copies of the markup.
+- **One field definition per section,** in `inc/custom-fields.php` (PHP, single source of truth).
+  The Flexible Content layout and the ACF Block field group are both generated from that same
+  definition.
+- Name sections by role (`hero`, `logo_grid`, `cta_banner`), never by page (`home_hero`).
+- Each section gets an optional **Section ID** field (anchor), so in-page links from the HTML
+  (`#contact`) keep working.
+- Every field is escaped on output and an empty field never prints empty markup (§23).
+- **Not part of the page builder:** header and footer (§67, `header.php` / `footer.php`), blog post
+  content (normal Gutenberg content, §14), and CPT single templates (§46) — these keep their own
+  templates.
+- `front-page.php` and `page.php` only loop the sections. They no longer hardcode page sections
+  (this replaces the hardcoded approach in §17 and §18 for page content).
+
+```text
+theme-name/
+├── template-parts/sections/   ← one PHP render file per section (shared)
+├── blocks/{section-name}/     ← block.json per section (options 2 and 3 only)
+├── theme.json                 ← options 2 and 3 only
+└── inc/
+    ├── custom-fields.php      ← section definitions → Flexible layouts and/or block field groups
+    └── page-builder.php       ← section loop, block registration, editor settings
+```
+
+## Option 1 — ACF PRO Flexible Content
+
+- One Flexible Content field `page_sections` on Pages (and the front page), one layout per section.
+- `front-page.php` / `page.php`: `while ( have_rows( 'page_sections' ) ) : the_row();` →
+  `get_template_part( 'template-parts/sections/' . get_row_layout(), null, $args );`
+- Give each layout a clear label and a collapsed title (e.g. the heading text) so long pages stay
+  easy to edit.
+- Hide the block editor for Pages that use the builder (`use_block_editor_for_post` filter), so
+  editors see only the section builder.
+
+## Option 2 — Gutenberg with ACF Blocks
+
+- Every section is an ACF Block: `blocks/{section-name}/block.json` with `"acf": { "mode": "preview",
+  "renderTemplate": … }`, registered with `register_block_type()`. The render template calls the
+  shared section file.
+- Put the theme blocks in their own block category (`{Project} Sections`).
+- Limit the inserter with `allowed_block_types_all` to the theme blocks plus the core blocks the
+  design really needs (paragraph, heading, list, image, buttons).
+- **`theme.json`:** colour palette, font sizes and spacing presets come from the same values as the
+  `:root` variables (§103). Turn off custom colours / font sizes so editors stay inside the design.
+- **Editor must look like the frontend:** `add_theme_support( 'editor-styles' )` +
+  `add_editor_style()` with the theme CSS; the block preview loads the scripts the section needs.
+- Core block CSS (`wp-block-library`) must not change the converted design. Check it, and dequeue
+  what the frontend does not use.
+- Make one **block pattern** per original page layout, so an editor can rebuild any HTML page with
+  one click.
+
+## Option 3 — Both
+
+- Same section files and same field definitions, exposed **twice**: as Flexible Content layouts
+  and as ACF Blocks.
+- **Per page, only one system is active**:
+  - Page template **"Flexible Sections"** (`page-templates/page-flexible.php`) → Flexible Content;
+    the block editor is turned off for that template.
+  - Default page template → Gutenberg with ACF Blocks (`the_content()`).
+- Ask the user which system the importer uses for the seeded pages (default: Flexible Content).
+
+## Importer (§96–§102)
+
+- `pages.json`: each page gets `"builder": "flexible" | "blocks"` and a `sections` array in the page
+  order: `[ { "layout": "hero", "fields": { … } }, … ]`. Values are parsed from the HTML (§98).
+- **Flexible Content:** write the rows with `update_field( $field_key, $rows, $post_id )`, each row
+  carrying `acf_fc_layout`. This stores the layout order and `_{name}` field keys the way ACF
+  expects. Image fields → attachment IDs (§101, §105).
+- **ACF Blocks:** build `post_content` with `serialize_block()` — one
+  `<!-- wp:acf/{section-name} {"name":"acf/{section-name}","data":{…},"mode":"preview"} /-->` per
+  section, where `data` holds `{field_name}` + `_{field_name}` (field key).
+- The importer uses the same section definitions as `custom-fields.php` — never a second list.
+
+## QA
+
+- [ ] The editor choice (Flexible / Gutenberg / Both) was asked and recorded before building.
+- [ ] Every section can be added to any page, in any order, and still matches the HTML.
+- [ ] The same section added twice on one page works (no duplicate IDs, JS still initialises).
+- [ ] Removing or reordering sections does not break layout, spacing or animations.
+- [ ] Each section has one render file, used by both Flexible Content and ACF Blocks.
+- [ ] Gutenberg: editor preview matches the frontend; only allowed blocks appear; `theme.json`
+      presets match the design.
+- [ ] Importer recreates every page with its sections in the original order, using the chosen builder.
