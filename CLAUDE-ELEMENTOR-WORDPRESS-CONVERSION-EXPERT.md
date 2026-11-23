@@ -8,6 +8,8 @@
 > **CRITICAL:** Do NOT start coding before understanding the existing website. First inspect the complete HTML project, then design the WordPress architecture, then convert it.
 >
 > **ELEMENTOR PROJECTS:** Read the **⭐ MAIN REQUIREMENT in §96** first. The Elementor site must match the original HTML site visually and functionally. That rule wins over everything else in this file.
+>
+> **SITE ALREADY BUILT, ONLY AN UPDATE?** Use **§143 Quick Update Mode** — read only the matching section and go straight to the point.
 
 ---
 
@@ -3360,6 +3362,7 @@ Do not accept “close enough” when the original values can be reproduced accu
 - [ ] 404 page and Search Results page built and checked against the design (§138).
 - [ ] HTML Sitemap page exists, lists everything automatically and is linked in the footer; XML sitemap works (§139).
 - [ ] Every image/icon is in the Media Library **once** — no `-1` / `-2` copies, no duplicate uploads (§140).
+- [ ] WooCommerce sites: shop design, CSS, JS and responsive pass the §142 QA list.
 - [ ] All website images converted to and served as WebP.
 - [ ] Images optimized (compressed, correctly sized).
 - [ ] All internal links use Dynamic Tags → Internal URL → Type: Content.
@@ -3425,6 +3428,7 @@ Images               → Optimized WebP
 Permalink Structure  → Post name
 Styling              → Elementor globals + section classes + reusable CSS in custom.css (no widget Custom CSS, no inline styles)
 <head> meta          → <meta name="DeveloperAI" content="Developer Skill"> on every page (§141)
+WooCommerce (if any) → Theme Builder + native Woo widgets, CSS in custom.css, woocommerce.js (§142)
 ```
 
 Normal content changes should be possible through WordPress/Elementor without manually editing the original HTML files.
@@ -3817,3 +3821,261 @@ add_action( 'wp_head', '{prefix}_developer_meta', 1 );
 
 - [ ] View source on Home, an inner page, a post, 404 and Search: `<meta name="DeveloperAI" content="Developer Skill">` is in
       `<head>`, exactly once.
+
+---
+
+# 142. WOOCOMMERCE — SHOP PAGES, THEME-LEVEL CSS / JS + RESPONSIVE
+
+*Use this section whenever the site sells products: the HTML has shop pages, or the user asks for
+WooCommerce. All the other rules in this file still apply (§114 CSS, §141 DeveloperAI meta tag, §136 images, §140 Media Library once, §128 QA).*
+
+**Site already built?** Add WooCommerce through Quick Update Mode (§143): follow the steps below and
+skip any step that already exists.
+
+**Ask at the start** (with the other start-of-project questions):
+1. Is WooCommerce part of this build?
+2. Cart and Checkout: **Block** (WooCommerce default) or **Classic** (shortcode)?
+3. Which payment gateways and shipping methods?
+
+## 1. Inspect first
+
+- WooCommerce version and every WooCommerce add-on plugin (payment, shipping, filters, wishlist).
+  Do not rebuild what a plugin already does (§84).
+- List every e-commerce screen in the HTML: Shop, Category, Single Product, Cart, Checkout,
+  My Account (login, orders, addresses), Thank You, mini-cart, empty cart, notices.
+- Product types used: simple, variable, grouped, external, digital.
+
+## 2. Theme files
+
+```text
+theme-name/
+├── woocommerce/               ← template overrides, ONLY when hooks + Elementor can't do it
+├── inc/woocommerce.php        ← theme support, hooks, image sizes, cart fragments
+└── assets/
+    ├── css/custom.css         ← WooCommerce block inside it (the only custom CSS file, §135)
+    └── js/woocommerce.js      ← shop interactions (step 8)
+```
+
+Never edit WooCommerce plugin files.
+
+## 3. Theme support (`inc/woocommerce.php`)
+
+```php
+function {prefix}_woocommerce_setup() {
+    add_theme_support( 'woocommerce', array(
+        'thumbnail_image_width' => 600,   // match the HTML product card
+        'single_image_width'    => 900,   // match the HTML product page
+    ) );
+    add_theme_support( 'wc-product-gallery-zoom' );
+    add_theme_support( 'wc-product-gallery-lightbox' );
+    add_theme_support( 'wc-product-gallery-slider' );
+}
+add_action( 'after_setup_theme', '{prefix}_woocommerce_setup' );
+```
+
+Take the image widths and ratios from the HTML design, not from these sample numbers.
+
+## 4. Hooks first, template overrides last
+
+- Change layout with WooCommerce hooks and filters (`remove_action` / `add_action`). Override a
+  template in `woocommerce/` only when no hook can do it.
+- Keep a list of every overridden template (file + WooCommerce version) in the theme docs.
+- After every WooCommerce update: WooCommerce → Status → **no outdated templates**.
+
+## 5. Build with Elementor Pro (native first, §96)
+
+- **Theme Builder:** a **Single Product** template and a **Product Archive** template, with display
+  conditions (§125). Product cards are one **Loop Item** template, reused on the shop, category,
+  related and home sections (§104).
+- **Native WooCommerce widgets first:** Products, Product Title, Product Price, Product Images,
+  Add to Cart, Product Meta, Product Data Tabs, Upsells / Related, Breadcrumb, Menu Cart, Cart,
+  Checkout, My Account, Purchase Summary.
+- **Site Settings → WooCommerce:** set the Cart, Checkout, My Account, Terms and Purchase Summary
+  pages there.
+- **Styling order:** Elementor Global Colors / Typography / Buttons / Forms → the widgets' own style
+  controls → only where those can't match the HTML, a reusable class + CSS in `custom.css` (§114).
+  Never widget Custom CSS.
+- Header mini-cart = the **Menu Cart** widget, inside the Theme Builder header (§105).
+
+## 6. Products, data and settings
+
+- Price, sale price, variations, stock, SKU, gallery and reviews come from WooCommerce's native
+  fields. Nothing hard-coded.
+- Extra product fields = ACF PRO, saved as local JSON and synced.
+- Product categories / tags / attributes = WooCommerce's own taxonomies. No duplicate taxonomy.
+- **HPOS compatible:** read orders with `wc_get_order()` / `$order->get_meta()`, never
+  `get_post_meta()` on orders or direct order SQL.
+- Importing products: WooCommerce CRUD (`new WC_Product_Simple()`, `->save()`), never raw DB writes.
+- WooCommerce → Settings → Advanced: Shop, Cart, Checkout, My Account and Terms pages set.
+- Payment gateways in **sandbox / test mode on staging**. Keys never go in code, docs or chat.
+- WooCommerce → Emails: logo, colours and footer text match the brand.
+
+## 7. Theme-level CSS — design + responsive
+
+Write all WooCommerce styling in `assets/css/custom.css`, under one `/* ===== WooCommerce ===== */` banner, after the native Elementor styling has been used (§114).
+
+**Rules**
+- Use the same `:root` variables (colours, fonts, font sizes, spacing, radius) as the rest of the
+  site. No new raw hex / px values.
+- Buttons use the site's global button style (normal, hover, `:focus-visible`, disabled, loading,
+  "added"). WooCommerce buttons must look like every other button on the site.
+- Inputs, selects, checkboxes and radios use the site's form style — Checkout, My Account, coupon,
+  variation selects and quantity included.
+- If the design has its own look, remove WooCommerce's default look instead of fighting it:
+  `add_filter( 'woocommerce_enqueue_styles', … )` to drop `woocommerce-general` (keep
+  `woocommerce-layout` / `woocommerce-smallscreen` only if they help). Avoid `!important`.
+- Block Cart / Checkout use `wc-block-*` classes. Style those when Blocks are chosen.
+
+**Style every one of these, as per the HTML**
+
+```text
+Product card     image ratio, title, price, sale price (<del>/<ins>), sale / out-of-stock badge,
+                 rating, add-to-cart button, hover
+Shop toolbar     result count, sorting select, filters, pagination, breadcrumbs
+Single product   gallery + thumbnails, title, price, short description, variations, quantity,
+                 add-to-cart, meta, tabs, reviews, related / upsells
+Notices          success, error, info (cart, checkout, account)
+Cart             table, quantity, remove, coupon, cart totals, empty cart, cross-sells
+Checkout         billing / shipping fields, order review, payment methods, place order, errors
+My Account       login / register, navigation, dashboard, orders, addresses, account details
+Thank You        order received + order details
+Mini-cart        header icon + count, dropdown / drawer, empty state
+```
+
+**Responsive** — use the site's own breakpoints, then check each screen at every breakpoint:
+- Product grid: desktop columns as per design → tablet 2 → mobile 1 or 2 (as per design).
+- Single product: gallery and summary side by side on desktop → stacked on tablet/mobile.
+- Cart table → stacked rows/cards on mobile (WooCommerce adds `data-title` labels for this).
+- Checkout: two columns → one column on tablet/mobile; order review below the fields.
+- My Account navigation → stacked or horizontal scroll on mobile.
+- Shop filters → off-canvas drawer on mobile (only if the design has filters).
+- Tap targets at least 44px; input font size at least 16px on mobile (stops iOS zoom).
+- No horizontal scroll at 320px on any WooCommerce page.
+
+## 8. Theme-level JS — `assets/js/woocommerce.js`
+
+- Enqueue with `wp_enqueue_script()` in the footer, dependency `jquery` (WooCommerce's own scripts
+  use it). Load it only where it is needed.
+- **Never** dequeue WooCommerce's core scripts: `wc-add-to-cart`, `wc-add-to-cart-variation`,
+  `wc-cart`, `wc-checkout`, `wc-cart-fragments` (where the mini-cart uses it).
+- Hook into WooCommerce's own events instead of rewriting its logic: `added_to_cart`,
+  `removed_from_cart`, `updated_cart_totals`, `updated_checkout`, `found_variation`, `reset_data`,
+  `wc_fragments_refreshed`.
+
+**Functionality to cover (as per the HTML)**
+- **Quantity +/- buttons** around the quantity input. Trigger `change` on the input, so the
+  "Update cart" button enables. Respect min / max / step.
+- **AJAX add to cart** on shop pages (WooCommerce → Settings → Products) and on the single product
+  page if the design needs it. Show loading and "added" states.
+- **Mini-cart count + content** refresh without page reload, through the
+  `woocommerce_add_to_cart_fragments` filter in `inc/woocommerce.php`.
+- **Mini-cart drawer** (if in the design): open/close, `aria-expanded`, focus trap, closes on
+  `Esc` and on overlay click.
+- **Variations:** price, image and stock change on `found_variation`. Swatches only if the design has
+  them.
+- **Product gallery:** use WooCommerce's built-in gallery (flexslider + photoswipe). Do not add a
+  second slider library for it.
+- **Mobile filters drawer** and sorting, if in the design.
+- After any AJAX update (cart, checkout, filters), re-run the site's animations / layout code (for
+  GSAP: `ScrollTrigger.refresh()`).
+- Everything works by keyboard and screen reader.
+
+## 9. Performance, caching and SEO
+
+- Cart, Checkout and My Account are **excluded from page cache**.
+- WooCommerce CSS/JS load only where needed; cart fragments only where the mini-cart needs them.
+- Product images WebP and correctly sized; Media Library once per image.
+- Product schema from WooCommerce or the SEO plugin — one source, no duplicate schema.
+- Permalinks: product base and category base set (Settings → Permalinks).
+- Every WooCommerce page also has `<meta name="DeveloperAI" content="Developer Skill">` in `<head>`.
+
+## QA
+
+- [ ] Shop, Category, Single Product, Cart, Checkout, My Account and Thank You match the HTML at
+      desktop, tablet and mobile.
+- [ ] WooCommerce buttons, inputs and notices use the site's global styles; no raw values, no
+      `!important` fights.
+- [ ] No horizontal scroll at 320px; cart and checkout are usable on mobile.
+- [ ] Simple and variable products add to cart; variation price / image / stock update.
+- [ ] Quantity +/- works and enables "Update cart"; mini-cart count updates without reload.
+- [ ] Coupon, shipping and tax totals are correct.
+- [ ] A test order completes with sandbox payment; customer and admin emails arrive and are branded.
+- [ ] My Account: login, register, orders, addresses, account details and password reset work.
+- [ ] WooCommerce → Status: no outdated templates, no errors; HPOS compatible.
+- [ ] Cart, Checkout and My Account are excluded from cache.
+- [ ] No JavaScript console errors on any WooCommerce page.
+
+---
+
+# 143. QUICK UPDATE MODE — SITE ALREADY BUILT, GO STRAIGHT TO THE POINT
+
+*When the site has already been built from this file and the user asks for one change ("add
+WooCommerce", "fix the cart on mobile", "change the footer", "add a section"), do **not** run the
+full build again. Go straight to that point.*
+
+## Which mode?
+
+```text
+No theme / site yet                          → FULL BUILD (this whole file, from §1)
+Site already built + one change is asked for → QUICK UPDATE (this section)
+```
+
+Signs the site is already built: the theme exists in `wp-content/themes/`, pages exist in WP Admin,
+the project has a `CLAUDE.md` / theme docs from the earlier build.
+
+## Quick update — steps
+
+1. **Understand the ask.** Restate the one change in one line. Do not widen the scope.
+2. **Read only the matching sections** of this file (table below). Skip the rest — no full site
+   inventory, no full architecture report, no re-reading every page.
+3. **Do not ask again** what the earlier build already decided (Elementor globals, header/footer templates, custom.css structure). Read it from the
+   theme / project docs. Ask only if this change needs a **new** decision (e.g. WooCommerce Block or
+   Classic, if WooCommerce was never set up).
+4. **Inspect only what the change touches:** the files / templates / widgets for that feature and
+   the pages that use them.
+5. **Back up only those files** before editing (git commit, or a dated copy) — the light version of
+   §75. Use the site login the user provided if WP Admin is needed; never expose it.
+6. **Make the change** following that section's rules. Reuse the existing classes, variables,
+   components and file structure — no parallel structure, no duplicate CSS/JS.
+7. **Check only what it affects:** that section's own QA list + the pages that use the changed part,
+   at desktop, tablet and mobile. Confirm nothing else broke there.
+8. **Report briefly:** what changed, which files, what was checked, anything still open.
+
+## Topic → section index
+
+| Change asked for | Read only |
+|---|---|
+| Any visual change | §96 ⭐ Main Requirement first, then the row below |
+| Reusing existing templates / globals | §110 (only the parts the change touches) |
+| Global colours / typography / spacing | §98–§102 |
+| Header / menu | §105, §106, §108 |
+| Footer | §107, §108 |
+| CSS / design (custom.css) | §114, §135 |
+| Reusable components / templates | §104, §124, §125 |
+| Responsive | §119 |
+| Animations / GSAP / JS | §120, §121, §135 |
+| Forms | §28 |
+| SEO / meta | §29, §141 |
+| Images / SVG / placeholders / Media Library | §131, §136, §137, §140 |
+| Internal links / permalinks | §132, §133 |
+| 404 / Search / Sitemap | §138, §139 |
+| Partners / Blog | §111, §112 |
+| WooCommerce (add or change) | §142 |
+
+Always-on rules still apply in quick mode: no inline styles / widget CSS, CSS variables, images
+once in the Media Library, the DeveloperAI meta tag, never expose login details.
+
+## Example — add WooCommerce to an already-built site
+
+1. Read only §142.
+2. Ask only the 3 WooCommerce start questions in §142.
+3. Go through §142 step by step and **skip any step that already exists** (e.g. theme support
+   already added, pages already set).
+4. Reuse the site's existing variables, buttons, forms, header and breakpoints for the shop CSS/JS.
+5. Run the §142 QA list and check the header (mini-cart) on a few non-shop pages.
+
+## QA
+
+- [ ] Only the asked change was made; nothing outside its scope changed.
+- [ ] That section's own QA list passes, and the ⭐ Main Requirement (§96) still holds.
+- [ ] Pages using the changed part look and work the same as before, apart from the change.
