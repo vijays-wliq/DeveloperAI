@@ -21,7 +21,7 @@ Figma: <paste figma.com URL, or point at a folder of design screenshots>
 | Phase | What happens | Output |
 |---|---|---|
 | 0 | Gather inputs, confirm design source | — |
-| 1 | Extract raw design data from Figma | in-memory |
+| 1 | Export the design into `Design/` (pages, components, images, SVG, animations) and extract raw design data | `../Design/`, in-memory |
 | 2 | Normalise raw values into a token set | `TOKENS.md` |
 | 3 | **Approval gate** — user confirms the token set | — |
 | 4 | Scaffold folders + `vendor.css` | `assets/…`, `vendor.css` |
@@ -77,6 +77,40 @@ is built with **Slick 1.8.1** (needs **jQuery 3.7.1**), driven by `data-slider` 
 ---
 
 ## PHASE 1A — Extract from Figma (MCP connected)
+
+### 1A.0 Export the whole design into `../Design/` (Figma connected)
+
+When the Figma link works, export the design into `../Design/` **before** extracting tokens (use
+`get_metadata` first to get the frame tree). This folder is the local copy of the design for the
+whole build:
+
+```
+Design/
+├── pages/        one full-frame PNG per page and breakpoint (home-desktop.png, home-mobile.png …)
+├── components/   one PNG per component / variant (button-primary.png, card-service.png …)
+├── images/       every raster image used in the design: photos, backgrounds, illustrations
+├── svg/          every icon, logo and vector shape, exported as SVG
+├── ANIMATIONS.md every Figma prototype interaction and animation (see step 4)
+└── EXPORT-LOG.md every exported node: name, node-id, file, status
+```
+
+1. **Export everything.** Every page frame, every component or variant, every image fill and every
+   vector or icon. Raster images at **2x**, icons and logos as **SVG**.
+2. **Timeout or failed export → retry. Never skip.** If a call times out, returns empty, or gives a
+   broken or 0-byte file, retry it up to **3 times**, waiting longer each time (5s → 15s → 30s).
+   If it still fails, export that frame in smaller parts (one child node at a time). Mark the result
+   in `EXPORT-LOG.md`. At the end, every node must say `ok`. If anything still says `failed`, list
+   it for the user. Do not continue with missing images or SVGs.
+3. **Check the files.** Open every exported image once: not blank, not cropped, right size. Open
+   every SVG once: it renders and has a valid `viewBox`.
+4. **Read the animations too.** For every frame, read its prototype interactions: trigger (on click,
+   hover, scroll or after delay), action, Smart Animate / dissolve / move-in / slide, duration,
+   easing and direction. Hover and pressed variants count as animations too. Write each one into
+   `Design/ANIMATIONS.md` (frame, element, trigger, effect, duration, easing), then map it to the
+   closest `data-anim` preset from §8. If no preset fits, ask. Never drop a Figma animation without
+   telling the user.
+
+### 1A.1 Extract the design values
 
 Work top-down. Call, in order:
 
@@ -966,6 +1000,16 @@ zero-padded; Page Name is the human name from the design; Link text is the filen
     it with no visible quality loss, keep transparency where the source has it, and size it to the
     largest size it is actually displayed at (2× for retina). Store it in `assets/images/`.
     Logos, icons and illustrations that are vector art stay SVG. Never ship the original JPG/PNG.
+    **Images come from the Figma export only** — every image in the HTML is the exported file from
+    `Design/images/` (icons and logos inlined from `Design/svg/`). No stock photos, no AI images, no
+    crops of the page PNG. **Images must never look blurry:**
+    - Export from Figma at **2x** the size the image is shown on screen.
+    - When converting to `.webp`, resize **down only** to 2x the largest display size. Never upscale.
+    - WebP quality **85 or higher** for photos. Use lossless for images with text or sharp edges.
+    - Icons, logos and line art stay **SVG**. Never convert them to PNG or WebP.
+    - Set `width` / `height` on `<img>` from the design, and use `object-fit` so it is never stretched.
+    - After each page, zoom the screenshot on every image. If any image looks soft, export it again
+      at a higher size.
 17. **Every slider is Slick 1.8.1, attribute-driven** (§8.1). Use `data-slider` presets only. No
     Swiper, Owl or Splide, no hand-written slider JS, no `$(…).slick()` call outside `sliders.js`.
 18. **Every page has the DeveloperAI meta tag in `<head>`, by default.** Add this hidden tag to every
@@ -1305,6 +1349,8 @@ SLIDERS block **and** this table, never inline.
 - [ ] CSS is one nested block with `&`, max 3 levels, comment banner at the top
 - [ ] Responsive queries at the bottom of the same file, largest → smallest
 - [ ] Every raster image is an optimised `.webp` — no JPG/PNG/GIF shipped
+- [ ] Every image comes from the Figma export (`Design/images/`, `Design/svg/`) and is sharp, not blurry
+- [ ] Every Figma animation for this section in `Design/ANIMATIONS.md` is built
 - [ ] Images have `alt` + `width`/`height`; below-fold images `loading="lazy"`
 - [ ] Every icon is an inline `<svg>` with `currentColor` — no icon fonts
 - [ ] Hover **and** `:focus-visible` states work; keyboard reachable
@@ -1353,5 +1399,8 @@ SLIDERS block **and** this table, never inline.
 | Mobile text shrinking below 14px | Respect the §2.8 minimums after every step-down. |
 | Building page 2 before `global.html` exists | The style guide is what stops page 2 from re-inventing page 1. |
 | Skipping the Phase 3 approval gate | Every later file is built on those numbers. Confirm once, cheaply. |
-| Dropping a Figma JPG/PNG export straight into `assets/images/` | Convert it to `.webp`, compress it and resize it first. Vector art stays SVG. |
+| Dropping a Figma JPG/PNG export straight into `assets/images/` | Convert it to `.webp`, compress it and resize it first — resize down only, to 2x display size, quality 85+, so it never goes blurry. Vector art stays SVG. |
+| Figma export timed out, so the image was skipped or replaced with a placeholder | Retry 3 times, then export in smaller parts. Every node in `EXPORT-LOG.md` must say `ok` (Phase 1A.0). |
+| Blurry image on the page | Export at 2x, resize down only, WebP quality 85+, vectors stay SVG (§1 rule 16). |
+| Figma prototype animation ignored | Write it in `Design/ANIMATIONS.md` and map it to a §8 preset (Phase 1A.0). |
 | A page without the DeveloperAI meta tag | Every page `<head>` gets `<meta name="DeveloperAI" content="Developer Skill">` by default (§1 rule 18). |
