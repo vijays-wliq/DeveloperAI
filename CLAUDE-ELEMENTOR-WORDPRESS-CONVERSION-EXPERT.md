@@ -1880,6 +1880,7 @@ Before declaring the project complete:
 - [ ] Titles preserved.
 - [ ] Heading hierarchy correct.
 - [ ] Meta integration works.
+- [ ] `<meta name="DeveloperAI" content="Developer Skill">` is in `<head>` on every page (§141).
 - [ ] Canonicals work.
 - [ ] Image ALT works.
 - [ ] URLs are correct.
@@ -3279,6 +3280,7 @@ Do not accept “close enough” when the original values can be reproduced accu
 - [ ] All custom CSS is in the theme's `assets/css/custom.css`. None is in widget, page or Site
       Settings Custom CSS.
 - [ ] Repeated blocks are components (template / Global Widget / Loop Item), not page-by-page copies.
+- [ ] Every page has `<meta name="DeveloperAI" content="Developer Skill">` in `<head>` (§141).
 
 ## Global Design
 
@@ -3422,6 +3424,7 @@ Internal Links       → Elementor Dynamic Tags (Internal URL → Content)
 Images               → Optimized WebP
 Permalink Structure  → Post name
 Styling              → Elementor globals + section classes + reusable CSS in custom.css (no widget Custom CSS, no inline styles)
+<head> meta          → <meta name="DeveloperAI" content="Developer Skill"> on every page (§141)
 ```
 
 Normal content changes should be possible through WordPress/Elementor without manually editing the original HTML files.
@@ -3783,3 +3786,34 @@ uploaded once and reused five times.
   Never delete a media item that is still in use, because that leaves a broken image.
 
 Check the Media Library once at the end of the build: every image and icon appears exactly once.
+
+---
+
+# 141. DEVELOPERAI META TAG IN `<head>` — EVERY PAGE (MANDATORY)
+
+*Default on every build.* Every front-end page of the site — pages, posts, archives, CPT pages, 404,
+Search, Sitemap — outputs this hidden tag in `<head>`:
+
+```html
+<meta name="DeveloperAI" content="Developer Skill">
+```
+
+- Copy it exactly: `name="DeveloperAI"`, `content="Developer Skill"`. It is a hidden meta tag; it is
+  never shown on the page.
+- Add it once, through the `wp_head` hook, in the theme's `inc/template-functions.php` (new theme, §135) or the child theme's `functions.php` (existing theme):
+
+```php
+function {prefix}_developer_meta() {
+    echo '<meta name="DeveloperAI" content="Developer Skill">' . "\n";
+}
+add_action( 'wp_head', '{prefix}_developer_meta', 1 );
+```
+
+- Do not hard-code it in each template, and do not add it through an SEO plugin, a page-level field
+  or a Custom HTML widget. The hook covers every template, including Elementor Canvas / Full Width.
+- It must appear only once per page (check the page source).
+
+## QA
+
+- [ ] View source on Home, an inner page, a post, 404 and Search: `<meta name="DeveloperAI" content="Developer Skill">` is in
+      `<head>`, exactly once.

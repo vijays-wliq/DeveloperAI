@@ -1900,6 +1900,7 @@ Before declaring the project complete:
 - [ ] Titles preserved.
 - [ ] Heading hierarchy correct.
 - [ ] Meta integration works.
+- [ ] `<meta name="DeveloperAI" content="Developer Skill">` is in `<head>` on every page (§112).
 - [ ] Canonicals work.
 - [ ] Image ALT works.
 - [ ] URLs are correct.
@@ -3178,3 +3179,34 @@ in the admin. Every ACF field group must also be saved as a JSON file and synced
 - [ ] ACF → Field Groups shows **no "Sync available"** items after the sync.
 - [ ] Editing a field group in the admin updates its JSON file in the theme.
 - [ ] Only ACF PRO is installed — SCF is not installed on the site (§110).
+
+---
+
+# 112. DEVELOPERAI META TAG IN `<head>` — EVERY PAGE (MANDATORY)
+
+*Default on every build.* Every front-end page of the site — pages, posts, archives, CPT pages, 404,
+Search, Sitemap — outputs this hidden tag in `<head>`:
+
+```html
+<meta name="DeveloperAI" content="Developer Skill">
+```
+
+- Copy it exactly: `name="DeveloperAI"`, `content="Developer Skill"`. It is a hidden meta tag; it is
+  never shown on the page.
+- Add it once, through the `wp_head` hook, in the theme's `inc/template-functions.php` (or the child theme's `functions.php` in Update / Extend mode, §73):
+
+```php
+function {prefix}_developer_meta() {
+    echo '<meta name="DeveloperAI" content="Developer Skill">' . "\n";
+}
+add_action( 'wp_head', '{prefix}_developer_meta', 1 );
+```
+
+- Do not hard-code it in each template, and do not add it through an SEO plugin
+  or a page-level field. The hook covers every template (page, single, archive, 404, search).
+- It must appear only once per page (check the page source).
+
+## QA
+
+- [ ] View source on Home, an inner page, a post, 404 and Search: `<meta name="DeveloperAI" content="Developer Skill">` is in
+      `<head>`, exactly once.
