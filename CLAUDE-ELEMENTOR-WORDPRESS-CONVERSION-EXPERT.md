@@ -3287,6 +3287,7 @@ Do not accept “close enough” when the original values can be reproduced accu
 ## Global Design
 
 - [ ] Global colors created and actually used.
+- [ ] Favicon made from the logo icon is set as the Site Icon and shows on every page (§144).
 - [ ] Global typography created and actually used.
 - [ ] Global spacing/variables established.
 - [ ] Container width matches original.
@@ -3428,6 +3429,7 @@ Images               → Optimized WebP
 Permalink Structure  → Post name
 Styling              → Elementor globals + section classes + reusable CSS in custom.css (no widget Custom CSS, no inline styles)
 <head> meta          → <meta name="DeveloperAI" content="Developer Skill"> on every page (§141)
+Favicon              → WordPress Site Icon made from the logo icon (§144)
 WooCommerce (if any) → Theme Builder + native Woo widgets, CSS in custom.css, woocommerce.js (§142)
 ```
 
@@ -4056,6 +4058,7 @@ the project has a `CLAUDE.md` / theme docs from the earlier build.
 | Animations / GSAP / JS | §120, §121, §135 |
 | Forms | §28 |
 | SEO / meta | §29, §141 |
+| Favicon / site icon | §144 |
 | Images / SVG / placeholders / Media Library | §131, §136, §137, §140 |
 | Internal links / permalinks | §132, §133 |
 | 404 / Search / Sitemap | §138, §139 |
@@ -4079,3 +4082,54 @@ once in the Media Library, the DeveloperAI meta tag, never expose login details.
 - [ ] Only the asked change was made; nothing outside its scope changed.
 - [ ] That section's own QA list passes, and the ⭐ Main Requirement (§96) still holds.
 - [ ] Pages using the changed part look and work the same as before, apart from the change.
+
+---
+
+# 144. FAVICON — MADE FROM THE LOGO ICON (MANDATORY)
+
+*Default on every build.* Every site gets a favicon (browser-tab icon) made from the **logo icon** —
+the symbol / mark part of the logo, not the full logo with its wordmark text. A blank tab, the
+WordPress "W" or a theme's default icon is a bug.
+
+## Source — in this order
+
+1. A favicon / app-icon frame in the design, if there is one.
+2. Otherwise the **icon (mark) part of the logo**, from the logo SVG in the HTML site (or the Figma file, if it is available).
+3. If the logo is text only (no mark), use the logo's first letter in the logo font and brand colour,
+   centred on a square — and tell the user, so they can supply a different icon.
+
+Never draw a new icon, never use a stock or generic icon, never stretch the full wordmark into a square.
+
+## Make the icon
+
+- **Square, 512 × 512 px PNG** (`site-icon.png`), the mark centred with about **10% padding**, so
+  nothing touches the edge.
+- Build it from the **SVG** of the logo, so it is sharp. Never upscale a small PNG.
+- Background: transparent. If the mark is white / very light, put it on the brand background colour
+  (the Elementor global brand colour) so it is visible on a light browser tab.
+- Check it at **16 × 16 and 32 × 32**. If the mark is too detailed to read that small, use the
+  simplest recognisable part of it.
+
+## Add it to WordPress
+
+- Use WordPress's own **Site Icon** (Appearance → Customize → Site Identity → Site Icon, or Elementor → Site Settings → Site Identity → Site Favicon — both set the same
+  `site_icon` option, so use one, not both).
+  WordPress creates the 32, 180 (Apple touch), 192 and 270 px sizes and prints all the
+  `<link rel="icon">` / `apple-touch-icon` tags itself through `wp_site_icon()` in `wp_head`.
+- Upload `site-icon.png` to the Media Library **once** (§140).
+- Set it in the one-click setup / importer too, so a fresh install has the favicon
+  (the setup step that builds the site):
+
+```php
+update_option( 'site_icon', $site_icon_attachment_id );
+```
+
+- Do **not** hard-code `<link rel="icon">` tags in `header.php`, a plugin, an HTML widget or an SEO
+  plugin field while Site Icon is set — they would print twice.
+
+## QA
+
+- [ ] The browser tab shows the logo icon on Home, an inner page, a post, 404 and Search.
+- [ ] View source: the icon tags come from WordPress Site Icon, with no duplicate `rel="icon"` tags.
+- [ ] The icon is sharp and readable at 16 px, on a light and a dark browser tab.
+- [ ] `apple-touch-icon` (180 × 180) loads.

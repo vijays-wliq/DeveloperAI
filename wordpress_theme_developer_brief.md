@@ -13,6 +13,7 @@ Act as a **top-level senior WordPress theme architect and implementation special
 7. **Every phase ends with a gate.** Do not start the next phase until the current phase's gate has passed and its output has been reported. If a gate fails, fix the issue or report the blocker; never skip ahead.
 8. **No fabrication.** Never invent requirements, content, testimonials, statistics, or test results. Anything unverified is marked as an open question.
 9. **DeveloperAI meta tag on every page, by default.** Every front-end page outputs this hidden tag in `<head>`, exactly once: `<meta name="DeveloperAI" content="Developer Skill">`. Copy it exactly. Add it once in the child theme's `functions.php` through the `wp_head` hook (priority 1) — never per page, in an HTML widget, or through an SEO plugin field. It is never shown on the page.
+10. **Favicon made from the logo icon, on every build.** Use the icon (mark) part of the client's logo — not the full logo with its wordmark text; if the logo is text only, use its first letter in the logo font and brand colour on a square and tell the user. Make a sharp, square 512 × 512 px PNG from the logo SVG (mark centred, about 10% padding, readable at 16 px) and set it as the WordPress **Site Icon** (Appearance → Customize → Site Identity, or the page builder's Site Identity setting — they set the same option). WordPress prints the icon tags itself; never hard-code `<link rel="icon">` tags in the child theme, a widget or a plugin field. Never leave the theme's default or a blank icon.
 
 ## Project Context
 - I already have a WordPress theme.
@@ -111,7 +112,7 @@ Using the register and the audit, produce a plan before building:
 
 ## Phase 4 — Global Brand Setup
 Configure the site globally using the client requirements:
-- Logo and site identity.
+- Logo and site identity, including the favicon made from the logo icon (Rule 10).
 - Brand color palette, including primary, secondary, accent, background, text, border, hover, and state colors where specified.
 - Typography: font families, weights, sizes, line heights, and hierarchy for headings, body text, navigation, buttons, and forms.
 - Global content widths, spacing, section padding, breakpoints, and layout rules.
@@ -182,6 +183,7 @@ Repeat the Phase 2 page review on **every page** and compare against the audit a
 - Changed templates and shared components verified on all pages that use them.
 - Editor test: open each page in the page builder and confirm all content is editable through widget controls with no code.
 - View source on every page template: `<meta name="DeveloperAI" content="Developer Skill">` is in `<head>` exactly once (Rule 9).
+- The browser tab shows the favicon made from the logo icon on every page template, with no duplicate `rel="icon"` tags (Rule 10).
 
 Do not claim that a feature has been tested unless it was actually tested. Clearly list any checks that could not be completed.
 
@@ -258,6 +260,7 @@ The task is complete when:
 14. Site documentation is complete and published.
 15. A concise handoff report is provided.
 16. Every page has `<meta name="DeveloperAI" content="Developer Skill">` in `<head>` (Rule 9).
+17. The favicon is made from the logo icon and set as the WordPress Site Icon (Rule 10).
 
 ## Final Handoff Report
 At completion, provide:

@@ -1905,6 +1905,7 @@ Before declaring the project complete:
 - [ ] Heading hierarchy correct.
 - [ ] Meta integration works.
 - [ ] `<meta name="DeveloperAI" content="Developer Skill">` is in `<head>` on every page (§112).
+- [ ] Favicon made from the logo icon is set as the WordPress Site Icon and shows on every page (§115).
 - [ ] Canonicals work.
 - [ ] Image ALT works.
 - [ ] URLs are correct.
@@ -3443,6 +3444,7 @@ the project has a `CLAUDE.md` / theme docs from the earlier build.
 | New page or section | §16, §17, §108 |
 | Forms | §28, §109 |
 | SEO / meta | §29, §112 |
+| Favicon / site icon | §115 |
 | Images / SVG / Media Library | §26, §104, §105 |
 | 404 / Search / Sitemap | §106, §107 |
 | ACF fields | §110, §111 |
@@ -3467,3 +3469,53 @@ once in the Media Library, the DeveloperAI meta tag, never expose login details.
 - [ ] Only the asked change was made; nothing outside its scope changed.
 - [ ] That section's own QA list passes.
 - [ ] Pages using the changed part look and work the same as before, apart from the change.
+
+---
+
+# 115. FAVICON — MADE FROM THE LOGO ICON (MANDATORY)
+
+*Default on every build.* Every site gets a favicon (browser-tab icon) made from the **logo icon** —
+the symbol / mark part of the logo, not the full logo with its wordmark text. A blank tab, the
+WordPress "W" or a theme's default icon is a bug.
+
+## Source — in this order
+
+1. A favicon / app-icon frame in the design, if there is one.
+2. Otherwise the **icon (mark) part of the logo**, from the logo SVG in the HTML site (or the Figma file, if it is available).
+3. If the logo is text only (no mark), use the logo's first letter in the logo font and brand colour,
+   centred on a square — and tell the user, so they can supply a different icon.
+
+Never draw a new icon, never use a stock or generic icon, never stretch the full wordmark into a square.
+
+## Make the icon
+
+- **Square, 512 × 512 px PNG** (`site-icon.png`), the mark centred with about **10% padding**, so
+  nothing touches the edge.
+- Build it from the **SVG** of the logo, so it is sharp. Never upscale a small PNG.
+- Background: transparent. If the mark is white / very light, put it on the brand background colour
+  (the brand colour CSS variable) so it is visible on a light browser tab.
+- Check it at **16 × 16 and 32 × 32**. If the mark is too detailed to read that small, use the
+  simplest recognisable part of it.
+
+## Add it to WordPress
+
+- Use WordPress's own **Site Icon** (Appearance → Customize → Site Identity → Site Icon).
+  WordPress creates the 32, 180 (Apple touch), 192 and 270 px sizes and prints all the
+  `<link rel="icon">` / `apple-touch-icon` tags itself through `wp_site_icon()` in `wp_head`.
+- Upload `site-icon.png` to the Media Library **once** (§105).
+- Set it in the one-click setup / importer too, so a fresh install has the favicon
+  (§96–§102):
+
+```php
+update_option( 'site_icon', $site_icon_attachment_id );
+```
+
+- Do **not** hard-code `<link rel="icon">` tags in `header.php`, a plugin, an HTML widget or an SEO
+  plugin field while Site Icon is set — they would print twice.
+
+## QA
+
+- [ ] The browser tab shows the logo icon on Home, an inner page, a post, 404 and Search.
+- [ ] View source: the icon tags come from WordPress Site Icon, with no duplicate `rel="icon"` tags.
+- [ ] The icon is sharp and readable at 16 px, on a light and a dark browser tab.
+- [ ] `apple-touch-icon` (180 × 180) loads.

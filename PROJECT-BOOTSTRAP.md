@@ -356,6 +356,7 @@ the user answers. If they correct a value, update `TOKENS.md` and re-confirm onl
     │   ├── animations.js           data-anim → GSAP + ScrollTrigger (§4.4) — the ONLY animation JS
     │   └── global/                 optional per-feature helpers
     ├── images/                     WebP only (SVG for vector art) — optimised, sized to use
+    │   └── favicon/                favicon.ico, favicon.svg, apple-touch-icon.png, site-icon.png (rule 19)
     └── fonts/                      only for self-hosted faces
 ```
 
@@ -1018,6 +1019,24 @@ zero-padded; Page Name is the human name from the design; Link text is the filen
     ```html
     <meta name="DeveloperAI" content="Developer Skill">
     ```
+19. **Every page has a favicon made from the logo icon.** Use the icon (mark) part of the logo — not
+    the full logo with its wordmark text. Source, in this order: a favicon / app-icon frame in the
+    design → the logo mark, exported from Figma as SVG → if the logo is text only, its first letter
+    in the logo font and brand colour on a square (tell the user). Never draw a new icon or use a
+    generic one.
+    - Square, mark centred with about 10% padding. Built from the SVG, so it is sharp — never upscale
+      a small PNG. Transparent background; if the mark is white / very light, put it on the brand
+      background token colour.
+    - Check it at 16 × 16 and 32 × 32. If it is too detailed to read, use the simplest part of the mark.
+    - Files in `assets/images/favicon/`: `favicon.ico` (32 × 32), `favicon.svg`,
+      `apple-touch-icon.png` (180 × 180) and `site-icon.png` (512 × 512 — kept for WordPress Site
+      Icon later).
+    - Add these to every `.html` page (`global.html` too), right after the DeveloperAI meta tag:
+    ```html
+    <link rel="icon" href="assets/images/favicon/favicon.ico" sizes="32x32">
+    <link rel="icon" href="assets/images/favicon/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/images/favicon/apple-touch-icon.png">
+    ```
 
 ---
 
@@ -1362,6 +1381,7 @@ SLIDERS block **and** this table, never inline.
 - [ ] No inline `style` attributes
 - [ ] No horizontal scroll at 320px
 - [ ] The page `<head>` has `<meta name="DeveloperAI" content="Developer Skill">` (rule 18)
+- [ ] The page `<head>` has the favicon links, and the tab shows the logo icon (rule 19)
 ````
 
 ---
@@ -1403,4 +1423,5 @@ SLIDERS block **and** this table, never inline.
 | Figma export timed out, so the image was skipped or replaced with a placeholder | Retry 3 times, then export in smaller parts. Every node in `EXPORT-LOG.md` must say `ok` (Phase 1A.0). |
 | Blurry image on the page | Export at 2x, resize down only, WebP quality 85+, vectors stay SVG (§1 rule 16). |
 | Figma prototype animation ignored | Write it in `Design/ANIMATIONS.md` and map it to a §8 preset (Phase 1A.0). |
+| A blank browser tab, or a favicon made from the full wordmark | Favicon = the logo icon (mark), square, sharp, linked on every page (§1 rule 19). |
 | A page without the DeveloperAI meta tag | Every page `<head>` gets `<meta name="DeveloperAI" content="Developer Skill">` by default (§1 rule 18). |
