@@ -1731,6 +1731,20 @@ Exception: the page-builder choice (Flexible Content / Gutenberg / Both, §108) 
 (Gravity Forms / Contact Form 7, §109) are **always** asked first and recorded in this report.
 If the site sells products, the WooCommerce questions (§113) are asked and recorded here too.
 
+**Ask questions one at a time (MANDATORY).** Never send a list of questions in one message — the
+user needs time to think about each answer, and nothing gets missed.
+
+1. Ask **one question per message**, numbered (*"Question 2 of 7"*), so the user knows how many are
+   left.
+2. Give the options, mark the default / recommended one, and add one line on what the answer
+   changes (e.g. *"Flexible Content — classic editor screen"*).
+3. **Wait for the answer** before asking the next question. If an answer raises a follow-up, ask that
+   next, as its own question.
+4. Skip a question only when the answer is already given (in the prompt, the project docs or
+   `login.md`) — say in one line what you read instead of asking.
+5. After the last answer, show **all answers as one short summary** and ask the user to confirm
+   before starting. Write the confirmed answers into the project notes / architecture report.
+
 ---
 
 # 66. DO NOT MAKE ASSUMPTIONS
@@ -3062,7 +3076,8 @@ theme-name/
 
 ## Ask before building (MANDATORY)
 
-Ask this together with the page-builder question (§108), at the very start of the project. Never
+Ask this right after the page-builder question (§108), at the very start of the project — as its own
+question, one question per message (§65). Never
 assume the answer, even if one plugin looks like the obvious choice.
 
 ```text
@@ -3227,7 +3242,7 @@ WooCommerce. All the other rules in this file still apply (§103 CSS, §112 Deve
 **Site already built?** Add WooCommerce through Quick Update Mode (§114): follow the steps below and
 skip any step that already exists.
 
-**Ask at the start** (with the other start-of-project questions):
+**Ask at the start** (with the other start-of-project questions — one question per message, §65):
 1. Is WooCommerce part of this build?
 2. Cart and Checkout: **Block** (WooCommerce default) or **Classic** (shortcode)?
 3. Which payment gateways and shipping methods?
@@ -3458,7 +3473,7 @@ once in the Media Library, the DeveloperAI meta tag, never expose login details.
 ## Example — add WooCommerce to an already-built site
 
 1. Read only §113.
-2. Ask only the 3 WooCommerce start questions in §113.
+2. Ask only the 3 WooCommerce start questions in §113 — one at a time (§65).
 3. Go through §113 step by step and **skip any step that already exists** (e.g. theme support
    already added, pages already set).
 4. Reuse the site's existing variables, buttons, forms, header and breakpoints for the shop CSS/JS.

@@ -57,7 +57,7 @@ Establish these before doing anything else.
      are measured, not read."* If `Design/` is empty too, stop and ask for the PDF export. Never guess
      a design you cannot see.
 
-3. **Project name and page list.** Ask once: *"What is the project called, and which pages are in
+3. **Project name and page list.** Ask: *"What is the project called, and which pages are in
    scope?"* Needed for `<title>`, the `global.html` page index and `CLAUDE.md`.
 
 4. **Animation library.** Default to **GSAP 3.12.5 + ScrollTrigger**, loaded from pinned cdnjs URLs
@@ -68,7 +68,19 @@ Establish these before doing anything else.
    wants none, drop §8 from the generated `CLAUDE.md`, and remove the script tags and
    `animations.js` from the templates.
 
-Ask all four in **one** message. Don't drip-feed questions.
+**Ask questions one at a time (MANDATORY).** Never send a list of questions in one message — the
+user needs time to think about each answer, and nothing gets missed.
+
+1. Ask **one question per message**, numbered (*"Question 2 of 7"*), so the user knows how many are
+   left.
+2. Give the options, mark the default / recommended one, and add one line on what the answer
+   changes (e.g. *"GSAP + ScrollTrigger — default"*).
+3. **Wait for the answer** before asking the next question. If an answer raises a follow-up, ask that
+   next, as its own question.
+4. Skip a question only when the answer is already given (in the prompt, the project docs or
+   `login.md`) — say in one line what you read instead of asking.
+5. After the last answer, show **all answers as one short summary** and ask the user to confirm
+   before starting. Write the confirmed answers into the project notes / architecture report.
 
 **Sliders are not a question — they are fixed.** Every slider, carousel or logo strip in the design
 is built with **Slick 1.8.1** (needs **jQuery 3.7.1**), driven by `data-slider` attributes through

@@ -81,7 +81,7 @@ Also list:
 
 When a requirement changes during the project, update the register (do not delete the old entry; mark it as changed with the date and reason) so the document always matches what is built.
 
-**Gate:** every requirement has an ID and an owning page; all gaps, conflicts, and missing assets are sent to me as one list of questions.
+**Gate:** every requirement has an ID and an owning page; all gaps, conflicts, and missing assets are listed in the register and asked one question at a time (Communication Rules), with every answer recorded.
 
 ## Phase 2 — Full Site & Theme Audit (review every page)
 Inspect the theme structure, templates, template parts, reusable parts, menus, widgets, customizer/theme settings, companion plugin widgets, page builder, and required plugins.
@@ -237,7 +237,7 @@ I may provide the staging URL and WordPress access details, including a WordPres
 
 ## Communication Rules
 - Report the output of each phase at its gate before moving on.
-- If essential information or access is missing, ask concise, specific questions, grouped in one message.
+- If essential information or access is missing, ask concise, specific questions — **one question per message**, numbered ("Question 2 of 6"), with the options and the recommended one marked. Wait for each answer before asking the next; if an answer raises a follow-up, ask it next. Skip a question only when the answer is already in the documents, and say what you read. After the last answer, show all answers as one short summary and ask me to confirm before continuing.
 - Do not silently omit requirements or make major design decisions without support from the documentation.
 - If something cannot be implemented because of a theme limitation, plugin dependency, missing asset, or access restriction, explain the blocker and suggest a practical solution.
 - Keep a record of important changes and any assumptions in the requirements register.
