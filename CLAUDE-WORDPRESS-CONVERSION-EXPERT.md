@@ -1863,6 +1863,7 @@ Before declaring the project complete:
 - [ ] Every standard page works.
 - [ ] Images work.
 - [ ] Internal links work.
+- [ ] Every button, card, logo, menu and footer link is set — no `#` / empty links (§116).
 
 ## Partners
 
@@ -3316,6 +3317,32 @@ Take the image widths and ratios from the HTML design, not from these sample num
 - Payment gateways in **sandbox / test mode on staging**. Keys never go in code, docs or chat.
 - WooCommerce → Emails: logo, colours and footer text match the brand.
 
+## 6a. Products are ALWAYS dynamic — never static
+
+*Wherever a product appears on the site, it comes from WooCommerce. Never hard-code a product.*
+
+- **Every place a product shows** — home page featured / new / best-seller sections, product
+  sliders and carousels, "related" / "you may also like", category tiles, mega-menu product cards,
+  banners with a price, landing pages — pulls the product from WooCommerce. Not only the Shop page.
+- **Never static:** no product name, price, sale price, image, rating, stock badge, link or
+  "Add to cart" button typed into HTML, a page builder field, a text widget or an ACF text field.
+  A static card goes stale the moment the price or stock changes and its button doesn't add to cart.
+- **How to pull them (custom theme):** `wc_get_products()` / `WP_Query` (`post_type => product`),
+  the `[products]` shortcode, or the WooCommerce **Product Collection** block. Render each card with
+  the one shared product card (`woocommerce/content-product.php` or the same template part) — the
+  same card as the shop, never a second hand-made card.
+- **Admin chooses, code renders:** the section's selection is a setting, not copied content —
+  an ACF field (Relationship / Post Object on `product`, or Taxonomy on `product_cat`), or a query
+  rule: category, tag, featured, on sale, best sellers, newest, manual IDs. Plus how many to show
+  and the order.
+- Name, price (`get_price_html()`), image, link (`get_permalink()`), rating, sale / stock badges and
+  the add-to-cart button (`woocommerce_template_loop_add_to_cart()`) all come from the product
+  object, so simple and variable products, sale prices and out-of-stock all behave correctly.
+- **Figma / HTML shows product cards?** Create those products in WooCommerce (importer, CRUD —
+  step 6) and point the section at them. The design's cards are the *look* of the card, not its data.
+- Empty state: if the query returns no products, hide the section (or show a short message) —
+  never fall back to static placeholder products.
+
 ## 7. Theme-level CSS — design + responsive
 
 Write all WooCommerce styling in `assets/css/woocommerce.css`, enqueued after the main stylesheet only on `is_woocommerce() || is_cart() || is_checkout() || is_account_page()`. Header mini-cart styles stay with the header CSS, because the header is on every page.
@@ -3402,6 +3429,8 @@ Mini-cart        header icon + count, dropdown / drawer, empty state
 - [ ] WooCommerce buttons, inputs and notices use the site's global styles; no raw values, no
       `!important` fights.
 - [ ] No horizontal scroll at 320px; cart and checkout are usable on mobile.
+- [ ] Every product on the site (home, sliders, related, menus, landing pages) is pulled from WooCommerce
+      — no static product name, price, image or button anywhere (step 6a).
 - [ ] Simple and variable products add to cart; variation price / image / stock update.
 - [ ] Quantity +/- works and enables "Update cart"; mini-cart count updates without reload.
 - [ ] Coupon, shipping and tax totals are correct.
@@ -3460,6 +3489,7 @@ the project has a `CLAUDE.md` / theme docs from the earlier build.
 | Forms | §28, §109 |
 | SEO / meta | §29, §112 |
 | Favicon / site icon | §115 |
+| Links / buttons / cards not linked | §116, §43 |
 | Images / SVG / Media Library | §26, §104, §105 |
 | 404 / Search / Sitemap | §106, §107 |
 | ACF fields | §110, §111 |
@@ -3534,3 +3564,65 @@ update_option( 'site_icon', $site_icon_attachment_id );
 - [ ] View source: the icon tags come from WordPress Site Icon, with no duplicate `rel="icon"` tags.
 - [ ] The icon is sharp and readable at 16 px, on a light and a dark browser tab.
 - [ ] `apple-touch-icon` (180 × 180) loads.
+
+---
+
+# 116. LINKING — EVERY CLICKABLE ELEMENT IS LINKED (MANDATORY)
+
+*Every button, link, card, logo, menu item and icon that looks clickable must go to its real
+destination. Nothing is left as `#`, empty, or unlinked.*
+
+## 1. Make a link map first
+
+Before building pages, list every clickable element from the HTML site (and the Figma prototype, if any):
+logo, header menu + dropdowns, header CTA, hero buttons, section buttons / "Learn more" / "Read more",
+service / blog / team / product / category cards, breadcrumbs, pagination, footer menus, footer CTA,
+social icons, phone, email, address, legal links (Privacy, Terms, Cookies), 404 / Search page links.
+
+For each one write: **element → page / post / product / external URL**. Keep this as
+`link-map.md` in the theme docs.
+
+- Destination is in the design / HTML → use it (`about.html` → the WordPress **About** page).
+- Destination page doesn't exist yet → create that page (or ask), don't leave the link empty.
+- Destination is unclear (no target in the design) → **ask the user** with the list of unclear
+  links. Never guess and never silently leave `#`.
+
+## How to set each link (theme code / page builder)
+
+- Internal page / post → `get_permalink( $id )` (page found by slug, §43), never a
+  typed URL or `.html` link. Home → `home_url( '/' )`.
+- Product / product category → `get_permalink( $product_id )` / `get_term_link( $term )`.
+- Archive / category / tag → `get_post_type_archive_link()`, `get_term_link()`.
+- Menus → WordPress Menus (`wp_nav_menu()`, header / footer sections) — every menu item points to a real page.
+- Editable buttons / CTAs → ACF **Link** field (returns url, title, target), so the admin can change
+  it — never a plain text field for the URL. Print with `esc_url()`; add `target="_blank"
+  rel="noopener"` only when the field's target is `_blank`.
+- Whole card clickable → wrap the card (or use a stretched link) so the full card opens the post /
+  product, not only the small "Read more" text.
+- Phone → `tel:`, email → `mailto:`, address → Google Maps link — from the ACF options page, not
+  typed again in each template.
+- Social icons → the real profile URLs from the design / client, from the ACF options page, opened in
+  a new tab with `rel="noopener"`.
+
+## Never
+
+- `href="#"`, `href=""`, `javascript:void(0)` or a button with no link — except real toggles (mobile
+  menu, accordion, tab, modal open), which are `<button>` elements, not links.
+- A hard-coded domain (`https://staging.site/...`, `localhost`) or a `.html` link.
+- A link to the wrong page because it was copied from another section.
+
+## Final link check (before handover)
+
+- Search the theme / templates / exported content for `href="#"`, `href=""` and `.html` — fix every hit.
+- Click (or crawl) every link on every page: header, footer, each section, cards, buttons, at
+  desktop and mobile menu. No 404, no link to `#`, no staging / localhost URL.
+- Report any link still waiting on the client (e.g. social profile not given) in the handover note.
+
+## QA
+
+- [ ] `link-map.md` exists and every clickable element on the site is in it.
+- [ ] No `href="#"`, empty href or `.html` link anywhere (except real toggle buttons).
+- [ ] Logo → Home; every menu item, CTA, button, card and footer link opens the correct page.
+- [ ] Product and category cards open the right product / category (WooCommerce sites).
+- [ ] Phone, email, map and social links work; external links open in a new tab with `rel="noopener"`.
+- [ ] No staging / localhost / hard-coded domain URLs; no 404 from any internal link.
