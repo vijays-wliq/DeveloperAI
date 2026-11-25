@@ -2119,6 +2119,8 @@ Footer menu should use a registered WordPress menu.
 
 # B9. WORDPRESS THEME STRUCTURE
 
+> **Elementor Pro chosen in E1:** header, footer, pages, singles and archives are Theme Builder templates (E5.9, E5.11, E5.15, E5.16, E5.24); the theme keeps only setup, enqueue and CPT files plus the E5.19 assets — not the PHP page templates below.
+
 Create a proper custom theme in `wp-content/themes/<project-slug>/`.
 
 Recommended:
@@ -2207,6 +2209,8 @@ Use `require_once`.
 
 # B11. PARTNERS — CUSTOM POST TYPE
 
+> **Elementor Pro chosen in E1:** register the CPT the same way; its single and archive are Theme Builder templates (E5.15) — no `archive-partner.php` / `single-partner.php`.
+
 If the Figma design has dedicated Partner pages, create:
 
 ```text
@@ -2277,11 +2281,10 @@ Featured Partner
 
 Do not blindly create all fields.
 
-Use ACF PRO for fields (D110); register field groups as local JSON (D111).
+Use ACF PRO for fields (D110 — never SCF, never hand-made meta boxes); register field groups as
+local JSON (D111).
 
 Do not recreate ACF functionality manually.
-
-If no plugin is permitted, implement secure custom meta fields.
 
 ---
 
@@ -2302,6 +2305,8 @@ Do not create unnecessary database structures.
 ---
 
 # B14. BLOG
+
+> **Elementor Pro chosen in E1:** native Posts as below; archive and single are Theme Builder templates (E5.16).
 
 Blog must remain separate from Partners.
 
@@ -2373,6 +2378,8 @@ or specific templates only when necessary.
 
 # B17. HOMEPAGE
 
+> **Elementor Pro chosen in E1:** Home is a normal page built with Elementor and set as the static front page — no `front-page.php`.
+
 Use:
 
 ```text
@@ -2401,6 +2408,8 @@ as appropriate.
 ---
 
 # B18. TEMPLATE HIERARCHY
+
+> **Elementor Pro chosen in E1:** Theme Builder templates + display conditions (E5.24) replace this PHP template hierarchy.
 
 Follow WordPress template hierarchy.
 
@@ -2467,6 +2476,8 @@ Do not use fragile relative paths such as:
 ---
 
 # B20. CSS
+
+> **Elementor Pro chosen in E1:** CSS follows **E5.18** (native controls first, no class-based CSS, approved CSS only in `custom.css`).
 
 ## CRITICAL
 
@@ -2536,6 +2547,8 @@ Respect dependencies and execution order.
 ---
 
 # B22. GSAP / THREE.JS / ANIMATIONS
+
+> **Elementor Pro chosen in E1:** see **E5.20**.
 
 Animations come from `Design/ANIMATIONS.md`, mapped to `data-anim` presets (A9.8) and run by
 `animations.js` (A7.4).
@@ -2676,6 +2689,8 @@ after custom loops.
 ---
 
 # B26. IMAGE HANDLING
+
+> **See also:** image accessibility, names and alt text → D104; upload every image once → D105.
 
 Use only the images exported from Figma (`Design/images/`, `Design/svg/`). They must be sharp,
 never blurry: export at 2x, resize down only, WebP at quality 85+, vectors stay SVG (A9.1 rule 16).
@@ -2890,11 +2905,8 @@ Partner editors should not need to edit PHP or HTML.
 
 # B34. USE ONLY THE BUILDER CHOSEN IN E1
 
-Default implementation:
-
-```text
-Custom PHP WordPress Theme
-```
+The theme is always a proper custom theme (or child theme, B55) — never a generic theme with the
+design pasted in (B35). **How the pages are built is the E1 answer**, not a default.
 
 Build page sections only with the page builder the user chose in E1 (ACF Flexible Content, Gutenberg
 ACF Blocks, Both, Elementor Pro, or another builder — E2–E6). Do not mix in a second builder.
@@ -3079,6 +3091,8 @@ where appropriate.
 
 # B43. INTERNAL LINKS
 
+> **See also D115:** every clickable element must be linked (link map, no `#` / empty links).
+
 Every internal link (buttons, cards, CTAs drawn in Figma) points to a WordPress permalink when the
 destination is a WordPress page. Never use static links like:
 
@@ -3104,6 +3118,8 @@ Do not hard-code URLs unnecessarily.
 
 # B44. MENU LINK HANDLING
 
+> **See also D115** (menus and every other link set, final link check).
+
 The WordPress menu should handle:
 
 ```text
@@ -3119,6 +3135,8 @@ Do not hard-code the navigation in `header.php`.
 ---
 
 # B45. PARTNER ARCHIVE
+
+> **Elementor Pro chosen in E1:** Theme Builder Archive template + Loop Grid (E5.15) — not `archive-partner.php`.
 
 Partner archive should reproduce the Figma partner listing design.
 
@@ -3147,6 +3165,8 @@ Only implement filters if the design requires them.
 
 # B46. PARTNER SINGLE
 
+> **Elementor Pro chosen in E1:** Theme Builder Single template with Dynamic Tags (E5.15) — not `single-partner.php`.
+
 Partner detail should reproduce the Figma Partner detail frame.
 
 Use:
@@ -3162,6 +3182,8 @@ Do not create a completely new partner layout.
 ---
 
 # B47. BLOG ARCHIVE
+
+> **Elementor Pro chosen in E1:** Theme Builder Archive template + Loop Grid (E5.16).
 
 Blog listing must reproduce the Figma blog listing frame.
 
@@ -3180,6 +3202,8 @@ Use WordPress Posts.
 ---
 
 # B48. BLOG SINGLE
+
+> **Elementor Pro chosen in E1:** Theme Builder Single Post template (E5.16).
 
 Blog detail must reproduce the Figma blog detail frame.
 
@@ -3206,6 +3230,8 @@ Related Posts
 ---
 
 # B49. REUSABLE TEMPLATE PARTS
+
+> **Builder sections:** page sections follow the E1 builder (E2–E6; one shared render file per section for ACF builders). **Elementor Pro chosen:** saved templates / Global Widgets / Loop Items (E5.8) — not `template-parts/` PHP.
 
 If the design contains repeated sections or components (`Design/components/`), extract them.
 
@@ -3299,6 +3325,8 @@ Never expose private data through an unprotected endpoint.
 ---
 
 # B54. CUSTOM ADMIN SETTINGS
+
+> With ACF PRO (D110), site-wide settings (phone, email, address, social links, footer text) go on an **ACF Options Page** (local JSON, D111). Use the Settings API below only for a setting ACF can't hold.
 
 If custom Theme Settings are needed:
 
@@ -3656,6 +3684,8 @@ Before building or modifying any component:
 ---
 
 # B70. FINAL QA CHECKLIST
+
+> **Elementor Pro chosen in E1:** the Elementor list is **E5.33**; F2 runs every list.
 
 Before declaring the project complete:
 
@@ -5236,6 +5266,33 @@ Thank You        order received + order details
 Mini-cart        header icon + count, dropdown / drawer, empty state
 ```
 
+**Mini-cart dropdown — must look right (lesson from a real build)**
+
+*Seen on a build: the header cart dropdown was too narrow and ran off the screen, product names broke
+letter by letter in heading size, prices were huge, "View cart" wrapped and Checkout / subtotal were
+cut. Build it like this:*
+
+- **Panel:** fixed width as per design (about `360–400px` on desktop), opens under the cart icon,
+  aligned to the icon's **right** edge, and **never goes past the viewport** (`max-width:
+  calc(100vw - 2 × gutter)`). On mobile: full-width dropdown or a side drawer, as per design.
+- **Height:** the items list has a `max-height` and scrolls inside; subtotal and buttons stay visible
+  at the bottom.
+- **Item row:** thumbnail fixed (about `64–80px`, same ratio as the product card) + details column
+  that takes the rest (`min-width: 0`). The details column must never be squeezed to a few px.
+- **Product name:** body / small text style (not H1–H6 global), normal word wrap — never broken letter
+  by letter — max 2 lines (`line-clamp`), linked to the product.
+- **Variation meta, quantity × price:** small text; sale price shows `<del>` / `<ins>` correctly.
+  Remove (×) icon with an `aria-label`.
+- **Subtotal:** one row — label left, amount right.
+- **Buttons:** **View cart** and **Checkout** both visible, site button style (smaller size), text
+  never wraps; side by side on desktop, full width stacked on small screens if needed.
+- **Empty cart:** short message + "Shop now" button, not a blank box.
+- **Behaviour:** opens on click (and on hover on desktop only if the design does), closes on outside
+  click and `Esc`, sits above the header (`z-index`) and is not clipped by a parent
+  `overflow: hidden`. Count badge and content update without reload (step 8).
+- **Test it** with 1, 5 and 10+ items, a long product name, a variable product and a sale product, at
+  every breakpoint and on a non-shop page.
+
 If a screen is not in the Figma design, style it from the global design system (tokens + global
 components) so it matches the rest of the site, and say so in the handover report.
 
@@ -5297,6 +5354,8 @@ components) so it matches the rest of the site, and say so in the handover repor
       — no static product name, price, image or button anywhere (step 6a).
 - [ ] Simple and variable products add to cart; variation price / image / stock update.
 - [ ] Quantity +/- works and enables "Update cart"; mini-cart count updates without reload.
+- [ ] Header mini-cart dropdown: right width, inside the screen, names readable (no letter-by-letter
+      break), View cart + Checkout + subtotal visible, empty state, works on mobile.
 - [ ] Coupon, shipping and tax totals are correct.
 - [ ] A test order completes with sandbox payment; customer and admin emails arrive and are branded.
 - [ ] My Account: login, register, orders, addresses, account details and password reset work.
@@ -5971,6 +6030,47 @@ Section widths
 Configure Elementor global container/layout settings accordingly (from `--container` and `--gutter`).
 Do not randomly choose a container width.
 
+### Global container — set ONCE in Site Settings, never per container (MANDATORY)
+
+Set the container system globally, in **Site Settings → Layout**, before building any page:
+
+| Site Settings → Layout | Value comes from |
+|---|---|
+| **Content Width** — **every breakpoint** | `--container` (e.g. `1200px`), then each breakpoint's stepped-down value |
+| **Container Padding** — desktop / tablet / mobile | `--gutter` — set for every breakpoint |
+| **Gaps** (Widgets / Elements gap) | the global grid / column gap |
+| **Breakpoints** | the project breakpoints (E5.6) |
+
+**The container is responsive.** `--container` (and `--gutter`) change at the breakpoints, so the
+global Content Width and Container Padding are set on **each device** in Site Settings → Layout
+(switch the responsive icon: Widescreen, Desktop, Laptop, Tablet Extra, Tablet, Mobile Extra,
+Mobile) with the values from the `--container` / `--gutter` step-down table in `TOKENS.md` (A5.8). Example: 1200 → 1150 → 1105 → 1010 → 910 → 960 fixed → 100%.
+Never set only the desktop value and leave the smaller screens on Elementor's default.
+
+Then on every page and template:
+
+- **Outer section container = Boxed** with the width **left empty / Default**, so it inherits the
+  global Content Width. Never type a pixel width (`1180px`, `1240px`) or a side padding on each
+  container.
+- **Full-bleed sections** (background to the screen edge) = outer container **Full Width**, with
+  one **inner Boxed container on Default** that holds the content — so the content still lines up
+  with every other section.
+- **Inner / nested containers = Full Width (100%)** of their parent. Their gap and padding use
+  Global Spacing values (above), not one-off numbers.
+- Section top / bottom padding = the global section-spacing value; only the left / right padding
+  comes from the global Container Padding.
+- Need a narrower block (text column, form)? Give that **inner** element a max-width from the design,
+  keep the outer container on the global width.
+- Changing the site width later = change **one** value in Site Settings → Layout, and every page
+  follows. If a page still looks different, a container has a hard-coded width — remove it.
+- Never set the container width in `custom.css` or widget Custom CSS to fight the global setting.
+
+QA:
+- [ ] Site Settings → Layout has Content Width + Container Padding set on every breakpoint, and Gaps, set from
+      `TOKENS.md`.
+- [ ] No container has its own pixel width or side padding; content edges line up on every section
+      at desktop, tablet and mobile.
+
 ---
 
 ## E5.8 Reusable Elementor components
@@ -6617,6 +6717,9 @@ Never edit WooCommerce plugin files.
   controls → only where those can't match the Figma design, report it and get approval, then CSS in
   `custom.css` (E5.18). Never widget Custom CSS.
 - Header mini-cart = the **Menu Cart** widget, inside the Theme Builder header (E5.9).
+  Style it per the D113 step 7 "Mini-cart dropdown" rules with the widget's own controls first
+  (container width, title / price typography = Global body text, subtotal, View cart / Checkout
+  buttons); only what they can't match goes in `custom.css` (E5.18).
 
 ### Products always dynamic in Elementor (replaces the "how to pull them" line of D113 step 6a)
 
@@ -6692,6 +6795,7 @@ The shared QA in E1 and the final QA in F2 also apply.
 - [ ] Global typography created from `TOKENS.md` and actually used.
 - [ ] Global spacing/variables established.
 - [ ] Container width matches the `--container` token.
+- [ ] Container width + padding set once in Site Settings → Layout; no per-container widths (E5.7).
 - [ ] Elementor breakpoints set to the A5.8 values; responsive typography matches.
 - [ ] Repeated components are reusable.
 
@@ -6794,6 +6898,48 @@ The shared QA in E1 and the final QA in F2 also apply.
 - [ ] Desktop matches.
 - [ ] Tablet matches.
 - [ ] Mobile matches.
+
+
+### Pre-delivery sign-off — tick every box TWICE (summary of E5.36 + E5.37)
+
+Do not tell the user "done" until all are ticked after the **second** pass.
+
+#### Setup & rules
+- [ ] Worked on staging only; no credentials in any file/reply; unique theme name.
+- [ ] CSS per E5.18 (no HTML widget / inline style for layout; classes only for approved rules).
+- [ ] Zero static px for spacing (Elementor controls AND custom.css); section spacing editable via Elementor Variables.
+- [ ] Global colours/fonts used; real client fonts uploaded; ™ ® 4 & % glyphs compared with design.
+- [ ] Repeating content = CPT + Loop Grid/Carousel; every loop image has a placeholder fallback (grey + site logo).
+
+#### Design match (PDF zoomed, per section)
+- [ ] Border-radius, shapes, curves, icon sizes, alignment, left/centre text as in PDF.
+- [ ] Card/section padding equal on 4 sides (phone 20px); top and bottom section space equal.
+- [ ] Gaps 40/30/20 everywhere; icons/logos smaller on tablet/mobile; no image crop on mobile.
+- [ ] Buttons: text vertically centred, not full width on phones; optical centring in menu/tabs/inputs/page numbers.
+
+#### Header / menu / footer
+- [ ] Top bar centred; device rules for location/phone/tagline; logo links home.
+- [ ] Mega menu: starts at header bottom, not cut, hover image works, no logo placeholder; active states right.
+- [ ] Mobile menu: custom burger, scroll lock, dividers, chevron toggle; 700–800 px OK.
+- [ ] Footer: hovers, email not cut, ® centred, copyright centred + last on mobile, social icons smaller.
+
+#### Interactions
+- [ ] Sliders: arrows per design, disabled = not-allowed, gaps right, hover not cut, zoom on product images.
+- [ ] Logo tiles fully clickable → detail page; marquee speed; entrance animations play.
+- [ ] Forms: validation, checkbox above button; accordions/tabs/pagination work.
+
+#### Content & pages
+- [ ] Every post type tested with temporary data in every view; empty fields hide cleanly; few/many entries OK.
+- [ ] All designed pages built (incl. detail templates and archives); slugs semantic (/faq/).
+- [ ] Breadcrumbs dynamic and correct (no "About / About").
+- [ ] Dummy content and links waiting on the client listed (links: D115).
+
+#### Technical QA
+- [ ] 1920 / 1440 / 1366 / 1024 / 768 / 520 / 390 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
+- [ ] axe: one `<main>`, no duplicate landmarks, unique `<nav>` labels, icon-only names, contrast measured and reported.
+- [ ] Unique title + description ≤160 on every page incl. archives/search/404; noindex/canonical noted for launch.
+- [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
+- [ ] `PROJECT-SUMMARY.md` and `DAILY-LOG.md` updated; final report by QA bug type (fixed / clean / needs decision).
 
 ---
 
@@ -7096,47 +7242,9 @@ Legend: **[R]** = responsive-specific.
 
 ---
 
-## E5.38 PRE-DELIVERY SIGN-OFF (TICK EVERY BOX — TWICE)
+## E5.38 PRE-DELIVERY SIGN-OFF
 
-Summary of E5.36 + E5.37. Do not tell the user "done" until all are ticked after the **second** pass.
-
-## Setup & rules
-- [ ] Worked on staging only; no credentials in any file/reply; unique theme name.
-- [ ] CSS per E5.18 (no HTML widget / inline style for layout; classes only for approved rules).
-- [ ] Zero static px for spacing (Elementor controls AND custom.css); section spacing editable via Elementor Variables.
-- [ ] Global colours/fonts used; real client fonts uploaded; ™ ® 4 & % glyphs compared with design.
-- [ ] Repeating content = CPT + Loop Grid/Carousel; every loop image has a placeholder fallback (grey + site logo).
-
-## Design match (PDF zoomed, per section)
-- [ ] Border-radius, shapes, curves, icon sizes, alignment, left/centre text as in PDF.
-- [ ] Card/section padding equal on 4 sides (phone 20px); top and bottom section space equal.
-- [ ] Gaps 40/30/20 everywhere; icons/logos smaller on tablet/mobile; no image crop on mobile.
-- [ ] Buttons: text vertically centred, not full width on phones; optical centring in menu/tabs/inputs/page numbers.
-
-## Header / menu / footer
-- [ ] Top bar centred; device rules for location/phone/tagline; logo links home.
-- [ ] Mega menu: starts at header bottom, not cut, hover image works, no logo placeholder; active states right.
-- [ ] Mobile menu: custom burger, scroll lock, dividers, chevron toggle; 700–800 px OK.
-- [ ] Footer: hovers, email not cut, ® centred, copyright centred + last on mobile, social icons smaller.
-
-## Interactions
-- [ ] Sliders: arrows per design, disabled = not-allowed, gaps right, hover not cut, zoom on product images.
-- [ ] Logo tiles fully clickable → detail page; marquee speed; entrance animations play.
-- [ ] Forms: validation, checkbox above button; accordions/tabs/pagination work.
-
-## Content & pages
-- [ ] Every post type tested with temporary data in every view; empty fields hide cleanly; few/many entries OK.
-- [ ] All designed pages built (incl. detail templates and archives); slugs semantic (/faq/).
-- [ ] Breadcrumbs dynamic and correct (no "About / About").
-- [ ] Dummy content and links waiting on the client listed (links: D115).
-
-## Technical QA
-- [ ] 1920 / 1440 / 1366 / 1024 / 768 / 520 / 390 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
-- [ ] axe: one `<main>`, no duplicate landmarks, unique `<nav>` labels, icon-only names, contrast measured and reported.
-- [ ] Unique title + description ≤160 on every page incl. archives/search/404; noindex/canonical noted for launch.
-- [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
-- [ ] `PROJECT-SUMMARY.md` and `DAILY-LOG.md` updated; final report by QA bug type (fixed / clean / needs decision).
-
+→ Merged into **E5.33 Elementor final QA** (Pre-delivery sign-off — tick every box twice). See E5.33.
 
 ---
 
@@ -7176,7 +7284,7 @@ E5.36–E5.38 find bugs **after** building. This section prevents the most frequ
 Global Colours → Global Fonts (real client fonts) → Elementor Variables for spacing (section, card, gap, gutter, per breakpoint) → saved components (heading, button, card, loop items, CTA) → Header/Footer → pages → CPT templates. Building pages before the variables exist is what creates static-px and inconsistent-gap bugs.
 
 ### E5.39.6 Honest limit
-These sections lower the bug count a lot, but they do not guarantee zero. Every new project has its own design details, so the two-pass self-QA (E5.36.10, E5.38) and the zoomed PDF compare stay mandatory. Any new kind of bug → fix it, then add one line to E5.36/E5.37.
+These sections lower the bug count a lot, but they do not guarantee zero. Every new project has its own design details, so the two-pass self-QA (E5.36.10, E5.33 pre-delivery sign-off) and the zoomed PDF compare stay mandatory. Any new kind of bug → fix it, then add one line to E5.36/E5.37.
 
 ---
 

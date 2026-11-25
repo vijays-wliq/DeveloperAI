@@ -462,11 +462,8 @@ Featured Partner
 
 Do not blindly create all fields.
 
-Use an appropriate field system if the project permits it.
-
-If using ACF, do not recreate ACF functionality manually.
-
-If no plugin is permitted, implement secure custom meta fields.
+Build the fields with **ACF PRO** (§110 — never SCF, never hand-made meta boxes), saved as local
+JSON and synced (§111). Do not recreate ACF functionality manually.
 
 ---
 
@@ -612,6 +609,9 @@ search.php
 ```
 
 Do not create duplicate templates without a reason.
+
+`page-{slug}.php` only when a page needs a different wrapper. Page content always comes from the
+page builder chosen in §108 — never hardcoded in a template.
 
 ---
 
@@ -853,6 +853,8 @@ after custom loops.
 
 # 26. IMAGE HANDLING
 
+> **See also:** image accessibility, SEO-friendly names and alt text → §104; upload every image once → §105.
+
 Use WordPress image functions.
 
 Prefer:
@@ -1066,7 +1068,9 @@ Default implementation:
 Custom PHP WordPress Theme
 ```
 
-Do not convert every HTML section into Elementor widgets unless explicitly requested.
+Do not convert every HTML section into Elementor widgets unless explicitly requested. Editable
+sections come from the page builder chosen in §108 (ACF Flexible Content / Gutenberg ACF Blocks /
+Both). If the user asks for Elementor, use `CLAUDE-ELEMENTOR-WORDPRESS-CONVERSION-EXPERT.md` instead.
 
 The existing HTML should remain the source of truth for the frontend.
 
@@ -1245,6 +1249,8 @@ where appropriate.
 
 # 43. INTERNAL LINKS
 
+> **See also §116:** every clickable element must be linked (link map, no `#` / empty links).
+
 Convert static internal HTML links where required.
 
 Example:
@@ -1272,6 +1278,8 @@ Do not hard-code URLs unnecessarily.
 ---
 
 # 44. MENU LINK HANDLING
+
+> **See also §116** (menus and every other link set, final link check).
 
 The WordPress menu should handle:
 
@@ -1376,6 +1384,8 @@ Related Posts
 
 # 49. REUSABLE TEMPLATE PARTS
 
+> **See also §108:** each page-builder section has **one shared render file**, used by Flexible Content and/or the ACF Block — the template parts below are for cards and other small repeated pieces.
+
 If the HTML contains repeated sections, extract them.
 
 Example:
@@ -1465,6 +1475,8 @@ Never expose private data through an unprotected endpoint.
 ---
 
 # 54. CUSTOM ADMIN SETTINGS
+
+> With ACF PRO (§110), site-wide settings (phone, email, address, social links, footer text) go on an **ACF Options Page** (fields as local JSON, §111). Use the Settings API below only for a setting ACF can't hold.
 
 If custom Theme Settings are needed:
 
@@ -3375,6 +3387,33 @@ Thank You        order received + order details
 Mini-cart        header icon + count, dropdown / drawer, empty state
 ```
 
+**Mini-cart dropdown — must look right (lesson from a real build)**
+
+*Seen on a build: the header cart dropdown was too narrow and ran off the screen, product names broke
+letter by letter in heading size, prices were huge, "View cart" wrapped and Checkout / subtotal were
+cut. Build it like this:*
+
+- **Panel:** fixed width as per design (about `360–400px` on desktop), opens under the cart icon,
+  aligned to the icon's **right** edge, and **never goes past the viewport** (`max-width:
+  calc(100vw - 2 × gutter)`). On mobile: full-width dropdown or a side drawer, as per design.
+- **Height:** the items list has a `max-height` and scrolls inside; subtotal and buttons stay visible
+  at the bottom.
+- **Item row:** thumbnail fixed (about `64–80px`, same ratio as the product card) + details column
+  that takes the rest (`min-width: 0`). The details column must never be squeezed to a few px.
+- **Product name:** body / small text style (not H1–H6 global), normal word wrap — never broken letter
+  by letter — max 2 lines (`line-clamp`), linked to the product.
+- **Variation meta, quantity × price:** small text; sale price shows `<del>` / `<ins>` correctly.
+  Remove (×) icon with an `aria-label`.
+- **Subtotal:** one row — label left, amount right.
+- **Buttons:** **View cart** and **Checkout** both visible, site button style (smaller size), text
+  never wraps; side by side on desktop, full width stacked on small screens if needed.
+- **Empty cart:** short message + "Shop now" button, not a blank box.
+- **Behaviour:** opens on click (and on hover on desktop only if the design does), closes on outside
+  click and `Esc`, sits above the header (`z-index`) and is not clipped by a parent
+  `overflow: hidden`. Count badge and content update without reload (step 8).
+- **Test it** with 1, 5 and 10+ items, a long product name, a variable product and a sale product, at
+  every breakpoint and on a non-shop page.
+
 **Responsive** — use the site's own breakpoints, then check each screen at every breakpoint:
 - Product grid: desktop columns as per design → tablet 2 → mobile 1 or 2 (as per design).
 - Single product: gallery and summary side by side on desktop → stacked on tablet/mobile.
@@ -3433,6 +3472,8 @@ Mini-cart        header icon + count, dropdown / drawer, empty state
       — no static product name, price, image or button anywhere (step 6a).
 - [ ] Simple and variable products add to cart; variation price / image / stock update.
 - [ ] Quantity +/- works and enables "Update cart"; mini-cart count updates without reload.
+- [ ] Header mini-cart dropdown: right width, inside the screen, names readable (no letter-by-letter
+      break), View cart + Checkout + subtotal visible, empty state, works on mobile.
 - [ ] Coupon, shipping and tax totals are correct.
 - [ ] A test order completes with sandbox payment; customer and admin emails arrive and are branded.
 - [ ] My Account: login, register, orders, addresses, account details and password reset work.

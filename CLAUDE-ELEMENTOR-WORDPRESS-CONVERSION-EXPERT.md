@@ -15,9 +15,9 @@
 >
 > | Project type | Follow | Ignore |
 > |---|---|---|
-> | HTML → custom PHP theme (no page builder) | §1–§72 | §96–§149 |
+> | HTML → custom PHP theme (no page builder) | Use `CLAUDE-WORDPRESS-CONVERSION-EXPERT.md` instead — it has the importer, page builder, ACF and forms rules (§1–§72 here are its older base) | this file |
 > | Existing WordPress theme to update/extend | §73–§95 (+ §1–§72 for new parts) | — |
-> | HTML / PDF / Figma → **Elementor Pro** (usual WLIQ case) | §96–§149 (+ §23–§33, §39–§44 for PHP, SEO, a11y) | §34 "Do not use Elementor" |
+> | HTML / PDF / Figma → **Elementor Pro** (usual WLIQ case) | §96–§149 (+ §23–§33, §39–§44 for PHP, SEO, a11y) | the PHP-template parts of §1–§72 (each has an **Elementor build** note pointing to the Elementor section) |
 >
 > §146–§149 (lessons, bug library, sign-off, build-right-first-time) apply to **every Elementor project**. The numbers in them (gaps 40/30/20, card padding 40/30/25/20, wave height 35–41 px, 2 hero slides, 4 s marquee…) are **examples from the Buell Recreation project** — on a new project always take the values from the new design. The *rule* (e.g. "set the gap at every breakpoint", "same padding on 4 sides") is what carries over.
 
@@ -321,6 +321,8 @@ Footer menu should use a registered WordPress menu.
 
 # 9. WORDPRESS THEME STRUCTURE
 
+> **Elementor build:** the theme is the one in §135 (`assets/css/custom.css`, `assets/js/vendor.js`). Header, footer, pages, singles and archives are Elementor Theme Builder templates (§105, §107, §111, §112, §125) — not the PHP template files below.
+
 Create a proper custom theme.
 
 Recommended:
@@ -377,6 +379,8 @@ Do not put the entire project into one huge `functions.php`.
 
 # 10. FUNCTIONS.PHP
 
+> **Elementor build:** keep `functions.php` light the same way; it loads only theme setup, enqueue (§135), CPTs and helpers — no PHP page templates.
+
 Keep `functions.php` lightweight.
 
 Example:
@@ -397,6 +401,8 @@ Use `require_once`.
 ---
 
 # 11. PARTNERS — CUSTOM POST TYPE
+
+> **Elementor build:** register the CPT the same way, but its single and archive are Elementor Theme Builder templates (§111) — no `archive-partner.php` / `single-partner.php`.
 
 If the existing site has dedicated Partner pages, create:
 
@@ -444,6 +450,8 @@ single-partner.php
 ---
 
 # 12. PARTNER FIELDS
+
+> **Elementor build:** fields = ACF PRO, shown with Elementor Dynamic Tags (§111).
 
 Inspect the original Partner HTML first.
 
@@ -493,6 +501,8 @@ Do not create unnecessary database structures.
 ---
 
 # 14. BLOG
+
+> **Elementor build:** use native Posts as below; the blog archive and single are Theme Builder templates (§112), not `home.php` / `single.php`.
 
 Blog must remain separate from Partners.
 
@@ -564,6 +574,8 @@ or specific templates only when necessary.
 
 # 17. HOMEPAGE
 
+> **Elementor build:** Home is a normal WordPress page built with Elementor and set as the static front page — not `front-page.php`. Dynamic parts use Loop Grid / Dynamic Tags (§104, §113).
+
 Use:
 
 ```text
@@ -589,6 +601,8 @@ as appropriate.
 ---
 
 # 18. TEMPLATE HIERARCHY
+
+> **Elementor build:** Theme Builder templates + display conditions (§125) replace this PHP template hierarchy.
 
 Follow WordPress template hierarchy.
 
@@ -656,6 +670,8 @@ Do not use fragile relative paths such as:
 
 # 20. CSS
 
+> **Elementor build:** CSS follows **§114** — native Elementor controls first, no class-based CSS, approved CSS only in `assets/css/custom.css` (§135). Keep the HTML's *look* (spacing, type, breakpoints, animations), not its selectors and classes.
+
 ## CRITICAL
 
 Do not rewrite the CSS unnecessarily.
@@ -679,6 +695,8 @@ Do not introduce a CSS framework simply because WordPress is being introduced.
 ---
 
 # 21. JAVASCRIPT
+
+> **Elementor build:** scripts load from the theme with `wp_enqueue_script()` (`assets/js/vendor.js`, §135). Editor-safe init: §121.
 
 Audit all JavaScript before changing it.
 
@@ -717,6 +735,8 @@ Respect dependencies and execution order.
 ---
 
 # 22. GSAP / THREE.JS / ANIMATIONS
+
+> **Elementor build:** see **§121**.
 
 If the existing website uses:
 
@@ -853,6 +873,8 @@ after custom loops.
 ---
 
 # 26. IMAGE HANDLING
+
+> **Elementor build:** images go into the Media Library once and are set in the widgets — see §131, §136, §140.
 
 Use WordPress image functions.
 
@@ -994,6 +1016,8 @@ Where URLs must change, implement 301 redirects.
 
 # 31. 404 AND REDIRECTS
 
+> **Elementor build:** the 404 and Search pages are Theme Builder templates built per the design (§138). Redirects as below.
+
 Create:
 
 ```text
@@ -1054,17 +1078,18 @@ Partner editors should not need to edit PHP or HTML.
 
 ---
 
-# 34. DO NOT USE ELEMENTOR UNLESS REQUESTED
+# 34. BUILDER IN THIS FILE = ELEMENTOR PRO
 
-Default implementation:
+This file builds the site with **Elementor Pro** (§96). The HTML site stays the source of truth for the
+design and behaviour (⭐ §96 Main Requirement); Elementor is how it is rebuilt.
 
-```text
-Custom PHP WordPress Theme
-```
-
-Do not convert every HTML section into Elementor widgets unless explicitly requested.
-
-The existing HTML should remain the source of truth for the frontend.
+- Where a section in §1–§72 says to make a PHP template (`front-page.php`, `archive-partner.php`,
+  `single.php`, `template-parts/` …), follow its **Elementor build** note instead — Theme Builder
+  templates, Loop Items and native widgets.
+- Do not paste the HTML into one big HTML / Custom HTML widget. Rebuild each section with native
+  widgets (§113).
+- The user asks for **no page builder** (custom PHP theme)? Then this is the wrong file — use
+  `CLAUDE-WORDPRESS-CONVERSION-EXPERT.md`.
 
 ---
 
@@ -1241,6 +1266,8 @@ where appropriate.
 
 # 43. INTERNAL LINKS
 
+> **Elementor build:** internal links use Dynamic Tags → Internal URL (§132), and every clickable element is linked (§145).
+
 Convert static internal HTML links where required.
 
 Example:
@@ -1269,6 +1296,8 @@ Do not hard-code URLs unnecessarily.
 
 # 44. MENU LINK HANDLING
 
+> **Elementor build:** menus = WordPress Menus in the Nav Menu widget (§106); see §145.
+
 The WordPress menu should handle:
 
 ```text
@@ -1284,6 +1313,8 @@ Do not hard-code the navigation in `header.php`.
 ---
 
 # 45. PARTNER ARCHIVE
+
+> **Elementor build:** Theme Builder **Archive** template + Loop Grid (§111) — not `archive-partner.php`.
 
 Partner archive should reproduce the existing partner listing design.
 
@@ -1312,6 +1343,8 @@ Only implement filters if the original site requires them.
 
 # 46. PARTNER SINGLE
 
+> **Elementor build:** Theme Builder **Single** template with Dynamic Tags (§111) — not `single-partner.php`.
+
 Partner detail should reproduce the existing Partner HTML template.
 
 Use:
@@ -1327,6 +1360,8 @@ Do not create a completely new partner layout.
 ---
 
 # 47. BLOG ARCHIVE
+
+> **Elementor build:** Theme Builder Archive template + Loop Grid (§112) — not `home.php` / `archive.php`.
 
 Blog listing must reproduce the existing blog HTML.
 
@@ -1345,6 +1380,8 @@ Use WordPress Posts.
 ---
 
 # 48. BLOG SINGLE
+
+> **Elementor build:** Theme Builder Single Post template (§112) — not `single.php`.
 
 Blog detail must reproduce the existing blog detail HTML.
 
@@ -1372,6 +1409,8 @@ Related Posts
 
 # 49. REUSABLE TEMPLATE PARTS
 
+> **Elementor build:** repeated sections = saved templates / Global Widgets / Loop Items (§104, §124) — not `template-parts/` PHP.
+
 If the HTML contains repeated sections, extract them.
 
 Example:
@@ -1393,6 +1432,8 @@ The goal is reusable and readable code.
 ---
 
 # 50. CSS CLASS PRESERVATION
+
+> **Elementor build:** no classes by habit (§114); a class exists only for an approved `custom.css` rule or a JS hook — and check its usage before renaming it.
 
 If JavaScript depends on:
 
@@ -1653,6 +1694,8 @@ Do not create files with random names.
 
 # 64. DEVELOPMENT ORDER
 
+> **Elementor build:** the build order is **§130**.
+
 Follow this order:
 
 ```text
@@ -1695,6 +1738,8 @@ Do not skip the inspection stage.
 ---
 
 # 65. BEFORE CODING: ARCHITECTURE REPORT
+
+> **Elementor build:** report the Elementor architecture (§97 inspect, globals §98, templates §124/§125, components §104) — not PHP template files.
 
 Before making major code changes, create an internal implementation plan containing:
 
@@ -1814,6 +1859,8 @@ Before modifying any component:
 ---
 
 # 70. FINAL QA CHECKLIST
+
+> **Elementor build:** the Final QA is **§128** — not this list.
 
 Before declaring the project complete:
 
@@ -1935,6 +1982,8 @@ Before declaring the project complete:
 
 # 71. FINAL DELIVERABLE
 
+> **Elementor build:** the deliverable and Definition of Done are in **§129**.
+
 The final result must be a complete WordPress theme that can be installed in:
 
 ```text
@@ -1954,6 +2003,8 @@ The theme must be production-ready.
 ---
 
 # 72. FINAL PRINCIPLE
+
+> **Elementor build:** the final goal is **§129**.
 
 Always prioritize:
 
@@ -2680,6 +2731,24 @@ Global Variables where appropriate
 
 Do not repeatedly enter the same value manually into individual widgets.
 
+## Required final state
+
+The final Elementor website should have one clear design system:
+
+```text
+Global Colors
+Global Typography
+Global Buttons
+Global Forms
+Global Container Width
+Global Spacing / Variables
+Border Radius
+Shadows
+Reusable Components
+```
+
+Values must be derived from the original HTML/CSS.
+
 ---
 
 # 99. GLOBAL COLORS
@@ -2720,6 +2789,14 @@ Global Color: Primary
 All relevant widgets
 ```
 
+## Color rule
+
+For every color ask:
+
+> Is this a site-wide design color?
+
+If yes, use an Elementor Global Color. Do not manually repeat the same hex/RGB value across many widgets.
+
 ---
 
 # 100. GLOBAL TYPOGRAPHY
@@ -2751,6 +2828,14 @@ Button
 ```
 
 Use Global Typography wherever the original design uses the same style. Do not manually repeat typography values on every widget.
+
+## Typography rule
+
+For every text element ask:
+
+> Is this a standard body, heading, label, or button style?
+
+If yes, use Elementor Global Typography. Only use custom typography for genuinely unique designs.
 
 ---
 
@@ -2795,6 +2880,16 @@ Spacing XXL
 ```
 
 The actual values must come from the original project. If the HTML/CSS already contains CSS variables such as `--spacing-md`, preserve that design logic where appropriate.
+
+## Spacing rule
+
+For every padding/margin/gap ask:
+
+> Is this part of the global design system or unique to this component?
+
+If global, use a Global Spacing/Variable. If unique, use a component-specific value.
+
+Do not create unnecessary one-off values.
 
 ---
 
@@ -3067,33 +3162,19 @@ Avoid `!important`.
 
 # 115. SPACING RULE
 
-For every padding/margin/gap ask:
-
-> Is this part of the global design system or unique to this component?
-
-If global, use a Global Spacing/Variable. If unique, use a component-specific value.
-
-Do not create unnecessary one-off values.
+→ Merged into **§102 Global Spacing / Variables** (Spacing rule). See §102.
 
 ---
 
 # 116. TYPOGRAPHY RULE
 
-For every text element ask:
-
-> Is this a standard body, heading, label, or button style?
-
-If yes, use Elementor Global Typography. Only use custom typography for genuinely unique designs.
+→ Merged into **§100 Global Typography** (Typography rule). See §100.
 
 ---
 
 # 117. COLOR RULE
 
-For every color ask:
-
-> Is this a site-wide design color?
-
-If yes, use an Elementor Global Color. Do not manually repeat the same hex/RGB value across many widgets.
+→ Merged into **§99 Global Colors** (Color rule). See §99.
 
 ---
 
@@ -3111,6 +3192,47 @@ Section widths
 ```
 
 Configure Elementor global container/layout settings accordingly. Do not randomly choose a container width.
+
+### Global container — set ONCE in Site Settings, never per container (MANDATORY)
+
+Set the container system globally, in **Site Settings → Layout**, before building any page:
+
+| Site Settings → Layout | Value comes from |
+|---|---|
+| **Content Width** — **every breakpoint** | the original CSS container `max-width` (e.g. `1200px`), then each breakpoint's stepped-down value |
+| **Container Padding** — desktop / tablet / mobile | the original CSS container side padding — set for every breakpoint |
+| **Gaps** (Widgets / Elements gap) | the global grid / column gap |
+| **Breakpoints** | the project breakpoints (§119) |
+
+**The container is responsive.** `--container` (and `--gutter`) change at the breakpoints, so the
+global Content Width and Container Padding are set on **each device** in Site Settings → Layout
+(switch the responsive icon: Widescreen, Desktop, Laptop, Tablet Extra, Tablet, Mobile Extra,
+Mobile) with the values from the original CSS media queries for the container. Example: 1200 → 1150 → 1105 → 1010 → 910 → 960 fixed → 100%.
+Never set only the desktop value and leave the smaller screens on Elementor's default.
+
+Then on every page and template:
+
+- **Outer section container = Boxed** with the width **left empty / Default**, so it inherits the
+  global Content Width. Never type a pixel width (`1180px`, `1240px`) or a side padding on each
+  container.
+- **Full-bleed sections** (background to the screen edge) = outer container **Full Width**, with
+  one **inner Boxed container on Default** that holds the content — so the content still lines up
+  with every other section.
+- **Inner / nested containers = Full Width (100%)** of their parent. Their gap and padding use
+  Global Spacing values (above), not one-off numbers.
+- Section top / bottom padding = the global section-spacing value; only the left / right padding
+  comes from the global Container Padding.
+- Need a narrower block (text column, form)? Give that **inner** element a max-width from the design,
+  keep the outer container on the global width.
+- Changing the site width later = change **one** value in Site Settings → Layout, and every page
+  follows. If a page still looks different, a container has a hard-coded width — remove it.
+- Never set the container width in `custom.css` or widget Custom CSS to fight the global setting.
+
+QA:
+- [ ] Site Settings → Layout has Content Width + Container Padding set on every breakpoint, and Gaps, set from
+      the original HTML/CSS.
+- [ ] No container has its own pixel width or side padding; content edges line up on every section
+      at desktop, tablet and mobile.
 
 ---
 
@@ -3130,13 +3252,15 @@ Use the original CSS media queries as the reference. Do not blindly rely on Elem
 
 # 120. ANIMATIONS
 
-If the original uses GSAP, ScrollTrigger, AOS, IntersectionObserver, CSS animations, Three.js, Swiper or other libraries, inspect the implementation first.
-
-Use Elementor Motion Effects only when they reproduce the original behavior accurately. If Elementor cannot reproduce it, preserve the required custom JavaScript.
+→ Merged into **§121 Animations — GSAP / Three.js with Elementor**. See §121.
 
 ---
 
-# 121. GSAP / THREE.JS WITH ELEMENTOR
+# 121. ANIMATIONS — GSAP / THREE.JS WITH ELEMENTOR
+
+If the original uses GSAP, ScrollTrigger, AOS, IntersectionObserver, CSS animations, Three.js, Swiper or other libraries, inspect the implementation first.
+
+Use Elementor Motion Effects only when they reproduce the original behavior accurately. If Elementor cannot reproduce it, preserve the required custom JavaScript.
 
 If GSAP or Three.js is present:
 
@@ -3227,21 +3351,7 @@ Avoid overlapping templates that produce duplicate headers, footers, or content.
 
 # 126. GLOBAL DESIGN SYSTEM — REQUIRED FINAL STATE
 
-The final Elementor website should have one clear design system:
-
-```text
-Global Colors
-Global Typography
-Global Buttons
-Global Forms
-Global Container Width
-Global Spacing / Variables
-Border Radius
-Shadows
-Reusable Components
-```
-
-Values must be derived from the original HTML/CSS.
+→ Merged into **§98 Elementor Global Design System** (Required final state). See §98.
 
 ---
 
@@ -3295,6 +3405,7 @@ Do not accept “close enough” when the original values can be reproduced accu
 - [ ] Global typography created and actually used.
 - [ ] Global spacing/variables established.
 - [ ] Container width matches original.
+- [ ] Container width + padding set once in Site Settings → Layout; no per-container widths (§118).
 - [ ] Responsive typography matches.
 - [ ] Repeated components are reusable.
 
@@ -3389,9 +3500,54 @@ Do not accept “close enough” when the original values can be reproduced accu
 - [ ] Tablet matches.
 - [ ] Mobile matches.
 
+## Pre-delivery sign-off — tick every box TWICE (summary of §146 + §147)
+
+Do not tell the user "done" until all are ticked after the **second** pass.
+
+### Setup & rules
+- [ ] Worked on staging only; no credentials in any file/reply; unique theme name.
+- [ ] CSS per §114 (no HTML widget / inline style for layout; classes only for approved rules).
+- [ ] Zero static px for spacing (Elementor controls AND custom.css); section spacing editable via Elementor Variables.
+- [ ] Global colours/fonts used; real client fonts uploaded; ™ ® 4 & % glyphs compared with design.
+- [ ] Repeating content = CPT + Loop Grid/Carousel; every loop image has a placeholder fallback (grey + site logo).
+
+### Design match (PDF zoomed, per section)
+- [ ] Border-radius, shapes, curves, icon sizes, alignment, left/centre text as in PDF.
+- [ ] Card/section padding equal on 4 sides (phone 20px); top and bottom section space equal.
+- [ ] Gaps 40/30/20 everywhere; icons/logos smaller on tablet/mobile; no image crop on mobile.
+- [ ] Buttons: text vertically centred, not full width on phones; optical centring in menu/tabs/inputs/page numbers.
+
+### Header / menu / footer
+- [ ] Top bar centred; device rules for location/phone/tagline; logo links home.
+- [ ] Mega menu: starts at header bottom, not cut, hover image works, no logo placeholder; active states right.
+- [ ] Mobile menu: custom burger, scroll lock, dividers, chevron toggle; 700–800 px OK.
+- [ ] Footer: hovers, email not cut, ® centred, copyright centred + last on mobile, social icons smaller.
+
+### Interactions
+- [ ] Sliders: arrows per design, disabled = not-allowed, gaps right, hover not cut, zoom on product images.
+- [ ] Logo tiles fully clickable → detail page; marquee speed; entrance animations play.
+- [ ] Forms: validation, checkbox above button; accordions/tabs/pagination work.
+
+### Content & pages
+- [ ] Every post type tested with temporary data in every view; empty fields hide cleanly; few/many entries OK.
+- [ ] All designed pages built (incl. detail templates and archives); slugs semantic (/faq/).
+- [ ] Breadcrumbs dynamic and correct (no "About / About").
+- [ ] Dummy content and links waiting on the client listed (links: §145).
+
+### Technical QA
+- [ ] 1920 / 1440 / 1366 / 1024 / 768 / 520 / 390 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
+- [ ] axe: one `<main>`, no duplicate landmarks, unique `<nav>` labels, icon-only names, contrast measured and reported.
+- [ ] Unique title + description ≤160 on every page incl. archives/search/404; noindex/canonical noted for launch.
+- [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
+- [ ] `PROJECT-SUMMARY.md` and `DAILY-LOG.md` updated; final report by QA bug type (fixed / clean / needs decision).
+
 ---
 
-# 129. DEFINITION OF DONE
+# 129. DEFINITION OF DONE AND FINAL GOAL
+
+**Final goal:** deliver a complete, responsive, fully functional WordPress website built with
+**Elementor Pro** that faithfully reproduces the original HTML website (⭐ §96), following WordPress
+best practices.
 
 The conversion is complete only when:
 
@@ -3435,13 +3591,17 @@ Styling              → Native Elementor controls only (no Custom CSS, no class
 <head> meta          → <meta name="DeveloperAI" content="Developer Skill"> on every page (§141)
 Favicon              → WordPress Site Icon made from the logo icon (§144)
 WooCommerce (if any) → Theme Builder + native Woo widgets, CSS in custom.css, woocommerce.js (§142)
+Images & SVGs        → accessible, SEO-friendly names and alt text (§136), Media Library once (§140)
+Placeholders         → consistent placeholders (§137); 404 + Search pages built (§138)
+Links                → every clickable element linked, no `#` (§145)
+Content              → manageable by the client in WordPress / Elementor
 ```
 
 Normal content changes should be possible through WordPress/Elementor without manually editing the original HTML files.
 
 ---
 
-# 130. FINAL ELEMENTOR DEVELOPMENT PRINCIPLE
+# 130. ELEMENTOR BUILD ORDER (DEVELOPMENT PRINCIPLE)
 
 Always follow:
 
@@ -3548,19 +3708,7 @@ Set this before building internal links, then flush permalinks (save the Permali
 
 # 134. FINAL GOAL
 
-Deliver a complete, responsive, fully functional WordPress website built with **Elementor Pro** that faithfully reproduces the original HTML website, while following WordPress best practices and ensuring:
-
-```text
-Proper Global Styling
-Reusable Components / Templates
-Correct Internal Linking (Dynamic Tags)
-Optimized WebP Images
-Post name Permalinks
-Manageable Content
-No Custom CSS in widgets / No class-based CSS
-Accessible SVGs and images, SEO-friendly image names
-Consistent placeholders, working 404 and Search pages
-```
+→ Merged into **§129 Definition of Done and Final Goal**. See §129.
 
 ---
 
@@ -3971,6 +4119,37 @@ Thank You        order received + order details
 Mini-cart        header icon + count, dropdown / drawer, empty state
 ```
 
+**Mini-cart dropdown — must look right (lesson from a real build)**
+
+*Seen on a build: the header cart dropdown was too narrow and ran off the screen, product names broke
+letter by letter in heading size, prices were huge, "View cart" wrapped and Checkout / subtotal were
+cut. Build it like this:*
+
+- **Panel:** fixed width as per design (about `360–400px` on desktop), opens under the cart icon,
+  aligned to the icon's **right** edge, and **never goes past the viewport** (`max-width:
+  calc(100vw - 2 × gutter)`). On mobile: full-width dropdown or a side drawer, as per design.
+- **Height:** the items list has a `max-height` and scrolls inside; subtotal and buttons stay visible
+  at the bottom.
+- **Item row:** thumbnail fixed (about `64–80px`, same ratio as the product card) + details column
+  that takes the rest (`min-width: 0`). The details column must never be squeezed to a few px.
+- **Product name:** body / small text style (not H1–H6 global), normal word wrap — never broken letter
+  by letter — max 2 lines (`line-clamp`), linked to the product.
+- **Variation meta, quantity × price:** small text; sale price shows `<del>` / `<ins>` correctly.
+  Remove (×) icon with an `aria-label`.
+- **Subtotal:** one row — label left, amount right.
+- **Buttons:** **View cart** and **Checkout** both visible, site button style (smaller size), text
+  never wraps; side by side on desktop, full width stacked on small screens if needed.
+- **Empty cart:** short message + "Shop now" button, not a blank box.
+- **Behaviour:** opens on click (and on hover on desktop only if the design does), closes on outside
+  click and `Esc`, sits above the header (`z-index`) and is not clipped by a parent
+  `overflow: hidden`. Count badge and content update without reload (step 8).
+- **Test it** with 1, 5 and 10+ items, a long product name, a variable product and a sale product, at
+  every breakpoint and on a non-shop page.
+- **Elementor:** use the **Menu Cart** widget (Cart Type = Mini Cart / Side Cart as per design) and set
+  its own style controls first — container width, product title / price typography (Global body
+  text), divider, subtotal, View cart / Checkout button typography and padding. Only what those
+  can't match goes in `custom.css` (§114).
+
 **Responsive** — use the site's own breakpoints, then check each screen at every breakpoint:
 - Product grid: desktop columns as per design → tablet 2 → mobile 1 or 2 (as per design).
 - Single product: gallery and summary side by side on desktop → stacked on tablet/mobile.
@@ -4029,6 +4208,8 @@ Mini-cart        header icon + count, dropdown / drawer, empty state
       — no static product name, price, image or button anywhere (step 6a).
 - [ ] Simple and variable products add to cart; variation price / image / stock update.
 - [ ] Quantity +/- works and enables "Update cart"; mini-cart count updates without reload.
+- [ ] Header mini-cart dropdown: right width, inside the screen, names readable (no letter-by-letter
+      break), View cart + Checkout + subtotal visible, empty state, works on mobile.
 - [ ] Coupon, shipping and tax totals are correct.
 - [ ] A test order completes with sandbox payment; customer and admin emails arrive and are branded.
 - [ ] My Account: login, register, orders, addresses, account details and password reset work.
@@ -4084,7 +4265,7 @@ the project has a `CLAUDE.md` / theme docs from the earlier build.
 | CSS / design (custom.css) | §114, §135 |
 | Reusable components / templates | §104, §124, §125 |
 | Responsive | §119 |
-| Animations / GSAP / JS | §120, §121, §135 |
+| Animations / GSAP / JS | §121, §135 |
 | Forms | §28 |
 | SEO / meta | §29, §141 |
 | Favicon / site icon | §144 |
@@ -4417,47 +4598,9 @@ Legend: **[R]** = responsive-specific.
 
 ---
 
-# 148. PRE-DELIVERY SIGN-OFF (TICK EVERY BOX — TWICE)
+# 148. PRE-DELIVERY SIGN-OFF
 
-Summary of §146 + §147. Do not tell the user "done" until all are ticked after the **second** pass.
-
-## Setup & rules
-- [ ] Worked on staging only; no credentials in any file/reply; unique theme name.
-- [ ] CSS per §114 (no HTML widget / inline style for layout; classes only for approved rules).
-- [ ] Zero static px for spacing (Elementor controls AND custom.css); section spacing editable via Elementor Variables.
-- [ ] Global colours/fonts used; real client fonts uploaded; ™ ® 4 & % glyphs compared with design.
-- [ ] Repeating content = CPT + Loop Grid/Carousel; every loop image has a placeholder fallback (grey + site logo).
-
-## Design match (PDF zoomed, per section)
-- [ ] Border-radius, shapes, curves, icon sizes, alignment, left/centre text as in PDF.
-- [ ] Card/section padding equal on 4 sides (phone 20px); top and bottom section space equal.
-- [ ] Gaps 40/30/20 everywhere; icons/logos smaller on tablet/mobile; no image crop on mobile.
-- [ ] Buttons: text vertically centred, not full width on phones; optical centring in menu/tabs/inputs/page numbers.
-
-## Header / menu / footer
-- [ ] Top bar centred; device rules for location/phone/tagline; logo links home.
-- [ ] Mega menu: starts at header bottom, not cut, hover image works, no logo placeholder; active states right.
-- [ ] Mobile menu: custom burger, scroll lock, dividers, chevron toggle; 700–800 px OK.
-- [ ] Footer: hovers, email not cut, ® centred, copyright centred + last on mobile, social icons smaller.
-
-## Interactions
-- [ ] Sliders: arrows per design, disabled = not-allowed, gaps right, hover not cut, zoom on product images.
-- [ ] Logo tiles fully clickable → detail page; marquee speed; entrance animations play.
-- [ ] Forms: validation, checkbox above button; accordions/tabs/pagination work.
-
-## Content & pages
-- [ ] Every post type tested with temporary data in every view; empty fields hide cleanly; few/many entries OK.
-- [ ] All designed pages built (incl. detail templates and archives); slugs semantic (/faq/).
-- [ ] Breadcrumbs dynamic and correct (no "About / About").
-- [ ] Dummy content and links waiting on the client listed (links: §145).
-
-## Technical QA
-- [ ] 1920 / 1440 / 1366 / 1024 / 768 / 520 / 390 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
-- [ ] axe: one `<main>`, no duplicate landmarks, unique `<nav>` labels, icon-only names, contrast measured and reported.
-- [ ] Unique title + description ≤160 on every page incl. archives/search/404; noindex/canonical noted for launch.
-- [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
-- [ ] `PROJECT-SUMMARY.md` and `DAILY-LOG.md` updated; final report by QA bug type (fixed / clean / needs decision).
-
+→ Merged into **§128 Elementor Final QA** (Pre-delivery sign-off — tick every box twice). See §128.
 
 ---
 
@@ -4497,4 +4640,4 @@ Summary of §146 + §147. Do not tell the user "done" until all are ticked after
 Global Colours → Global Fonts (real client fonts) → Elementor Variables for spacing (section, card, gap, gutter, per breakpoint) → saved components (heading, button, card, loop items, CTA) → Header/Footer → pages → CPT templates. Building pages before the variables exist is what creates static-px and inconsistent-gap bugs.
 
 ## 149.6 Honest limit
-These sections lower the bug count a lot, but they do not guarantee zero. Every new project has its own design details, so the two-pass self-QA (§146.10, §148) and the zoomed PDF compare stay mandatory. Any new kind of bug → fix it, then add one line to §146/§147.
+These sections lower the bug count a lot, but they do not guarantee zero. Every new project has its own design details, so the two-pass self-QA (§146.10, §128 pre-delivery sign-off) and the zoomed PDF compare stay mandatory. Any new kind of bug → fix it, then add one line to §146/§147.
