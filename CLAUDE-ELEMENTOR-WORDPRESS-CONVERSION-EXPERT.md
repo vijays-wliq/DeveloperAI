@@ -11,6 +11,16 @@
 >
 > **SITE ALREADY BUILT, ONLY AN UPDATE?** Use **§143 Quick Update Mode** — read only the matching section and go straight to the point.
 
+> **HOW TO USE THIS FILE — PICK THE MODE FIRST**
+>
+> | Project type | Follow | Ignore |
+> |---|---|---|
+> | HTML → custom PHP theme (no page builder) | §1–§72 | §96–§149 |
+> | Existing WordPress theme to update/extend | §73–§95 (+ §1–§72 for new parts) | — |
+> | HTML / PDF / Figma → **Elementor Pro** (usual WLIQ case) | §96–§149 (+ §23–§33, §39–§44 for PHP, SEO, a11y) | §34 "Do not use Elementor" |
+>
+> §146–§149 (lessons, bug library, sign-off, build-right-first-time) apply to **every Elementor project**. The numbers in them (gaps 40/30/20, card padding 40/30/25/20, wave height 35–41 px, 2 hero slides, 4 s marquee…) are **examples from the Buell Recreation project** — on a new project always take the values from the new design. The *rule* (e.g. "set the gap at every breakpoint", "same padding on 4 sides") is what carries over.
+
 ---
 
 # 1. PRIMARY OBJECTIVE
@@ -1841,6 +1851,7 @@ Before declaring the project complete:
 - [ ] Every standard page works.
 - [ ] Images work.
 - [ ] Internal links work.
+- [ ] Every button, card, logo, menu and footer link is set — no `#` / empty links (§145).
 
 ## Partners
 
@@ -2586,19 +2597,19 @@ breakpoint before calling it finished.
 1. **Native first.** Wherever possible, build every section with native Elementor widgets and
    features: containers, widgets, Global Settings, Motion Effects, Theme Builder, Loop Grid, Dynamic
    Tags.
-2. **Reusable CSS class only where native can't.** If a design detail or function cannot be
-   achieved with Elementor, give that section/element an appropriate, reusable CSS class name
-   (`Advanced → CSS Classes`). Name it by role, e.g. `card-hover-lift`, `logo-placeholder`,
-   `section-curved-bg`. Never name it after a page or a colour.
+2. **No class-based CSS. CSS only with approval.** If a design detail or function cannot be
+   achieved with native Elementor, do not silently add CSS or a class. Report it, explain why the
+   native controls are not enough, and get approval first (§114). A class goes on the element only
+   for an approved rule.
 3. **Global styles.** Manage reusable styles globally wherever possible (Global Colors, Global
-   Typography, Site Settings, CSS variables) so the site stays consistent.
-4. **All custom CSS lives in the theme's assets directory** (`assets/css/custom.css`, §135).
+   Typography, Site Settings, Elementor Variables) so the site stays consistent.
+4. **Approved CSS lives only in the theme's assets directory** (`assets/css/custom.css`, §135).
    - Never put it in a widget's `Advanced → Custom CSS`.
    - Never put it in Page Settings → Custom CSS.
    - Never put it in Site Settings → Custom CSS or in inline styles.
 5. **Reusable, scalable, component-based.**
    - Build each repeated block once as a component (saved template / Global Widget / Loop Item, §104).
-   - Style it once by its class, then reuse it.
+   - Style it once with globals and its own style controls, then reuse it.
    - Never copy and restyle it page by page.
 
 ```text
@@ -3030,48 +3041,27 @@ Use the HTML widget only for small pieces that genuinely require raw HTML.
 
 ---
 
-# 114. CSS STRUCTURE — NO WIDGET CSS, REUSABLE CLASS-BASED CSS ONLY — MANDATORY
+# 114. NO CUSTOM CSS / NO CLASS-BASED CSS — MANDATORY
 
-**Do not add Custom CSS in any widget.** The widget-level `Advanced → Custom CSS` field must stay
-empty on every widget, container and template. The same goes for Page Settings → Custom CSS and
-Site Settings → Custom CSS. No inline `style=""` either.
+**Do not add Custom CSS in any widget.** The widget-level `Advanced → Custom CSS` field must stay empty on every widget, container, and template.
 
-**Styling order (native first — see the ⭐ Main Requirement in §96):**
+**Do not write class-based CSS.** Do not create custom CSS classes (via `Advanced → CSS Classes` or otherwise) and then write CSS rules targeting them — not in widgets, page settings, Site Settings Custom CSS, or theme stylesheets.
+
+All styling must be done through native Elementor controls, in this order:
 
 ```text
 Elementor Global Settings (Colors, Typography, Buttons, Forms, Layout)
     ↓
 Global Variables
     ↓
-Native Elementor Widget / Container Style Controls
-    ↓
-ONLY where native Elementor cannot match the original HTML:
-reusable CSS class + CSS in assets/css/custom.css
+Elementor Widget / Container Style Controls
 ```
 
-**Section-level classes, wherever required.** When a section or element needs CSS that Elementor
-cannot do, give it an appropriate, reusable class (`Advanced → CSS Classes`).
-- Section classes look like `about-section` or `testimonials-section`.
-- Shared components get a component class, e.g. `card-hover-lift` or `logo-placeholder`.
-- Write the styling for that class **once** in `assets/css/custom.css` (§135) and reuse the class.
-  Don't repeat the same padding, colours or font sizes widget by widget.
+If a design detail genuinely cannot be reproduced with native Elementor controls, do not silently add CSS. Report it, explain why the controls are insufficient, and get approval before using any CSS. Approved CSS goes **only** in the theme's `assets/css/custom.css` (see §135) — never in a widget.
 
-**CSS variables for common values.** Font sizes, colours, spacing, radius and other repeated values
-are CSS variables, never repeated raw values. Use Elementor's own global variables where they exist
-(`--e-global-color-<id>`, `--e-global-typography-<id>-font-size` …). Put any extra shared values in
-one `:root` block at the top of `custom.css` (e.g. `--section-space`, `--container-gutter`).
+**Exception for approved CSS:** when a rule in custom.css has been approved, a class on the Elementor element may be added **only for that rule** (e.g. a curved-panel mask, a full-bleed carousel). Keep a list of these classes; never add "section-name" classes by habit (§147.1 rule 5). Before writing CSS, check whether a native control or a native widget can do it — on Buell the client rejected custom CSS for card hover, logo marquee and waves and asked for native hover, the Elementor carousel and native shape dividers instead.
 
-**Global spacing.**
-- Section top/bottom spacing is one variable (e.g. `--section-space`) applied through the section
-  class, so it matches across every section.
-- Container left/right spacing is set **once** globally, either through Site Settings → Layout or
-  one rule in `custom.css`. Never re-enter it in each section.
-
-**Keep the CSS clean, scalable and reusable:**
-- One comment banner per section or component.
-- Class names describe a role, not a page or a colour.
-- No duplicate rules.
-- Avoid `!important`.
+Avoid `!important`.
 
 ---
 
@@ -3292,8 +3282,8 @@ Do not accept “close enough” when the original values can be reproduced accu
 - [ ] Hover effects and animations match.
 - [ ] Buttons, links and every interactive element work like the original.
 - [ ] Any other custom design or functionality from the HTML is reproduced.
-- [ ] Native Elementor used wherever possible. Reusable CSS classes only where it couldn't match.
-- [ ] All custom CSS is in the theme's `assets/css/custom.css`. None is in widget, page or Site
+- [ ] Native Elementor used everywhere. No class-based CSS; any CSS was approved first (§114).
+- [ ] Approved CSS is only in the theme's `assets/css/custom.css`. None is in widget, page or Site
       Settings Custom CSS.
 - [ ] Repeated blocks are components (template / Global Widget / Loop Item), not page-by-page copies.
 - [ ] Every page has `<meta name="DeveloperAI" content="Developer Skill">` in `<head>` (§141).
@@ -3361,8 +3351,8 @@ Do not accept “close enough” when the original values can be reproduced accu
 - [ ] Elementor Editor works.
 - [ ] Frontend works.
 - [ ] No widget contains Custom CSS (`Advanced → Custom CSS` empty everywhere).
-- [ ] Every section has a section-level class; shared styling lives in `custom.css`, not inline.
-- [ ] Font sizes, colours and spacing use CSS variables / Elementor globals, not repeated raw values.
+- [ ] No class-based CSS was written; classes exist only for approved `custom.css` rules (§114).
+- [ ] Font sizes, colours and spacing use Elementor globals / Variables, not repeated raw values.
 - [ ] Section spacing is consistent; container left/right spacing is set once globally.
 - [ ] Repeated sections/blocks saved as reusable templates / Global Widgets.
 - [ ] If a new theme was created: `assets/js/vendor.js` and `assets/css/custom.css` exist and are enqueued correctly.
@@ -3441,7 +3431,7 @@ and:
 Internal Links       → Elementor Dynamic Tags (Internal URL → Content)
 Images               → Optimized WebP
 Permalink Structure  → Post name
-Styling              → Elementor globals + section classes + reusable CSS in custom.css (no widget Custom CSS, no inline styles)
+Styling              → Native Elementor controls only (no Custom CSS, no class-based CSS; approved CSS only in custom.css)
 <head> meta          → <meta name="DeveloperAI" content="Developer Skill"> on every page (§141)
 Favicon              → WordPress Site Icon made from the logo icon (§144)
 WooCommerce (if any) → Theme Builder + native Woo widgets, CSS in custom.css, woocommerce.js (§142)
@@ -3540,6 +3530,7 @@ Rules:
 - This keeps links working when slugs or domains change.
 - Navigation menus use WordPress Menus (see Header/Footer sections), not hardcoded links.
 - Verify every internal link after the build — no 404s.
+- Every clickable element must be linked (link map, no `#` / empty links) — see §145.
 
 ---
 
@@ -3566,7 +3557,7 @@ Correct Internal Linking (Dynamic Tags)
 Optimized WebP Images
 Post name Permalinks
 Manageable Content
-No Custom CSS in widgets / Reusable, variable-driven CSS in custom.css
+No Custom CSS in widgets / No class-based CSS
 Accessible SVGs and images, SEO-friendly image names
 Consistent placeholders, working 404 and Search pages
 ```
@@ -3583,7 +3574,7 @@ theme-name/
     ├── js/
     │   └── vendor.js      ← third-party libraries (GSAP, ScrollTrigger, Swiper, Three.js, etc.)
     └── css/
-        └── custom.css     ← the ONLY place for custom CSS (section classes, variables, components)
+        └── custom.css     ← the ONLY place for approved custom CSS
 ```
 
 ### vendor.js
@@ -3592,11 +3583,11 @@ theme-name/
 - Do not load the same library twice (check whether Elementor or a plugin already loads it).
 - Enqueue with `wp_enqueue_script()` in the footer, with correct dependencies and version numbers.
 - Load only on the pages that need it where practical.
+- It may also hold small, approved front-end fixes that Elementor cannot do (e.g. adding a missing `aria-label`, a menu-chevron toggle). Fix things in the template/PHP first; use JS only when the markup comes from Elementor/Pro and cannot be changed. Comment each fix with what it fixes.
 
 ### custom.css
 
-- The single home for all custom CSS (§114): the `:root` variables block, global container spacing,
-  section-level classes and reusable component classes. Never put CSS in widget `Advanced → Custom CSS`.
+- The single home for any CSS that §114 approved. Never put CSS in widget `Advanced → Custom CSS`.
 - Do not use it to replace things Elementor Global Settings or widget controls can handle.
 - Comment each rule with the section/component it belongs to.
 - Enqueue with `wp_enqueue_style()` after Elementor's styles, so its rules apply in the right order.
@@ -3692,19 +3683,19 @@ placeholder image**. Never leave an empty space, a broken image or a random stoc
 - Create one placeholder per ratio the design uses (e.g. `placeholder-16x9.webp`,
   `placeholder-4x3.webp`, `placeholder-1x1.webp`). Upload them once to the Media Library and reuse
   them everywhere. Don't make a new one per section.
-- Lock the ratio with a reusable class in `custom.css` (e.g. `.img-placeholder` with
-  `aspect-ratio` and `object-fit: cover`). Don't set heights widget by widget.
+- Lock the ratio with native controls (Image widget height + Object Fit: Cover, set per
+  breakpoint). Save the placeholder setup as one reusable component. CSS only after §114 approval.
 - Give placeholders alt text that names the intended content (e.g. `Team photo placeholder`) so
   they are easy to find and replace.
 
 ### Logo placeholders
 
-- Light gray / neutral background (a CSS variable, e.g. `--placeholder-bg`).
+- Light gray / neutral background (a Global Color, e.g. `Placeholder BG`).
 - Logo centered **both vertically and horizontally** inside a fixed-ratio box (flex,
   `align-items: center; justify-content: center`).
 - Every logo box is the same size, and the logo keeps its proportions (`object-fit: contain`,
   max width/height).
-- One reusable class (e.g. `.logo-placeholder`) for every logo grid and logo slider on the site.
+- One saved component / Loop Item for every logo grid and logo slider on the site (no class-based CSS, §114).
 
 ### Responsive and consistent
 
@@ -3909,7 +3900,7 @@ Take the image widths and ratios from the HTML design, not from these sample num
 - **Site Settings → WooCommerce:** set the Cart, Checkout, My Account, Terms and Purchase Summary
   pages there.
 - **Styling order:** Elementor Global Colors / Typography / Buttons / Forms → the widgets' own style
-  controls → only where those can't match the HTML, a reusable class + CSS in `custom.css` (§114).
+  controls → only where those can't match the HTML, report it and get approval, then CSS in `custom.css` (§114).
   Never widget Custom CSS.
 - Header mini-cart = the **Menu Cart** widget, inside the Theme Builder header (§105).
 
@@ -3926,9 +3917,31 @@ Take the image widths and ratios from the HTML design, not from these sample num
 - Payment gateways in **sandbox / test mode on staging**. Keys never go in code, docs or chat.
 - WooCommerce → Emails: logo, colours and footer text match the brand.
 
+## 6a. Products are ALWAYS dynamic — never static
+
+*Wherever a product appears on the site, it comes from WooCommerce. Never hard-code a product.*
+
+- **Every place a product shows** — home page featured / new / best-seller sections, product
+  sliders and carousels, "related" / "you may also like", category tiles, mega-menu product cards,
+  banners with a price, landing pages — pulls the product from WooCommerce. Not only the Shop page.
+- **Never static:** no product built from Heading + Image + Text + Button widgets, no price typed
+  into a Text Editor, no hand-made product card copied section to section. A static card goes stale
+  the moment the price or stock changes and its button doesn't add to cart.
+- **How to pull them (Elementor):** the **Products** widget, or **Loop Grid / Loop Carousel** with
+  source = **Products** and the product **Loop Item** template (the same card as the shop, step 5).
+  Sliders = Loop Carousel, not a static Image Carousel / Slides widget.
+- **Admin chooses, the query renders:** set the widget's Query — category, tag, featured, on sale,
+  best sellers, newest, or manual selection — plus how many to show and the order. Inside the Loop
+  Item use dynamic tags (Product Title, Product Price, Featured Image, Product Rating, Add to Cart,
+  Sale / Stock badge) — no typed values.
+- **Figma / HTML shows product cards?** Create those products in WooCommerce (importer, CRUD —
+  step 6) and point the widget at them. The design's cards are the *look* of the card, not its data.
+- Empty state: set the widget's "Nothing found" message or hide the section — never fall back to
+  static placeholder products.
+
 ## 7. Theme-level CSS — design + responsive
 
-Write all WooCommerce styling in `assets/css/custom.css`, under one `/* ===== WooCommerce ===== */` banner, after the native Elementor styling has been used (§114).
+Write all WooCommerce styling in `assets/css/custom.css`, under one `/* ===== WooCommerce ===== */` banner, after the native Elementor styling has been used, and only for CSS that was approved first (§114).
 
 **Rules**
 - Use the same `:root` variables (colours, fonts, font sizes, spacing, radius) as the rest of the
@@ -4012,6 +4025,8 @@ Mini-cart        header icon + count, dropdown / drawer, empty state
 - [ ] WooCommerce buttons, inputs and notices use the site's global styles; no raw values, no
       `!important` fights.
 - [ ] No horizontal scroll at 320px; cart and checkout are usable on mobile.
+- [ ] Every product on the site (home, sliders, related, menus, landing pages) is pulled from WooCommerce
+      — no static product name, price, image or button anywhere (step 6a).
 - [ ] Simple and variable products add to cart; variation price / image / stock update.
 - [ ] Quantity +/- works and enables "Update cart"; mini-cart count updates without reload.
 - [ ] Coupon, shipping and tax totals are correct.
@@ -4073,11 +4088,13 @@ the project has a `CLAUDE.md` / theme docs from the earlier build.
 | Forms | §28 |
 | SEO / meta | §29, §141 |
 | Favicon / site icon | §144 |
-| Images / SVG / placeholders / Media Library | §131, §136, §137, §140 |
-| Internal links / permalinks | §132, §133 |
+| Images / SVG / placeholders / Media Library | §131, §136, §137, §140, §149.2–§149.3 |
+| Internal links / permalinks | §132, §133, §145 |
+| Button / card / menu links not set | §145 |
 | 404 / Search / Sitemap | §138, §139 |
 | Partners / Blog | §111, §112 |
 | WooCommerce (add or change) | §142 |
+| Known bugs / lessons / final sign-off | §146–§149 |
 
 Always-on rules still apply in quick mode: no inline styles / widget CSS, CSS variables, images
 once in the Media Library, the DeveloperAI meta tag, never expose login details.
@@ -4147,3 +4164,337 @@ update_option( 'site_icon', $site_icon_attachment_id );
 - [ ] View source: the icon tags come from WordPress Site Icon, with no duplicate `rel="icon"` tags.
 - [ ] The icon is sharp and readable at 16 px, on a light and a dark browser tab.
 - [ ] `apple-touch-icon` (180 × 180) loads.
+
+---
+
+# 145. LINKING — EVERY CLICKABLE ELEMENT IS LINKED (MANDATORY)
+
+*Every button, link, card, logo, menu item and icon that looks clickable must go to its real
+destination. Nothing is left as `#`, empty, or unlinked.*
+
+## 1. Make a link map first
+
+Before building pages, list every clickable element from the HTML site (and the Figma prototype, if any):
+logo, header menu + dropdowns, header CTA, hero buttons, section buttons / "Learn more" / "Read more",
+service / blog / team / product / category cards, breadcrumbs, pagination, footer menus, footer CTA,
+social icons, phone, email, address, legal links (Privacy, Terms, Cookies), 404 / Search page links.
+
+For each one write: **element → page / post / product / external URL**. Keep this as
+`link-map.md` in the theme docs.
+
+- Destination is in the design / HTML → use it (`about.html` → the WordPress **About** page).
+- Destination page doesn't exist yet → create that page (or ask), don't leave the link empty.
+- Destination is unclear (no target in the design) → **ask the user** with the list of unclear
+  links. Never guess and never silently leave `#`.
+
+## How to set each link (Elementor)
+
+- Internal page / post → **Link → Dynamic Tags → Internal URL → Content** (§132). Never a typed URL.
+- Product / product category → the product's own link from the **Loop Item** / WooCommerce widgets
+  (Product Title, Product Image, Add to Cart) or Internal URL → the product / category.
+- Archive / category / tag → Dynamic Tags → Archive URL / Internal URL → Taxonomy.
+- Menus → WordPress Menus in the Nav Menu widget (§106) — every menu item points to a real page.
+- Whole card clickable → set the link on the Loop Item / container (Elementor container link), not
+  only on the small "Read more" text.
+- Phone → `tel:`, email → `mailto:`, address → Google Maps link — taken from Site Settings / ACF
+  options, not typed again per widget.
+- Social icons → the real profile URLs from the design / client, opened in a new tab with
+  `rel="noopener"`.
+
+## Never
+
+- `href="#"`, `href=""`, `javascript:void(0)` or a button with no link — except real toggles (mobile
+  menu, accordion, tab, modal open), which are `<button>` elements, not links.
+- A hard-coded domain (`https://staging.site/...`, `localhost`) or a `.html` link.
+- A link to the wrong page because it was copied from another section.
+
+## Final link check (before handover)
+
+- Search the theme / templates / exported content for `href="#"`, `href=""` and `.html` — fix every hit.
+- Click (or crawl) every link on every page: header, footer, each section, cards, buttons, at
+  desktop and mobile menu. No 404, no link to `#`, no staging / localhost URL.
+- Report any link still waiting on the client (e.g. social profile not given) in the handover note.
+
+## QA
+
+- [ ] `link-map.md` exists and every clickable element on the site is in it.
+- [ ] No `href="#"`, empty href or `.html` link anywhere (except real toggle buttons).
+- [ ] Logo → Home; every menu item, CTA, button, card and footer link opens the correct page.
+- [ ] Product and category cards open the right product / category (WooCommerce sites).
+- [ ] Phone, email, map and social links work; external links open in a new tab with `rel="noopener"`.
+- [ ] No staging / localhost / hard-coded domain URLs; no 404 from any internal link.
+
+---
+
+# 146. LESSONS LEARNED — ISSUES QA ALREADY FOUND (DO NOT REPEAT)
+
+These came from the Buell Recreation build. On any new Elementor project, **check each one yourself and fix it before anyone else sees the site.** If you hit a new kind of issue, fix it and add it here.
+
+## 146.1 Landmarks & structure
+- Every page needs exactly **one `<main>`** (role="main" on the page content container). Check pages, single, archive, 404 and search templates.
+- The Theme Builder Header/Footer *location* already renders `<header>` / `<footer>`. The top container inside the template must be `html_tag = div`, never `header` / `footer`, otherwise the page gets duplicate `banner` / `contentinfo` landmarks.
+- Loop Grid / Carousel containers must not carry `role="list"` unless every child is `role="listitem"`. Remove the stray role. Same for `.elementor-posts-container` on search/archive.
+- One `<h1>` per page, no skipped heading levels (a card `<h3>` after the `<h1>` with no `<h2>` is a bug — fix the tag, keep the visual size through the style controls).
+
+## 146.2 Accessibility names
+- Every icon-only link/button gets an `aria-label`: social icons (name from the network), slider arrows, off-canvas open/close, card arrows (use the card heading).
+- When a page has more than one `<nav>`, each needs a **unique** `aria-label` (Main menu, Footer – Markets, Footer – Company…).
+- **Colour contrast is a QA bug.** Test every text/background pair with axe: white on a light brand blue/green usually fails (below 4.5:1, large text 3:1). Do NOT silently change the brand colour — list the failing pairs (ratio + where) in the handover so the client picks a darker token. Never hide the fix in custom CSS.
+
+## 146.3 Text & symbols
+- Superscripts (®, ™) inside headings, banners and breadcrumbs must render as a real `<sup>`. Breadcrumb/label code that uses `esc_html()` prints `<sup>` as raw text — use `wp_kses( $label, [ 'sup' => [] ] )`.
+- A ® styled as a knocked-out disc can show a blank circle if the glyph colour equals the disc colour. Set the glyph ink from the surrounding text luminance and look at it on both dark and light backgrounds.
+
+## 146.4 Breadcrumbs & menus
+- Breadcrumb must not repeat the current page ("About / About"): skip a menu ancestor whose object id equals the current page.
+- An item in several categories shows only the first in the breadcrumb; decide on purpose (primary category) and note it.
+- **Mega-menu hover image:** never fall back to a logo/placeholder. Fallback chain = featured image → gallery → product image → category banner → nothing. When there is no image, restore the default panel image.
+- New CPT entries do **not** appear in a static WP menu. Say so, or build the menu column from a query.
+
+## 146.5 Page hierarchy
+- A sub-page of a section (e.g. Designers under Markets) must be a real child page (parent id + menu_order), use the same template/builder script as its siblings, and appear in the section's card list.
+- The parent landing page's card list shows **children only** — never the parent itself.
+- Give the parent its own landing content (banner + cards + contact panel) rather than leaving it empty.
+
+## 146.6 Dynamic content (CPT / ACF / Loop)
+- **Verify data flow for every post type:** create a temporary entry, fill every field, open every view where it should appear (single, archive, home carousel, related carousel, category page), then delete the temporary entry. Report what is manual (menus, relations) vs automatic.
+- Check empty states: an empty ACF field must hide its block, not show an empty box or "Lorem".
+- A "related / explore other…" carousel must query the **right source**. Example: brand page "Explore Other Product Categories" must loop **Product Categories** (taxonomy terms), not the brand gallery.
+- Never run `WP_Query` / `get_children` / `get_pages` inside an `elementor/query/*` hook — infinite recursion → HTTP 500. Alter the passed query object (`$query->set(...)`), or use `$wpdb` / post meta.
+- Don't post `acf` props to core REST endpoints that don't register them; post core fields only.
+
+## 146.7 SEO
+- Every page: unique `<title>` and meta description (≤160 characters, count them). Include the archive, search and 404 templates.
+- Never copy one page's SEO text to another (Markets once carried Designers' copy). When a page is split or renamed, rewrite its entry.
+- Staging is `noindex` → no canonical tag. Add "turn on search-engine visibility + check canonicals" to the launch checklist.
+
+## 146.8 Links & content
+- Links: §145. **List every link still waiting on the client and every placeholder/lorem block in the handover** so QA does not log them as bugs.
+- Read the copy: wrong excerpts pasted from another brand/page and test data (e.g. a "Visit Website" pointing to a search engine) are content bugs. Fix or list.
+
+## 146.9 Cache & tooling
+- Hosts like WP Engine cache query-string URLs. After a rebuild clear the Elementor cache (`DELETE /elementor/v1/cache`) and use a harmless cache-buster (not `?s=` — that triggers WordPress search).
+- `curl` may get 403 from host bot protection; verify links in a real browser run.
+
+## 146.10 SELF-QA — MANDATORY, TWO PASSES
+Before telling the user "done", run QA yourself **twice** (pass 2 after fixing pass 1):
+1. Crawl every page, CPT single/archive, taxonomy page, search and 404 at **1920, 1366, 1024, 390**.
+2. Per page record: console errors, failed requests, broken images, missing alt, horizontal overflow, clipped text, heading order, landmarks, axe violations (Playwright + axe-core), title/description, `#` links (§145) / placeholder content, form validation.
+3. Take screenshots and **look** at the header, mega menu, banner, cards and footer on desktop and mobile; measure spacing instead of guessing.
+4. Fix everything that is code. Anything that needs the client (colour, copy, URLs) goes in a short "needs decision" list.
+5. Final report grouped by QA bug type (Accessibility, SEO, Content, Links, Responsive, Functional) — what was fixed, what is clean, what is open.
+
+## 146.11 DOCUMENTATION HABIT
+- Keep `PROJECT-SUMMARY.md` (what exists, how to rebuild, content model, open items) and `DAILY-LOG.md` (newest first, what changed today) updated every working day so teammates can pick the project up cold.
+
+
+---
+
+# 147. BUG LIBRARY — EVERYTHING QA / THE CLIENT FOUND ON THE BUELL PROJECT (50+ ITEMS)
+
+**How to use this section:** it is a pre-flight checklist. Before you show ANY page, go through every line below and test it yourself at **1920 / 1440 / 1366 / 1024 / 768 / 520 / 390**. If an item is not applicable, skip it. If you meet a new kind of bug, fix it and add one line here. Sections 146 and 147 together are the "do not repeat" list.
+
+Legend: **[R]** = responsive-specific.
+
+**Numbers below are Buell values (examples).** On a new project keep the rule, take the number from the new design. Example: "gaps 40/30/20" means *decide one gap scale from the design and use it on every slider and grid at every breakpoint*.
+
+## 147.1 Working rules the client set (apply from day one)
+1. Work **directly on the staging site** through the REST API / Application Password. Never build locally. Never put credentials, tokens or private URLs in any file, reply, commit or chat.
+2. Create a **new, uniquely named theme/child theme** for the project (never reuse another project's theme name).
+3. Match the design **pixel-for-pixel from the PDF/Figma** — zoom in per section and measure (border-radius, shapes, spacing, icon size, text alignment). "Close enough" is a bug. Photos and hero text can be client-changed later, so build them as editable.
+4. CSS and styling: §114 — no HTML widget / raw markup / inline styles for layout.
+5. **No classes or IDs in Elementor unless truly required** (e.g. a class that custom.css needs). Do not add "section-name" classes by habit.
+6. **No static px for spacing** — margins, paddings, gaps use CSS variables (custom unit `var(--…)`), also inside `custom.css`. Section spacing must be editable in the admin (Elementor Variables, e.g. `section-space`, `section-top-space`, `section-bottom-space`, each with laptop/tablet/mobile values).
+7. Links: §145. **Never link to the live/old site.** Dummy content is OK only where real data is missing; list it in the handover.
+8. Build repeating content (projects, testimonials, team, brands, markets, categories, promotions, FAQ, areas) as **CPT + Loop Grid / Loop Carousel**, not copied static cards, so new entries show up automatically.
+9. Give the client one final **list of: pages built, checks done, what is missing, what needs their input**.
+
+## 147.2 Global header / top bar
+- Top bar items (phone, location, tagline) must be **vertically centred** — measure it; demo/custom fonts often sit low in the line box (see 147.6).
+- Top-bar content per device: keep the tagline on all devices; on small screens collapse phone/location to **icon-only** (text hidden) or move them into the menu. Never leave a half-shown mix. [R]
+- Right-side top-bar icons, search icon and logo shape must match the design; the whole logo click area works (links: §145).
+- Shape under the logo / curved header edge must match the PDF exactly at every width. [R]
+- Header sticky behaviour and z-index must not hide content or cut dropdowns.
+- Header "Products" mega panel starts **at the bottom edge of the header** (not overlapping it), is a floating card with the design's radius, and is **never cut off** (check desktop 1366–1920 with the panel open).
+
+## 147.3 Menus (desktop)
+- Submenu items carry the icon from the design; submenu panel layout (columns, photos) matches the design.
+- Hover on a top item = the design's hover style (pill/underline). **Active state:** when a sub-page is current, its top-level item is also active. Home must not look active because of an `#anchor` or query-string menu link — test on the bare URL, not just with `?shot=`.
+- Mega-menu image changes on hover of each product/brand link (fallback chain: 146.4).
+
+## 147.4 Mobile / off-canvas menu [R]
+- Hamburger uses a **custom uploaded SVG icon** (not the default Elementor icon) in the design's shape; check its size at 390/520/768.
+- When the menu opens: **page scroll is locked**, only the menu scrolls.
+- Menu rows: proper `li` borders/dividers and padding, clear tap targets, design look. Sub-menu chevron is a pure open/close toggle (does not navigate).
+- Everything keeps working at 700–800 px where tablets/landscape phones show the menu: banner arrows must not be touched by the menu or overlap content.
+- Social icons in the menu/footer are smaller on mobile.
+
+## 147.5 Footer
+- Copyright + privacy links: on small screens **centred and ordered last**; on a full-width bar the legal menu and copyright are centred.
+- Phone and email links have **hover states**; the email never gets cut off (test around 1208 px — use `minmax(max-content, …)` column).
+- ® / ™ symbols sit centred in their box; compare with the PDF zoomed in.
+- Social icons smaller on mobile; footer wave/curve matches the design.
+- Last section before the footer tucks under the wave by exactly the design's wave height (35–41 px); bottom padding matches the PDF. A section whose bottom space looks different from its top is a bug — view it, don't trust the numbers.
+
+## 147.6 Typography & fonts
+- Use the **client's real fonts** uploaded as Elementor Custom Fonts / local WOFF2 (remove placeholder fonts such as Sour Gummy when told). Keep exact weights; declare `@font-face` per real weight (a 100–900 range face can make 700 fall back to Arial bold).
+- Demo/trial font files have watermarked glyphs (e.g. digit 4, `& - ' % ! / ™ ®`). Use `unicode-range` so only real glyphs come from the font and symbols come from a fallback or a small subset font. Compare ™ and ® with the design — client reported them looking different.
+- Optical centring: trial fonts ride low in the line box → text looks low in buttons, header menu, tabs, page numbers, inputs. Fix with em-based offsets, then **measure** cap-height vs the box (not ink rows near rounded corners). Re-measure after the fix.
+- Form fields need a font with correct ascent/descent metrics or Chrome clips placeholder descenders.
+- Line-height: check multi-line card titles and big headings (a line-height bug was reported on link-card titles); h2 demo-font lift only when no intro follows.
+- Text that is left-aligned in the PDF must stay **left** at all widths (do not centre it on mobile unless the PDF does).
+- Title → content gap is **30 px (token)** on all pages and `section-title-wrap` bottom margin 30; use the token.
+- Text/logos in the hero or a brand wordmark that gets cut by the wave must scale and keep the cut as designed; supply it as SVG and make it scale down on mobile. [R]
+
+## 147.7 Spacing, sizing and responsive rules [R]
+- Container side padding is global (gutter variable) — never added per section. Same padding on **all four sides** of cards and sections on phones (**20 px, never 15**), as a variable.
+- Section top and bottom space must look equal when viewed; check every band, panel and CTA.
+- Card padding variable (`--card-space`) = equal on 4 sides: 40 → 30 (≤1365) → 25 (≤991) → 20 (≤767).
+- **Slider/loop gaps:** 40 desktop → 30 → 20, same on every page. Set the carousel gap (`image_spacing_custom`) at **every breakpoint explicitly** — an inherited value showed 16 px in the editor and a `var()` gap became 0, so carousel gaps stay in px.
+- Icons and logos must be **smaller on tablet/mobile** (client repeatedly found them too big). Badge/icon glyph is centred with flex, not padding; check every icon badge.
+- Brand logos in loop cards: width 100% + a max-width that steps down per breakpoint.
+- Responsive typography steps per the design; at phone width a big number/heading must not be tiny (404 text) or huge.
+- Buttons never stretch to 100 % width on phones; button text is vertically centred.
+- Photos do **not crop** on mobile unless the PDF crops (About "Our Story" photo bug): use auto height ≤991. Inclusive/background photos keep behaving as background at all widths.
+- A section with icon + title + text centred on mobile (e.g. "Why Communities") centres **all three**; its icons may be larger only for that section.
+- Fixed breakpoints: do not leave a value for 991 and 575 inconsistent (client set 767 = 36 px, 991 and below = 40 px). Ask which value applies at each breakpoint or copy the design.
+- Forms: checkbox row is placed **above** the Send button on all widths; phone field with country prefix looks like the design.
+- Border radius at tablet/mobile must not look broken (curved panels use a 9-slice mask from the PDF path, with the same corner/bulge size); check every rounded card at 390.
+- Marquee/logo band speed: ~4 s per logo (a slow marquee was a bug); paused on hover, reduced for `prefers-reduced-motion`.
+
+## 147.8 Sliders, carousels & loops
+- Arrows are the design's arrow (circle/square, chevron, hover and pressed colour). **Disabled arrow = `cursor: not-allowed`** + disabled colour.
+- Carousel maths: slide width = (widget width − offset − gaps)/n; peeking cards use fractional `slides_to_show` at every breakpoint. Always set `slides_to_show` for desktop, laptop, tablet, mobile explicitly (Elementor's default tablet 2 showed two hero slides).
+- Home hero = exactly the number of slides the client approved (2), banner slider on other pages uses dummy data if there is none.
+- Do not let a slider "break" by trying to fix one slide: a fix for one slide must not rearrange the rest — test the whole row.
+- Cards in the slider must not get cut on hover (hover transform/scale needs overflow space). Add zoom-on-hover for **product/gallery images** inside an overflow-hidden wrapper, using the global `--transition` variable.
+- Loop Grid pagination (page numbers + prev/next) is styled like the slider arrows and is centred; search results pagination too.
+- Every loop image (featured or ACF) has an Elementor dynamic-tag **fallback** = the §137 placeholder (Buell: neutral grey, correct ratio, **site logo centred**), same on every page and breakpoint.
+- Brand/partner logo tiles are **clickable on the whole bordered box**, and go to the detail page. Logos in marquees link to the brand detail page too.
+- Nested Carousel: the `offset` (peeking next card) only works with **infinite loop on**; the NEXT arrow's horizontal offset sign is the opposite of the PREV arrow's — check both arrows' positions at every breakpoint.
+- A carousel that must be wider than its container (bleeding to the screen edge) needs `max-width: none` on the widget, otherwise a width over 100 % is ignored.
+- Side arrows on wide screens (1366–1920) are placed with `calc()`/`clamp()` on `100vw` so they never sit on top of the cards or off-screen. Check at 1366, 1440 and 1920.
+- After changing a slider, test the **whole row on every breakpoint** (slides shown, gap, peek, arrows, dots, swipe on mobile, autoplay pause) — not only the slide you changed.
+
+## 147.9 Content, data & dynamic pages
+- Every post type gets dummy data when empty so no section looks empty (area tiles, slider 2, team, projects). Mark dummy data clearly (e.g. "Sample") and list it.
+- Every detail template must be built when the design exists (e.g. Areas We Serve detail page from the PDF). A button that leads nowhere is a bug.
+- Dynamic pages must not break the design when data is **more or less** than the design shows (long titles, 1 item, 12 items). Test with few and with many entries.
+- If the admin adds content (e.g. brand detail fields) and it does not show in the view, the template is missing a dynamic field — check each ACF field against the template.
+- Slugs must be semantic (the FAQ page must be `/faq/`).
+- Breadcrumbs are **dynamic** (page parent chain / menu / post type), not static text; correct on every page type. Static crumb code left in builders will crash rebuilds — remove it.
+- Search and 404 pages: §138 — plus a search empty state + pagination, and the large "404" text scales on mobile. [R]
+- Animations: `fade-up` and similar entrance animations must actually play on the sections the design has them (client reported a section not animating). Test scroll animations in a real browser.
+
+## 147.10 Elementor technical gotchas (save hours)
+- Container desktop width is printed inside `@media(min-width:576px)` at the end of the post CSS, so tablet-extra widths never apply → restate widths ≤1199 explicitly for every container (inheritance) via the generator/`custom_css`.
+- Grid/flex containers: set columns at **every** breakpoint (Elementor defaults tablet 2 / mobile 1); containers wrap by default — set `nowrap` for rows.
+- Elementor per-element CSS beats `body .elementor .x` rules; use `.elementor-element.x` or set the control in the generator.
+- An undefined CSS var inside `calc()` silently breaks a whole width/card row — verify every var exists on `:root`.
+- Zero spacing must be `0px` when a var-converted control is involved (a unitless 0 invalidates the whole margin). Form-widget column/row gap must stay px.
+- Overlay default opacity 0.5 halves the scrim — set the overlay opacity explicitly.
+- Linked image `<a>` is inline-block → fixed-height cover photos shrink; make it `display:block` for image-link wrappers.
+- Form field custom classes go on the input, not the group; select has no `.elementor-field` class.
+- Icon widget size key is `size`; get real control names from the widget config (`get_widgets_config`) and validate generated JSON before saving.
+- Mega-menu / off-canvas: Pro off-canvas widget for mobile, Pro mega-menu widget for desktop panels; mobile nav submenus forced inline in custom CSS (approved CSS, §114).
+- Custom `?area=`-style query vars can collide with a CPT query var; strip/handle them in a `request` filter on the archive.
+- Theme upload: after every upload check the site returns 200; bump the theme version to flush rewrites/caches. No PHP linter may exist — review PHP by eye.
+- Run a **pixel-diff A/B** when you bulk-convert (e.g. px → var tokens) to prove nothing moved.
+- **Check you are on the right site before any write.** A shared dev install once had another client's theme active — confirm site name/theme via REST first (kit, Theme Builder and theme activation are site-wide).
+- REST quirks on managed hosts: if `/wp-json/` redirects, use `/?rest_route=/…`; theme install/upload through REST can fail on WP Engine (`copy_failed_pclzip`) → upload the theme zip in wp-admin; SVG/WOFF uploads need a mime filter (admins only).
+- ACF fields appear in REST only when the field group has "Show in REST" on; Yoast fields need registering for REST before a script can write them.
+- Google Maps widget needs ~5 s to render before a screenshot; lazy content needs a scroll before QA screenshots.
+- Git Bash on Windows rewrites arguments like `/about/` into file paths — set `MSYS_NO_PATHCONV=1` when passing URL paths to scripts.
+
+## 147.11 QA protocol (client expectation: "zero bugs")
+1. Compare **every page against the PDF/Figma, zoomed in**, not only overflow/console checks. Technical-only QA already failed once (the client found 10 visual bugs after a "clean" technical report).
+2. Measure: padding on all four sides, icon centring in badges, image crops, gaps per breakpoint, text overflow, vertical centring in buttons, equal top/bottom section space.
+3. Click-test: menus (desktop + mobile), accordions, tabs, sliders and arrows, forms (validation), logo links, brand links, pagination, hover states.
+4. Devices: 1920, 1440, 1366, 1024, 768, 520 and 390 — plus 700–800 for the menu/banner arrow case.
+5. Run the checks twice (after fixes) and write the result per QA bug type.
+6. Before saying "done": updated `PROJECT-SUMMARY.md` + `DAILY-LOG.md`, listed dummy content, links waiting on the client, client decisions, and the theme version.
+
+
+---
+
+# 148. PRE-DELIVERY SIGN-OFF (TICK EVERY BOX — TWICE)
+
+Summary of §146 + §147. Do not tell the user "done" until all are ticked after the **second** pass.
+
+## Setup & rules
+- [ ] Worked on staging only; no credentials in any file/reply; unique theme name.
+- [ ] CSS per §114 (no HTML widget / inline style for layout; classes only for approved rules).
+- [ ] Zero static px for spacing (Elementor controls AND custom.css); section spacing editable via Elementor Variables.
+- [ ] Global colours/fonts used; real client fonts uploaded; ™ ® 4 & % glyphs compared with design.
+- [ ] Repeating content = CPT + Loop Grid/Carousel; every loop image has a placeholder fallback (grey + site logo).
+
+## Design match (PDF zoomed, per section)
+- [ ] Border-radius, shapes, curves, icon sizes, alignment, left/centre text as in PDF.
+- [ ] Card/section padding equal on 4 sides (phone 20px); top and bottom section space equal.
+- [ ] Gaps 40/30/20 everywhere; icons/logos smaller on tablet/mobile; no image crop on mobile.
+- [ ] Buttons: text vertically centred, not full width on phones; optical centring in menu/tabs/inputs/page numbers.
+
+## Header / menu / footer
+- [ ] Top bar centred; device rules for location/phone/tagline; logo links home.
+- [ ] Mega menu: starts at header bottom, not cut, hover image works, no logo placeholder; active states right.
+- [ ] Mobile menu: custom burger, scroll lock, dividers, chevron toggle; 700–800 px OK.
+- [ ] Footer: hovers, email not cut, ® centred, copyright centred + last on mobile, social icons smaller.
+
+## Interactions
+- [ ] Sliders: arrows per design, disabled = not-allowed, gaps right, hover not cut, zoom on product images.
+- [ ] Logo tiles fully clickable → detail page; marquee speed; entrance animations play.
+- [ ] Forms: validation, checkbox above button; accordions/tabs/pagination work.
+
+## Content & pages
+- [ ] Every post type tested with temporary data in every view; empty fields hide cleanly; few/many entries OK.
+- [ ] All designed pages built (incl. detail templates and archives); slugs semantic (/faq/).
+- [ ] Breadcrumbs dynamic and correct (no "About / About").
+- [ ] Dummy content and links waiting on the client listed (links: §145).
+
+## Technical QA
+- [ ] 1920 / 1440 / 1366 / 1024 / 768 / 520 / 390 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
+- [ ] axe: one `<main>`, no duplicate landmarks, unique `<nav>` labels, icon-only names, contrast measured and reported.
+- [ ] Unique title + description ≤160 on every page incl. archives/search/404; noindex/canonical noted for launch.
+- [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
+- [ ] `PROJECT-SUMMARY.md` and `DAILY-LOG.md` updated; final report by QA bug type (fixed / clean / needs decision).
+
+
+---
+
+# 149. BUILD IT RIGHT THE FIRST TIME — ICONS, IMAGES, MENU, DESIGN
+
+§146–148 find bugs **after** building. This section prevents the most frequent ones **while** building. Follow it in this order on every new project.
+
+## 149.1 Design numbers come from the source, not from eyes
+1. If a PDF/Figma exists, extract exact values first: text, positions, box sizes, colours, radii and vector paths (e.g. PyMuPDF `get_text("dict")`, `get_drawings()`, `get_images()`; Figma variables/context). Save them (`pdftext` / `pdfboxes` style JSON).
+2. Build from those numbers (padding, gaps, radius, icon size, font size per breakpoint).
+3. After building, compare **live DOM boxes/text vs the extracted PDF boxes** with a script, then zoom-compare screenshots. Fix every difference above ~2 px.
+4. Curved edges, waves and bulged panels: take the path from the PDF and build a reusable mask (9-slice: fixed corner size + bulge), do not approximate with a plain border-radius.
+
+## 149.2 Icons — no icon issues
+- Take **every icon from the design/HTML itself** (extract SVG from the PDF/HTML). Never substitute Font Awesome/Elementor default icons unless the design uses them.
+- Enable SVG upload (theme, admins only), upload each SVG once (§140), store the ids in a map (e.g. `svgmedia.json`) and reuse via the native Icon widget.
+- Icons must use the global colour (currentColor / Elementor global), keep cut-out parts (detail paths) in the secondary colour, and keep their own fills only when the icon is an illustration (flag, logo).
+- Size by variable per breakpoint (smaller on tablet/mobile); centre in the badge with flex — verify centre point by measurement.
+- Hamburger, search, arrows, social: all custom SVG from the design (accessible names: 146.2).
+- Check every icon: correct glyph, colour, size, centring, hover colour, at 1920 and 390.
+
+## 149.3 Images — no image issues
+- WebP, names, alt text and Media Library: §131, §136, §140. Resize to ≤2× the largest display size; SVG stays SVG (logos, icons, wordmarks, watermark).
+- Use PDF-extracted crops/positions: hero, split-intro and card photos get `aspect-ratio` + `object-fit: cover` + focal position as in the design; photos that must not crop on mobile use auto height ≤991.
+- Wide/background photos keep behaving as background at every width; overlays have explicit opacity.
+- Logo tiles: contain, centred, whitespace-trimmed so logos look the same optical size (dynamic-image fallback: 147.8).
+- Check: no stretched, blurry, cropped-wrong, missing or oversized (heavy) image at any breakpoint; `loading="lazy"` below the fold, priority on the LCP image.
+
+## 149.4 Menu — no menu issues
+1. Menus are real WordPress menus (§106); header, footer and mobile reuse them.
+2. Desktop: Pro Mega Menu widget for panels, native submenu for simple dropdowns. Build the panel from the design: columns, icons, photos, floating card, radius, start at the header bottom.
+3. States: hover, focus-visible, active (also when a child page is current), open. Test on the **bare URL**, no query string.
+4. Hover image and CPT columns: 146.4. Mobile: 147.4 (Pro Off-Canvas, works from 1199 px down).
+5. Keyboard: Tab order, Esc closes, `aria-expanded`.
+
+## 149.5 Design system first, pages second
+Global Colours → Global Fonts (real client fonts) → Elementor Variables for spacing (section, card, gap, gutter, per breakpoint) → saved components (heading, button, card, loop items, CTA) → Header/Footer → pages → CPT templates. Building pages before the variables exist is what creates static-px and inconsistent-gap bugs.
+
+## 149.6 Honest limit
+These sections lower the bug count a lot, but they do not guarantee zero. Every new project has its own design details, so the two-pass self-QA (§146.10, §148) and the zoomed PDF compare stay mandatory. Any new kind of bug → fix it, then add one line to §146/§147.
