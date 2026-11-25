@@ -3541,6 +3541,47 @@ Do not tell the user "done" until all are ticked after the **second** pass.
 - [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
 - [ ] `PROJECT-SUMMARY.md` and `DAILY-LOG.md` updated; final report by QA bug type (fixed / clean / needs decision).
 
+## Final round — one last full check of the whole site (MANDATORY)
+
+*Every QA list above has passed? Now do **one more complete round over the whole site** before
+saying "done". It catches what the per-section lists miss.*
+
+1. **Make the checklist file** `FINAL-QA.md` in the project root: one row per page / template
+   (every page, single / archive templates, 404, Search, Sitemap, WooCommerce pages) × the checks below. Tick a box only after actually checking it, and note how
+   (screenshot compare, crawl, test submit, test order).
+2. **Design match — 100% to the Figma / PDF:** every page and every section side by side with its
+   Figma frame / PDF page, zoomed in: section order, layout, spacing, sizes, fonts, weights, line
+   heights, colours, radius, shadows, icons, images (sharp, right crop), hover / active states and
+   animations. Measure the numbers, don't judge by eye — any difference over ~2 px gets fixed.
+3. **Responsive:** every page at every Elementor breakpoint (§118, §119), plus 320 px: no horizontal scroll, no overlap, no
+   clipped or squeezed text, menus / dropdowns / mini-cart stay inside the screen, tap targets at
+   least 44 px, images not wrongly cropped.
+4. **Functionality:** header menu, dropdowns, mobile menu, sticky header, search, sliders, tabs,
+   accordions, modals, video, pagination, filters, animations; forms (validation, submit, the email
+   arrives); WooCommerce (if any): add to cart, mini-cart, cart, coupon, checkout test order, emails, My Account. Everything works by keyboard. No console errors, PHP warnings or failed requests.
+5. **Content:** exact text from the design (HTML / Figma / PDF) — no lorem ipsum, no made-up copy;
+   spelling, ™ / ®, phone, email and address correct. Placeholders only where they are listed for
+   the client.
+6. **Linking:** every clickable element opens the right page (§145); no `#`, empty, `.html`,
+   staging or localhost links; no 404; external links open in a new tab.
+7. **Images & icons:** all from the design export, sharp, WebP, alt text set, Media Library once (§140).
+8. **SEO & `<head>`:** unique title and meta description per page, one `<h1>`, DeveloperAI meta tag
+   and favicon on every page (§141, §144).
+9. **Accessibility:** landmarks, heading order, alt text, form labels, visible focus, colour contrast
+   measured.
+
+- **Admin / editability:** every text, image, button and link is editable in WordPress / the Elementor editor with no code; dynamic
+  content (posts, CPTs, products, menus, settings) comes from the CMS — nothing hard-coded.
+10. **Performance:** pages load fast; no unused heavy assets; images correctly sized.
+11. **Browsers:** Chrome, Safari, Firefox and Edge, plus one real phone (iOS Safari) where possible.
+
+**Rules**
+- Any fail → fix it → re-check that item **and** every page that shares that part.
+- Never tick a box that was not actually checked. Anything that could not be checked is written
+  down as "not checked + why".
+- Only when every row in `FINAL-QA.md` is ticked, report: what was checked, what the final round
+  fixed, and what is still waiting on the client.
+
 ---
 
 # 129. DEFINITION OF DONE AND FINAL GOAL

@@ -1394,6 +1394,46 @@ SLIDERS block **and** this table, never inline.
 - [ ] No horizontal scroll at 320px
 - [ ] The page `<head>` has `<meta name="DeveloperAI" content="Developer Skill">` (rule 18)
 - [ ] The page `<head>` has the favicon links, and the tab shows the logo icon (rule 19)
+
+---
+
+## 10. Final Round — whole site, before handover
+
+*Every QA list above has passed? Now do **one more complete round over the whole site** before
+saying "done". It catches what the per-section lists miss.*
+
+1. **Make the checklist file** `FINAL-QA.md` in the project root: one row per page / template
+   (every page incl. 404 if built) × the checks below. Tick a box only after actually checking it, and note how
+   (screenshot compare, crawl, test submit).
+2. **Design match — 100% to the Figma / PDF:** every page and every section side by side with its
+   Figma frame / PDF page, zoomed in: section order, layout, spacing, sizes, fonts, weights, line
+   heights, colours, radius, shadows, icons, images (sharp, right crop), hover / active states and
+   animations. Measure the numbers, don't judge by eye — any difference over ~2 px gets fixed.
+3. **Responsive:** every page at 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 (§7), plus 320 px: no horizontal scroll, no overlap, no
+   clipped or squeezed text, menus / dropdowns / mini-cart stay inside the screen, tap targets at
+   least 44 px, images not wrongly cropped.
+4. **Functionality:** header menu, dropdowns, mobile menu, sticky header, search, sliders, tabs,
+   accordions, modals, video, pagination, filters, animations; forms (validation, submit, the email
+   arrives). Everything works by keyboard. No console errors or failed requests.
+5. **Content:** exact text from the design (`Design/CONTENT.md` / Figma / PDF) — no lorem ipsum, no made-up copy;
+   spelling, ™ / ®, phone, email and address correct. Placeholders only where they are listed for
+   the client.
+6. **Linking:** every clickable element opens the right page (`.pages-nav` + every button, card and menu link); no `#`, empty,
+   staging or localhost links; no 404 (every `.html` link opens an existing page); external links open in a new tab.
+7. **Images & icons:** all from the design export, sharp, WebP, alt text set.
+8. **SEO & `<head>`:** unique title and meta description per page, one `<h1>`, DeveloperAI meta tag
+   and favicon on every page (rules 18, 19).
+9. **Accessibility:** landmarks, heading order, alt text, form labels, visible focus, colour contrast
+   measured.
+10. **Performance:** pages load fast; no unused heavy assets; images correctly sized.
+11. **Browsers:** Chrome, Safari, Firefox and Edge, plus one real phone (iOS Safari) where possible.
+
+**Rules**
+- Any fail → fix it → re-check that item **and** every page that shares that part.
+- Never tick a box that was not actually checked. Anything that could not be checked is written
+  down as "not checked + why".
+- Only when every row in `FINAL-QA.md` is ticked, report: what was checked, what the final round
+  fixed, and what is still waiting on the client.
 ````
 
 ---
@@ -1408,6 +1448,9 @@ SLIDERS block **and** this table, never inline.
    > page and screenshot that instead.
 3. Fix the drift, then report: what was detected, what was generated, what still needs the user's
    input (usually real copy, real images and real URLs).
+4. When the **whole site** is built, run the **§10 Final Round** of the generated `CLAUDE.md` —
+   `FINAL-QA.md`, design match 100% to Figma / PDF, responsive, functionality, content and links —
+   before handing over.
 
 ---
 

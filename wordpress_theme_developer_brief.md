@@ -185,6 +185,47 @@ Repeat the Phase 2 page review on **every page** and compare against the audit a
 - View source on every page template: `<meta name="DeveloperAI" content="Developer Skill">` is in `<head>` exactly once (Rule 9).
 - The browser tab shows the favicon made from the logo icon on every page template, with no duplicate `rel="icon"` tags (Rule 10).
 
+### Final round — one last full check of the whole site (MANDATORY)
+
+*Every QA list above has passed? Now do **one more complete round over the whole site** before
+saying "done". It catches what the per-section lists miss.*
+
+1. **Make the checklist file** `FINAL-QA.md` in the project root: one row per page / template
+   (every page and template) × the checks below. Tick a box only after actually checking it, and note how
+   (screenshot compare, crawl, test submit, test order).
+2. **Design match — 100% to the Figma / PDF:** every page and every section side by side with its
+   Figma frame / PDF page, zoomed in: section order, layout, spacing, sizes, fonts, weights, line
+   heights, colours, radius, shadows, icons, images (sharp, right crop), hover / active states and
+   animations. Measure the numbers, don't judge by eye — any difference over ~2 px gets fixed.
+3. **Responsive:** every page at desktop, laptop, tablet and mobile breakpoints, plus 320 px: no horizontal scroll, no overlap, no
+   clipped or squeezed text, menus / dropdowns / mini-cart stay inside the screen, tap targets at
+   least 44 px, images not wrongly cropped.
+4. **Functionality:** header menu, dropdowns, mobile menu, sticky header, search, sliders, tabs,
+   accordions, modals, video, pagination, filters, animations; forms (validation, submit, the email
+   arrives); WooCommerce (if any): add to cart, mini-cart, cart, coupon, checkout test order, emails, My Account. Everything works by keyboard. No console errors, PHP warnings or failed requests.
+5. **Content:** exact text from the design (the client documents / design) — no lorem ipsum, no made-up copy;
+   spelling, ™ / ®, phone, email and address correct. Placeholders only where they are listed for
+   the client.
+6. **Linking:** every clickable element opens the right page (menus, buttons, cards, footer); no `#`, empty, `.html`,
+   staging or localhost links; no 404; external links open in a new tab.
+7. **Images & icons:** all from the design export, sharp, WebP, alt text set.
+8. **SEO & `<head>`:** unique title and meta description per page, one `<h1>`, DeveloperAI meta tag
+   and favicon on every page (Rules 9, 10).
+9. **Accessibility:** landmarks, heading order, alt text, form labels, visible focus, colour contrast
+   measured.
+
+- **Admin / editability:** every text, image, button and link is editable in WordPress / the page builder; dynamic
+  content (posts, CPTs, products, menus, settings) comes from the CMS — nothing hard-coded.
+10. **Performance:** pages load fast; no unused heavy assets; images correctly sized.
+11. **Browsers:** Chrome, Safari, Firefox and Edge, plus one real phone (iOS Safari) where possible.
+
+**Rules**
+- Any fail → fix it → re-check that item **and** every page that shares that part.
+- Never tick a box that was not actually checked. Anything that could not be checked is written
+  down as "not checked + why".
+- Only when every row in `FINAL-QA.md` is ticked, report: what was checked, what the final round
+  fixed, and what is still waiting on the client.
+
 Do not claim that a feature has been tested unless it was actually tested. Clearly list any checks that could not be completed.
 
 **Gate:** QA report shows no open critical issues; every page is marked Pass or has listed, approved exceptions.
