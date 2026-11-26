@@ -2841,8 +2841,9 @@ Add the importer to the README **Install** steps:
 its own sake. These rules decide **how** the CSS is organised while the output stays identical.*
 
 **Section-level classes, wherever required**
-- Every template section gets an appropriate section-level class (e.g. `about-section`,
-  `partners-section`). Keep the original HTML class if it already has one.
+- Every template section gets a section-level class. **Keep the original HTML class if it already
+  has one.** A new class follows BEM: a block class with a matching `id` (e.g. `about`, `partners`),
+  with elements `about__grid`, `about__card`.
 - Shared components get a reusable class (e.g. `card`, `logo-grid`).
 - Name classes by role. Never name them after a page or a colour.
 
@@ -2860,10 +2861,10 @@ its own sake. These rules decide **how** the CSS is organised while the output s
 - Section CSS uses `var(--…)`, not the same raw value repeated in many rules.
 
 **Consistent spacing**
-- Section top/bottom spacing is one variable (e.g. `--section-space`) applied the same way to every
-  section.
-- Container left/right spacing (gutter) is set **once** globally on the container class through
-  CSS. Never re-declare it in each section.
+- Section top/bottom spacing is one variable applied the same way to every section. Reuse the
+  original HTML's variable if it has one; a new one is named `--sectionGap`.
+- Container left/right spacing (gutter, a new variable is named `--gutter`) is set **once** globally
+  on the container class through CSS. Never re-declare it in each section.
 
 **Clean, scalable, reusable**
 - One comment banner per section or component.
@@ -2876,6 +2877,18 @@ its own sake. These rules decide **how** the CSS is organised while the output s
 
 *Noted during real builds — image names and accessibility attributes were left incomplete before.*
 
+### Images — sharp, never blurry
+
+- Every image, icon and logo comes from the HTML site / design export. No stock photos, no AI images,
+  no screenshots of the design used as images.
+- Rasters are exported at **2x** and only ever **resized down** to the size actually used — never
+  scaled up.
+- Convert rasters (JPG / PNG / GIF) to **WebP at quality 85 or higher**. No visible loss versus the
+  original. Keep transparency where the original uses it.
+- Icons, logos and vector shapes **stay SVG** (WebP is for raster images only).
+- Zoom in on every image at desktop / tablet / mobile (§119): if it looks soft or blurry, export it
+  again at a higher size. A blurry image is a bug.
+
 ### SVG icons
 
 - **Meaningful SVG** (it carries information or is the only content of a link/button):
@@ -2884,6 +2897,7 @@ its own sake. These rules decide **how** the CSS is organised while the output s
   - Icon-only link/button: put the `aria-label` on the link/button and `aria-hidden="true"`
     `focusable="false"` on the SVG.
   - SVG `<img>`: proper `alt`.
+  - SVG uploaded through the Media Library: fill in its **Alt Text** there.
 - **Decorative SVG** (the text next to it already says the same thing): `aria-hidden="true"`, and
   no alt text.
 - Never leave an icon-only control without an accessible name.
@@ -2892,29 +2906,40 @@ its own sake. These rules decide **how** the CSS is organised while the output s
 
 - **Rename every image, avatar and SVG by what it actually shows.** Open or view the file first.
   - Use lowercase, hyphens, 2–5 meaningful words.
-  - Never keep Figma or export names (`Ellipse 3`, `Group 1000004521`, `Frame 12`, `IMG_1234`,
-    `image (1)`).
+  - Never keep Figma or export names (`Ellipse 3`, `Group 1000004521`, `Frame 12`, `Vector`,
+    `IMG_1234`, `image (1)`).
+  - Never guess from where the file sits in the design. Describe what is actually in it.
   - Rename **before** the file is referenced in the templates or the seed, and update every
-    reference.
+    reference. WordPress keeps the uploaded file name in the URL, so the name must be right before
+    upload.
 
 | File type | Pattern | Example | Alt text |
 |---|---|---|---|
 | Content image | `<what-it-shows>.webp` | `doctor-consulting-patient.webp` | `Doctor consulting a patient at a clinic desk` |
 | Hero image | `<page>-hero-<subject>.webp` | `about-hero-team-workshop.webp` | describe the scene |
+| Blog / post image | `<post-topic>.webp` | `seo-audit-checklist.webp` | describe the image, not just the post title |
 | Avatar — real person | `<first>-<last>-avatar.webp` | `priya-shah-avatar.webp` | `Priya Shah, Marketing Director at Acme` |
 | Avatar — dummy | `<context>-avatar-<n>.webp` | `testimonial-avatar-01.webp` | `Testimonial author photo` (never invent a name) |
+| Team photo | `<first>-<last>-<role>.webp` | `rahul-mehta-ceo.webp` | `Rahul Mehta, CEO` |
 | Logo | `<brand>-logo.svg` | `acme-logo.svg` | `Acme` |
+| Site logo | `<site>-logo.svg` | `brightpath-logo.svg` | `<Site name> home` when it links home |
 | SVG icon | `icon-<what-it-shows>.svg` | `icon-phone.svg`, `icon-arrow-right.svg` | its meaning, or empty if decorative |
+| Social icon | `icon-<network>.svg` | `icon-linkedin.svg` | `LinkedIn` (on the link: `Follow us on LinkedIn`) |
 | Decorative background | `bg-<what-it-is>.svg/webp` | `bg-wave-pattern.svg` | `alt=""` |
+| Placeholder | `placeholder-<ratio>.webp` | `placeholder-16x9.webp` | `<Intended content> placeholder` (§117) |
 
 - **Alt text:** describe what is in the image and why it is there.
   - Keep it under ~125 characters. Don't start with "image of", and don't stuff keywords.
   - A purely decorative image gets `alt=""`. The `alt` attribute is never missing.
+  - Same image in two places = same alt (it comes from the Media Library).
 - **Where the alt comes from:**
   - Media Library images: use `wp_get_attachment_image()` / `the_post_thumbnail()` so the library's
     Alt Text is printed.
   - Set Alt Text and Title on every attachment (the importer sets it from the seed, §101).
   - Static theme images: write the alt in the template with `esc_attr()`.
+- **If renaming is not possible** (the file is already uploaded and in use): do not upload a second
+  copy just to change its name (§105). Correct its **Title** and **Alt Text** in the Media Library,
+  and list the file in the handover report as "file name not SEO-friendly".
 - Do not leave image names or accessibility attributes incomplete. A build with default file names
   or blank alt text is not done.
 
@@ -3573,7 +3598,10 @@ the project has a `CLAUDE.md` / theme docs from the earlier build.
 | Favicon / site icon | §115 |
 | Links / buttons / cards not linked | §116, §43 |
 | Images / SVG / Media Library | §26, §104, §105 |
+| Placeholders / dummy content | §117 |
 | 404 / Search / Sitemap | §106, §107 |
+| Permalinks | §118 |
+| Verify against the HTML | §119 |
 | ACF fields | §110, §111 |
 | Setup / importer | §96–§102 |
 | Partners / Blog | §11–§15, §45–§48 |
@@ -3708,3 +3736,75 @@ For each one write: **element → page / post / product / external URL**. Keep t
 - [ ] Product and category cards open the right product / category (WooCommerce sites).
 - [ ] Phone, email, map and social links work; external links open in a new tab with `rel="noopener"`.
 - [ ] No staging / localhost / hard-coded domain URLs; no 404 from any internal link.
+
+---
+
+# 117. DUMMY CONTENT & PLACEHOLDER IMAGES
+
+*Noted during real builds — use one consistent placeholder system across the whole site.*
+
+Only where the HTML / design itself has no real content or image for a slot (e.g. a grey "image
+here" box, or more blog / CPT items than the design shows), use dummy content **with a proper
+placeholder image**. Never leave an empty space, a broken image or a random stock photo. Never
+replace an image that exists in the HTML / design with a placeholder — if it is missing, export it
+again.
+
+### Image placeholders
+
+- Match the **aspect ratio, dimensions and styling** of the design's real image slot (same radius,
+  same object-fit, same size at every breakpoint).
+- Create one placeholder per ratio the design uses (e.g. `placeholder-16x9.webp`,
+  `placeholder-4x3.webp`, `placeholder-1x1.webp`). Upload them once to the Media Library (§105) and
+  reuse them everywhere. Don't make a new one per section.
+- Lock the ratio with one reusable class in the global CSS — e.g. `.img-placeholder` with
+  `aspect-ratio` and `object-fit: cover`. Don't set heights section by section.
+- Give placeholders alt text that names the intended content (e.g. `Team photo placeholder`) so
+  they are easy to find and replace.
+
+### Logo placeholders
+
+- One reusable logo placeholder (e.g. `.logo-placeholder`), sized and aligned like the real logos in
+  the grid, used the same way on every page.
+
+### Rules
+
+- Same treatment on every page: same placeholder, same ratio class, same alt pattern.
+- Dummy text is clearly marked (e.g. "Sample") and never invented as if it were real client copy.
+- List every dummy item and placeholder in the handover report, so the client can replace them.
+
+---
+
+# 118. PERMALINK STRUCTURE
+
+Set the WordPress permalink structure to **Post name**:
+
+```text
+Settings → Permalinks → Post name   (/%postname%/)
+```
+
+Set this before building internal links, then flush permalinks (save the Permalinks screen once)
+after registering any Custom Post Types. The importer sets it too (§102).
+
+---
+
+# 119. VERIFY AGAINST THE HTML — BEFORE CALLING ANYTHING DONE
+
+Every page and every section is checked against the original HTML site before it is called done.
+
+1. Build **one real section** first as a proving run — ideally the header or hero, since it
+   exercises type, colour, buttons, icons and responsive behaviour at once. Fix the drift before
+   building the rest.
+2. Screenshot every page headless at desktop / tablet / mobile and compare it side by side with the
+   matching original HTML page.
+   > Headless Chrome enforces a ~500px minimum window, so a 375px screenshot comes out **cropped,
+   > not narrow**. To check true mobile, load the page in a 375px-wide `<iframe>` inside a wrapper
+   > page and screenshot that instead.
+3. Check, per section: spacing, font sizes, line heights, colours, alignment, radius, shadows,
+   image crops, icon sizes, hover / focus states and animations.
+4. Zoom in on every image in the screenshot. If any image looks soft or blurry, export it again at a
+   higher size (§104).
+5. Nothing from the HTML is missing on the site — every section, image and text block is there.
+6. Open each page in the page builder chosen in §108 and confirm an editor can change text, images,
+   links and section order without code.
+7. Fix the drift, then report: what was checked, what was fixed, what still needs the user's input
+   (usually real copy, real images and real URLs). Then run the §70 final QA.

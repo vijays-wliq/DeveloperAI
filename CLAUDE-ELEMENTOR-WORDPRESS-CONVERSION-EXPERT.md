@@ -17,7 +17,7 @@
 > |---|---|---|
 > | HTML → custom PHP theme (no page builder) | Use `CLAUDE-WORDPRESS-CONVERSION-EXPERT.md` instead — it has the importer, page builder, ACF and forms rules (§1–§72 here are its older base) | this file |
 > | Existing WordPress theme to update/extend | §73–§95 (+ §1–§72 for new parts) | — |
-> | HTML / PDF / Figma → **Elementor Pro** (usual WLIQ case) | §96–§149 (+ §23–§33, §39–§44 for PHP, SEO, a11y) | the PHP-template parts of §1–§72 (each has an **Elementor build** note pointing to the Elementor section) |
+> | HTML / PDF / Figma → **Elementor Pro** (usual WLIQ case) | §96–§151 (+ §23–§33, §39–§44 for PHP, SEO, a11y) | the PHP-template parts of §1–§72 (each has an **Elementor build** note pointing to the Elementor section) |
 >
 > §146–§149 (lessons, bug library, sign-off, build-right-first-time) apply to **every Elementor project**. The numbers in them (gaps 40/30/20, card padding 40/30/25/20, wave height 35–41 px, 2 hero slides, 4 s marquee…) are **examples from the Buell Recreation project** — on a new project always take the values from the new design. The *rule* (e.g. "set the gap at every breakpoint", "same padding on 4 sides") is what carries over.
 
@@ -476,11 +476,12 @@ Featured Partner
 
 Do not blindly create all fields.
 
-Use an appropriate field system if the project permits it.
+Custom fields are **always ACF PRO** (MANDATORY):
 
-If using ACF, do not recreate ACF functionality manually.
-
-If no plugin is permitted, implement secure custom meta fields.
+- Never install, activate or require **Secure Custom Fields (SCF)** next to ACF PRO.
+- Never hand-make meta boxes or custom meta fields — do not recreate ACF functionality manually.
+- Save every field group as **ACF local JSON** in the theme's `acf-json/` folder and sync it
+  (ACF → Field Groups → Sync), so fields travel with the theme.
 
 ---
 
@@ -576,7 +577,7 @@ or specific templates only when necessary.
 
 > **Elementor build:** Home is a normal WordPress page built with Elementor and set as the static front page — not `front-page.php`. Dynamic parts use Loop Grid / Dynamic Tags (§104, §113).
 
-Use:
+**Only for a non-Elementor (custom PHP) theme** — use:
 
 ```text
 front-page.php
@@ -670,7 +671,7 @@ Do not use fragile relative paths such as:
 
 # 20. CSS
 
-> **Elementor build:** CSS follows **§114** — native Elementor controls first, no class-based CSS, approved CSS only in `assets/css/custom.css` (§135). Keep the HTML's *look* (spacing, type, breakpoints, animations), not its selectors and classes.
+> **Elementor build:** CSS follows **§114** — cover everything with native Elementor controls first; only when a native control cannot do it, add a CSS class on that element with its rule in `assets/css/custom.css` (§135). Keep the HTML's *look* (spacing, type, breakpoints, animations), not its selectors and classes.
 
 ## CRITICAL
 
@@ -950,6 +951,14 @@ Forms must be:
 - Responsive
 - Working
 - Spam-protected where appropriate
+
+> **Forms plugin — always ask at the start (MANDATORY), one question (§65):**
+> *Which forms plugin should the site use? 1. Elementor Pro Form widget  2. Gravity Forms  3. Contact Form 7.*
+> Never assume it. Use **only** the chosen one for every form on the site. Elementor Form widget:
+> style with its native controls + globals, Email action to the admin email, Honeypot / reCAPTCHA,
+> follow the Form-widget gotchas in §147.10. Gravity Forms / CF7: turn off the plugin's default look
+> and make the form match the design. If the original form posts to a CRM / API, keep that
+> integration through the chosen option.
 
 ---
 
@@ -2731,6 +2740,12 @@ Global Variables where appropriate
 
 Do not repeatedly enter the same value manually into individual widgets.
 
+**Tokens ↔ Elementor globals stay in sync (MANDATORY).** The Elementor globals (colours, fonts,
+spacing variables) and the `vendor.css` `:root` tokens (§135) hold **the same values with the same
+names**. When a value changes, change it in both places at once. Keep a short **token → Elementor
+global** table in the theme docs, so the next developer knows which is which. A value that is not a
+token is a question for the user, not a new global.
+
 ## Required final state
 
 The final Elementor website should have one clear design system:
@@ -2841,7 +2856,8 @@ If yes, use Elementor Global Typography. Only use custom typography for genuinel
 
 # 101. RESPONSIVE TYPOGRAPHY
 
-Inspect the original media queries and reproduce typography for:
+Breakpoints are the fixed seven (§119). Inspect the original media queries for *what* changes, and
+reproduce typography for:
 
 ```text
 Desktop
@@ -3088,7 +3104,7 @@ Elementor Pro Archive Template
 
 Use dynamic Partner data. Do not hard-code individual Partner information into Elementor templates.
 
-If ACF is installed, use ACF fields with Elementor Dynamic Tags where appropriate.
+Partner fields are ACF PRO (local JSON, §12), shown with Elementor Dynamic Tags.
 
 ---
 
@@ -3202,12 +3218,12 @@ Set the container system globally, in **Site Settings → Layout**, before build
 | **Content Width** — **every breakpoint** | the original CSS container `max-width` (e.g. `1200px`), then each breakpoint's stepped-down value |
 | **Container Padding** — desktop / tablet / mobile | the original CSS container side padding — set for every breakpoint |
 | **Gaps** (Widgets / Elements gap) | the global grid / column gap |
-| **Breakpoints** | the project breakpoints (§119) |
+| **Breakpoints** | the seven fixed breakpoints (§119) |
 
 **The container is responsive.** `--container` (and `--gutter`) change at the breakpoints, so the
 global Content Width and Container Padding are set on **each device** in Site Settings → Layout
 (switch the responsive icon: Widescreen, Desktop, Laptop, Tablet Extra, Tablet, Mobile Extra,
-Mobile) with the values from the original CSS media queries for the container. Example: 1200 → 1150 → 1105 → 1010 → 910 → 960 fixed → 100%.
+Mobile) with the container's stepped-down value at each of the seven breakpoints (§119). Example: 1200 → 1150 → 1105 → 1010 → 910 → 960 fixed → 100%.
 Never set only the desktop value and leave the smaller screens on Elementor's default.
 
 Then on every page and template:
@@ -3246,7 +3262,17 @@ Tablet
 Mobile
 ```
 
-Use the original CSS media queries as the reference. Do not blindly rely on Elementor defaults.
+**Breakpoints — always these seven, never others (MANDATORY):**
+
+```text
+1599.98 · 1439.98 · 1365.98 · 1199.98 · 991.98 · 767.98 · 575.98
+```
+
+Set Elementor's custom breakpoints (Site Settings → Layout → Breakpoints) to the nearest of these
+values, so Elementor's responsive controls switch at the same widths as `vendor.css`. Check the
+breakpoint names and limits in the installed Elementor version. The original CSS media queries show
+*what* changes on smaller screens, not *where* the breakpoint sits. Do not blindly rely on Elementor
+defaults.
 
 ---
 
@@ -3259,6 +3285,8 @@ Use the original CSS media queries as the reference. Do not blindly rely on Elem
 # 121. ANIMATIONS — GSAP / THREE.JS WITH ELEMENTOR
 
 If the original uses GSAP, ScrollTrigger, AOS, IntersectionObserver, CSS animations, Three.js, Swiper or other libraries, inspect the implementation first.
+
+**Sliders:** use Elementor's own default carousel widgets (Image Carousel, Loop Carousel, Media Carousel …), styled to match the design. Never add a new slider JS (no Slick, no Swiper of our own), even if the original HTML used one. Never Owl, Splide or hand-written slider JS.
 
 Use Elementor Motion Effects only when they reproduce the original behavior accurately. If Elementor cannot reproduce it, preserve the required custom JavaScript.
 
@@ -3428,6 +3456,7 @@ Do not accept “close enough” when the original values can be reproduced accu
 - [ ] Footer menus are dynamic.
 - [ ] Social links work.
 - [ ] Contact information works.
+- [ ] Forms use the forms plugin chosen at the start (Elementor Form / Gravity Forms / CF7, §28) — only that one.
 - [ ] Responsive Footer matches.
 
 ## Pages
@@ -3535,7 +3564,7 @@ Do not tell the user "done" until all are ticked after the **second** pass.
 - [ ] Dummy content and links waiting on the client listed (links: §145).
 
 ### Technical QA
-- [ ] 1920 / 1440 / 1366 / 1024 / 768 / 520 / 390 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
+- [ ] 1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
 - [ ] axe: one `<main>`, no duplicate landmarks, unique `<nav>` labels, icon-only names, contrast measured and reported.
 - [ ] Unique title + description ≤160 on every page incl. archives/search/404; noindex/canonical noted for launch.
 - [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
@@ -3553,7 +3582,7 @@ saying "done". It catches what the per-section lists miss.*
    Figma frame / PDF page, zoomed in: section order, layout, spacing, sizes, fonts, weights, line
    heights, colours, radius, shadows, icons, images (sharp, right crop), hover / active states and
    animations. Measure the numbers, don't judge by eye — any difference over ~2 px gets fixed.
-3. **Responsive:** every page at every Elementor breakpoint (§118, §119), plus 320 px: no horizontal scroll, no overlap, no
+3. **Responsive:** every page at 1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 (§118, §119), plus 320 px: no horizontal scroll, no overlap, no
    clipped or squeezed text, menus / dropdowns / mini-cart stay inside the screen, tap targets at
    least 44 px, images not wrongly cropped.
 4. **Functionality:** header menu, dropdowns, mobile menu, sticky header, search, sliders, tabs,
@@ -3569,11 +3598,11 @@ saying "done". It catches what the per-section lists miss.*
    and favicon on every page (§141, §144).
 9. **Accessibility:** landmarks, heading order, alt text, form labels, visible focus, colour contrast
    measured.
-
-- **Admin / editability:** every text, image, button and link is editable in WordPress / the Elementor editor with no code; dynamic
-  content (posts, CPTs, products, menus, settings) comes from the CMS — nothing hard-coded.
 10. **Performance:** pages load fast; no unused heavy assets; images correctly sized.
 11. **Browsers:** Chrome, Safari, Firefox and Edge, plus one real phone (iOS Safari) where possible.
+12. **Admin / editability:** every text, image, button and link is editable in WordPress / the
+    Elementor editor with no code; dynamic content (posts, CPTs, products, menus, settings) comes
+    from the CMS — nothing hard-coded.
 
 **Rules**
 - Any fail → fix it → re-check that item **and** every page that shares that part.
@@ -3755,24 +3784,34 @@ Set this before building internal links, then flush permalinks (save the Permali
 
 # 135. NEW THEME — VENDOR.JS AND CUSTOM.CSS
 
-If the project needs a new theme (or child theme), create it, and include these two asset files:
+If the project needs a new theme (or child theme), create it, and include these three asset files:
 
 ```text
 theme-name/
 └── assets/
     ├── js/
-    │   └── vendor.js      ← third-party libraries (GSAP, ScrollTrigger, Swiper, Three.js, etc.)
+    │   └── vendor.js      ← third-party libraries (GSAP, ScrollTrigger, Three.js, etc.) — no slider library (§121)
     └── css/
+        ├── vendor.css     ← :root tokens ONLY (from the original CSS) — no components
         └── custom.css     ← the ONLY place for approved custom CSS
 ```
 
 ### vendor.js
 
-- Holds the third-party JavaScript libraries the original HTML site depends on.
+- Holds the third-party JavaScript libraries the original HTML site depends on — except slider libraries: sliders are Elementor's own carousel widgets (§121).
 - Do not load the same library twice (check whether Elementor or a plugin already loads it).
 - Enqueue with `wp_enqueue_script()` in the footer, with correct dependencies and version numbers.
 - Load only on the pages that need it where practical.
 - It may also hold small, approved front-end fixes that Elementor cannot do (e.g. adding a missing `aria-label`, a menu-chevron toggle). Fix things in the template/PHP first; use JS only when the markup comes from Elementor/Pro and cannot be changed. Comment each fix with what it fixes.
+
+### vendor.css (tokens only)
+
+- Holds **only the `:root` tokens** taken from the original site's CSS (colours, fonts, spacing,
+  transition …) — the same names and values as the Elementor globals (§98–§102) — so `custom.css`
+  can use `var(--…)`.
+- **No global components** (no `.container`, buttons, headings, forms) — those are set in Elementor
+  Site Settings and the Global Design System (§98–§102, §118).
+- Enqueue it before `custom.css`, after Elementor's styles.
 
 ### custom.css
 
@@ -3782,7 +3821,7 @@ theme-name/
 - Enqueue with `wp_enqueue_style()` after Elementor's styles, so its rules apply in the right order.
 - Avoid `!important`.
 
-Register both through `inc/enqueue.php` (or `functions.php` for a minimal child theme) using `get_stylesheet_directory_uri()` / `get_template_directory_uri()`. Never hardcode paths or domains.
+Register them through `inc/enqueue.php` (or `functions.php` for a minimal child theme) using `get_stylesheet_directory_uri()` / `get_template_directory_uri()`. Never hardcode paths or domains.
 
 ---
 
@@ -3959,6 +3998,12 @@ That must not happen.*
 **Rule: one file = one Media Library item.** The same image or icon used in five sections is
 uploaded once and reused five times.
 
+**Decide each file's home — theme or Media Library, never both:**
+- **Fixed UI files** that admins never change stay in the theme's `assets/images/` and are **not**
+  uploaded to the Media Library: UI icons, arrows, chevrons, decorative shapes, the SVG sprite.
+- **Content images** that admins can change go into the Media Library: page images, post/CPT images,
+  ACF image fields, partner logos, avatars.
+
 ### Before every upload
 
 1. **Search the Media Library first** by file name (e.g. `acme-logo`) or title.
@@ -3985,7 +4030,7 @@ uploaded once and reused five times.
 
   Never delete a media item that is still in use, because that leaves a broken image.
 
-Check the Media Library once at the end of the build: every image and icon appears exactly once.
+Check the Media Library once at the end of the build: every content image appears exactly once, and no fixed UI icon was uploaded.
 
 ---
 
@@ -4317,6 +4362,8 @@ the project has a `CLAUDE.md` / theme docs from the earlier build.
 | Partners / Blog | §111, §112 |
 | WooCommerce (add or change) | §142 |
 | Known bugs / lessons / final sign-off | §146–§149 |
+| One-click setup / importer | §150 |
+| Verify against the design | §151 |
 
 Always-on rules still apply in quick mode: no inline styles / widget CSS, CSS variables, images
 once in the Media Library, the DeveloperAI meta tag, never expose login details.
@@ -4370,7 +4417,7 @@ Never draw a new icon, never use a stock or generic icon, never stretch the full
   WordPress creates the 32, 180 (Apple touch), 192 and 270 px sizes and prints all the
   `<link rel="icon">` / `apple-touch-icon` tags itself through `wp_site_icon()` in `wp_head`.
 - Upload `site-icon.png` to the Media Library **once** (§140).
-- Set it in the one-click setup / importer too, so a fresh install has the favicon
+- Set it in the one-click setup / importer (§150) too, so a fresh install has the favicon
   (the setup step that builds the site):
 
 ```php
@@ -4500,7 +4547,7 @@ These came from the Buell Recreation build. On any new Elementor project, **chec
 
 ## 146.10 SELF-QA — MANDATORY, TWO PASSES
 Before telling the user "done", run QA yourself **twice** (pass 2 after fixing pass 1):
-1. Crawl every page, CPT single/archive, taxonomy page, search and 404 at **1920, 1366, 1024, 390**.
+1. Crawl every page, CPT single/archive, taxonomy page, search and 404 at **1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320**.
 2. Per page record: console errors, failed requests, broken images, missing alt, horizontal overflow, clipped text, heading order, landmarks, axe violations (Playwright + axe-core), title/description, `#` links (§145) / placeholder content, form validation.
 3. Take screenshots and **look** at the header, mega menu, banner, cards and footer on desktop and mobile; measure spacing instead of guessing.
 4. Fix everything that is code. Anything that needs the client (colour, copy, URLs) goes in a short "needs decision" list.
@@ -4514,7 +4561,7 @@ Before telling the user "done", run QA yourself **twice** (pass 2 after fixing p
 
 # 147. BUG LIBRARY — EVERYTHING QA / THE CLIENT FOUND ON THE BUELL PROJECT (50+ ITEMS)
 
-**How to use this section:** it is a pre-flight checklist. Before you show ANY page, go through every line below and test it yourself at **1920 / 1440 / 1366 / 1024 / 768 / 520 / 390**. If an item is not applicable, skip it. If you meet a new kind of bug, fix it and add one line here. Sections 146 and 147 together are the "do not repeat" list.
+**How to use this section:** it is a pre-flight checklist. Before you show ANY page, go through every line below and test it yourself at **1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320**. If an item is not applicable, skip it. If you meet a new kind of bug, fix it and add one line here. Sections 146 and 147 together are the "do not repeat" list.
 
 Legend: **[R]** = responsive-specific.
 
@@ -4545,7 +4592,7 @@ Legend: **[R]** = responsive-specific.
 - Mega-menu image changes on hover of each product/brand link (fallback chain: 146.4).
 
 ## 147.4 Mobile / off-canvas menu [R]
-- Hamburger uses a **custom uploaded SVG icon** (not the default Elementor icon) in the design's shape; check its size at 390/520/768.
+- Hamburger uses a **custom uploaded SVG icon** (not the default Elementor icon) in the design's shape; check its size at 375/576/768.
 - When the menu opens: **page scroll is locked**, only the menu scrolls.
 - Menu rows: proper `li` borders/dividers and padding, clear tap targets, design look. Sub-menu chevron is a pure open/close toggle (does not navigate).
 - Everything keeps working at 700–800 px where tablets/landscape phones show the menu: banner arrows must not be touched by the menu or overlap content.
@@ -4581,7 +4628,7 @@ Legend: **[R]** = responsive-specific.
 - A section with icon + title + text centred on mobile (e.g. "Why Communities") centres **all three**; its icons may be larger only for that section.
 - Fixed breakpoints: do not leave a value for 991 and 575 inconsistent (client set 767 = 36 px, 991 and below = 40 px). Ask which value applies at each breakpoint or copy the design.
 - Forms: checkbox row is placed **above** the Send button on all widths; phone field with country prefix looks like the design.
-- Border radius at tablet/mobile must not look broken (curved panels use a 9-slice mask from the PDF path, with the same corner/bulge size); check every rounded card at 390.
+- Border radius at tablet/mobile must not look broken (curved panels use a 9-slice mask from the PDF path, with the same corner/bulge size); check every rounded card at 375.
 - Marquee/logo band speed: ~4 s per logo (a slow marquee was a bug); paused on hover, reduced for `prefers-reduced-motion`.
 
 ## 147.8 Sliders, carousels & loops
@@ -4595,7 +4642,7 @@ Legend: **[R]** = responsive-specific.
 - Brand/partner logo tiles are **clickable on the whole bordered box**, and go to the detail page. Logos in marquees link to the brand detail page too.
 - Nested Carousel: the `offset` (peeking next card) only works with **infinite loop on**; the NEXT arrow's horizontal offset sign is the opposite of the PREV arrow's — check both arrows' positions at every breakpoint.
 - A carousel that must be wider than its container (bleeding to the screen edge) needs `max-width: none` on the widget, otherwise a width over 100 % is ignored.
-- Side arrows on wide screens (1366–1920) are placed with `calc()`/`clamp()` on `100vw` so they never sit on top of the cards or off-screen. Check at 1366, 1440 and 1920.
+- Side arrows on wide screens (1366–1920) are placed with `calc()`/`clamp()` on `100vw` so they never sit on top of the cards or off-screen. Check at 1366, 1440, 1600 and 1920.
 - After changing a slider, test the **whole row on every breakpoint** (slides shown, gap, peek, arrows, dots, swipe on mobile, autoplay pause) — not only the slide you changed.
 
 ## 147.9 Content, data & dynamic pages
@@ -4632,7 +4679,7 @@ Legend: **[R]** = responsive-specific.
 1. Compare **every page against the PDF/Figma, zoomed in**, not only overflow/console checks. Technical-only QA already failed once (the client found 10 visual bugs after a "clean" technical report).
 2. Measure: padding on all four sides, icon centring in badges, image crops, gaps per breakpoint, text overflow, vertical centring in buttons, equal top/bottom section space.
 3. Click-test: menus (desktop + mobile), accordions, tabs, sliders and arrows, forms (validation), logo links, brand links, pagination, hover states.
-4. Devices: 1920, 1440, 1366, 1024, 768, 520 and 390 — plus 700–800 for the menu/banner arrow case.
+4. Devices: 1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320 — plus 700–800 for the menu/banner arrow case.
 5. Run the checks twice (after fixes) and write the result per QA bug type.
 6. Before saying "done": updated `PROJECT-SUMMARY.md` + `DAILY-LOG.md`, listed dummy content, links waiting on the client, client decisions, and the theme version.
 
@@ -4661,7 +4708,7 @@ Legend: **[R]** = responsive-specific.
 - Icons must use the global colour (currentColor / Elementor global), keep cut-out parts (detail paths) in the secondary colour, and keep their own fills only when the icon is an illustration (flag, logo).
 - Size by variable per breakpoint (smaller on tablet/mobile); centre in the badge with flex — verify centre point by measurement.
 - Hamburger, search, arrows, social: all custom SVG from the design (accessible names: 146.2).
-- Check every icon: correct glyph, colour, size, centring, hover colour, at 1920 and 390.
+- Check every icon: correct glyph, colour, size, centring, hover colour, at 1920 and 375.
 
 ## 149.3 Images — no image issues
 - WebP, names, alt text and Media Library: §131, §136, §140. Resize to ≤2× the largest display size; SVG stays SVG (logos, icons, wordmarks, watermark).
@@ -4682,3 +4729,75 @@ Global Colours → Global Fonts (real client fonts) → Elementor Variables for 
 
 ## 149.6 Honest limit
 These sections lower the bug count a lot, but they do not guarantee zero. Every new project has its own design details, so the two-pass self-QA (§146.10, §128 pre-delivery sign-off) and the zoomed PDF compare stay mandatory. Any new kind of bug → fix it, then add one line to §146/§147.
+
+---
+
+# 150. ONE-CLICK SETUP — TOOLS → {PROJECT} SETUP (MANDATORY)
+
+Every Elementor build ships a **one-click importer**, so a fresh WordPress install becomes the full
+site with one click — and a re-run never creates duplicates.
+
+**Where it lives:** in the theme, `inc/importer/` (PHP) + `inc/importer/data/` (JSON seed + exported
+Elementor templates). Admin screen: **Tools → {Project} Setup**, admins only, nonce-checked, with an
+"Import" button and an "Overwrite" checkbox. Each step runs as a small AJAX batch with a progress log,
+so it never times out.
+
+**Seed data — extracted from the original HTML, never retyped, never invented.** Page text, menus,
+CPT entries and images are parsed from the HTML site into the JSON seed. Missing content uses a
+clearly marked placeholder (§137) and is listed in the handover.
+
+**Import order:**
+
+```text
+1. Media            → every content image once, tagged with _{prefix}_source = file name (§140)
+2. Templates        → Theme Builder templates (header, footer, singles, archives, 404, search),
+                      section templates and Loop Items — exported as Elementor JSON
+                      (Templates → Saved Templates → Export); imported once, matched by title
+3. Pages            → Home first (set as front page right away), Blog early (posts page);
+                      sections in the original page order
+4. Posts / CPTs     → entries + featured images + ACF PRO fields (§12, local JSON field keys)
+5. Menus            → built from the seed, assigned to the theme locations (§106)
+6. Site settings    → Elementor globals (§98–§102), breakpoints (§119), display conditions,
+                      Site Icon (§144), WooCommerce pages (§142), forms (§28)
+7. Finalize         → permalinks = Post name (§133), flush rewrite rules,
+                      Elementor → Tools → Regenerate CSS & Data
+```
+
+**Rules:**
+- **Safe to run again:** find existing items by slug + post type (all statuses), keep them by default;
+  only "Overwrite" updates them. Never create duplicate pages, templates or media.
+- Use images by Media Library attachment ID — never the exported template's own image URLs.
+- Use only documented Elementor import methods for the installed version (template import, Kit
+  import or WP-CLI). Never guess meta keys or formats — check Elementor's official docs or ask.
+- `is_wp_error()` on every insert; skip and report a failure instead of stopping. Never delete
+  content that is not in the seed. No API keys or passwords in the seed files.
+
+**QA:**
+- [ ] On a fresh install: activate the theme + Elementor Pro + ACF PRO, run Tools → {Project} Setup →
+      every page, template, menu, CPT entry and image is there and matches the design.
+- [ ] Run it a second time → nothing is duplicated (pages, templates, media, menu items).
+- [ ] Front page, posts page, menus, display conditions, Site Icon and permalinks are set.
+
+---
+
+# 151. VERIFY AGAINST THE DESIGN — BEFORE CALLING ANYTHING DONE
+
+Every page and every section is checked against the design before it is called done.
+
+1. Build **one real section** first as a proving run — ideally the header or hero, since it
+   exercises type, colour, buttons, icons and responsive behaviour at once. Fix the drift before
+   building the rest.
+2. Screenshot every page headless at desktop / tablet / mobile and compare it side by side with the
+   matching design (Figma frame / PDF page / original HTML page).
+   > Headless Chrome enforces a ~500px minimum window, so a 375px screenshot comes out **cropped,
+   > not narrow**. To check true mobile, load the page in a 375px-wide `<iframe>` inside a wrapper
+   > page and screenshot that instead.
+3. Check, per section: spacing, font sizes, line heights, colours, alignment, radius, shadows,
+   image crops, icon sizes, hover / focus states and animations.
+4. Zoom in on every image in the screenshot. If any image looks soft or blurry, export it again at a
+   higher size.
+5. Nothing from the design is missing on the site — every section, image and text block is there.
+6. Open each page in the Elementor editor and confirm an editor can change text, images, links and
+   section order without code.
+7. Fix the drift, then report: what was checked, what was fixed, what still needs the user's input
+   (usually real copy, real images and real URLs). Then run the §128 final QA.

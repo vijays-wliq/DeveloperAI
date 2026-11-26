@@ -113,7 +113,7 @@ Start questions (ask one, wait for the answer, then ask the next):
       3. Both                         (same sections as Flexible Content layouts AND blocks)
       4. Elementor Pro
       5. Other builder                (name + version, please)
- 6. Which forms plugin?  1. Gravity Forms   2. Contact Form 7
+ 6. Which forms plugin?  1. Gravity Forms   2. Contact Form 7   3. Elementor Pro Form widget (Elementor builds only)
  7. Is WooCommerce part of this build? If yes: Cart and Checkout as
     Block (WooCommerce default) or Classic (shortcode)?
  8. New theme, or update / extend an existing theme on the site?
@@ -160,7 +160,7 @@ What each answer drives:
    Blocks) → E3. Both → E4. Elementor Pro → E5. Any other builder → E6 (ask for its name and
    version). Shared builder rules are in E1. Options 1–3 need **ACF PRO** — never install SCF (D110).
 
-6. **Forms plugin.** Gravity Forms or Contact Form 7 (D109). Use only the chosen one for every form.
+6. **Forms plugin.** Gravity Forms, Contact Form 7, or — on an Elementor build — the Elementor Pro Form widget (D109). Use only the chosen one for every form.
 
 7. **WooCommerce.** Yes / no, and Cart + Checkout as **Block** or **Classic** (D113).
 
@@ -171,9 +171,14 @@ What each answer drives:
    project folder (D110). Never ask for, print, copy or commit passwords. If a local server is needed
    and its details are not known, ask the user — `login.md` is only for the user's own site.
 
-**Sliders are not a question — they are fixed.** Every slider, carousel or logo strip in the design
-is built with **Slick 1.8.1** (needs **jQuery**), driven by `data-slider` attributes through
-`assets/js/sliders.js` (A7.5). Never use Swiper, Owl, Splide or hand-written slider JS.
+**Sliders are not a question — they are fixed by the builder chosen in E1.**
+- **ACF Flexible Content / Gutenberg (ACF Blocks) / Both:** every slider, carousel or logo strip is
+  built with **Slick 1.8.1** (needs **jQuery**), driven by `data-slider` attributes through
+  `assets/js/sliders.js` (A7.5). **Swiper** may be used instead — one slider library per site, never
+  both, initialised only in `sliders.js` and enqueued in the A7.6 order.
+- **Elementor Pro / any other builder:** use the builder's own default slider / carousel widget.
+  Never add a new slider JS (no Slick, no Swiper of our own).
+- Never use Owl, Splide or hand-written slider JS.
 
 ---
 
@@ -1379,8 +1384,10 @@ List the components that exist on this project's style guide page here (from the
     - Set `width` / `height` on `<img>` from the design, and use `object-fit` so it is never stretched.
     - After each page, zoom the screenshot on every image. If any image looks soft, export it again
       at a higher size.
-17. **Every slider is Slick 1.8.1, attribute-driven** (A9.8.1). Use `data-slider` presets only. No
-    Swiper, Owl or Splide, no hand-written slider JS, no `$(…).slick()` call outside `sliders.js`.
+17. **Sliders follow the builder chosen in E1** (A1). ACF / Gutenberg / Both: Slick 1.8.1 with
+    `data-slider` presets (A9.8.1), or Swiper — one library per site, initialised only in
+    `sliders.js`; no `$(…).slick()` call outside `sliders.js`. Elementor / any other builder: the
+    builder's own default slider widget, no new slider JS. Never Owl, Splide or hand-written slider JS.
 18. **Every page has the DeveloperAI meta tag in `<head>`, by default.** It is output once, through
     the `wp_head` hook, as D112 defines — never hard-coded in a template. Copy it exactly — do not
     change the name or the content, and never show it on the page:
@@ -1802,7 +1809,7 @@ Things that go wrong if you skip them.
 | Stagger across 20+ children | Total delay blows past 400ms. Animate the container as one block. |
 | Naming a class after a colour (`.btn-orange`, `.text-blue`) | Name by role: `.btn-accent`, `.heading-accent`. Colour names break on a rebrand. |
 | Inventing a CDN URL, animation attribute or preset | Use only the pinned URLs and presets in A7.6 / A9.8. Ask for docs before adding a library. |
-| Reaching for Swiper or writing a slider by hand | Every slider is Slick 1.8.1 through `data-slider` (A7.5 / A9.8.1). |
+| Reaching for Owl / Splide or writing a slider by hand | ACF / Gutenberg / Both: Slick 1.8.1 through `data-slider` (A7.5 / A9.8.1) or Swiper, only in `sliders.js`. Elementor / other builders: the builder's own slider widget (A1). |
 | Slider shows stacked slides or nothing at all | Slick not enqueued, `{PREFIX}_HAS_SLIDER` is `false`, or Slick loads after `sliders.js`. Check the A7.6 order and dependencies. |
 | `data-anim-stagger` on a slider track | Slick clones and re-wraps the slides. Animate the `[data-slider-wrap]` as one block. |
 | Hard-coded `<script>` / `<link>` tags in `header.php`, `footer.php` or a template | Enqueue everything in `inc/enqueue.php` with dependencies (A7.6). |
@@ -2380,7 +2387,7 @@ or specific templates only when necessary.
 
 > **Elementor Pro chosen in E1:** Home is a normal page built with Elementor and set as the static front page — no `front-page.php`.
 
-Use:
+**ACF Flexible Content / Gutenberg (ACF Blocks) / Both chosen in E1:** use:
 
 ```text
 front-page.php
@@ -2390,8 +2397,8 @@ The homepage must be built from the actual Figma Home frames (1600 / 900 / 375).
 
 Do not redesign.
 
-Homepage sections are built with the page builder chosen in E1. `front-page.php` loops the
-sections; it does not hardcode them.
+Homepage sections are built with the page builder chosen in E1. For ACF / Gutenberg / Both,
+`front-page.php` loops the sections; it does not hardcode them.
 
 If homepage sections contain dynamic data, connect them to:
 
@@ -2437,6 +2444,9 @@ search.php
 
 Do not create duplicate templates without a reason.
 
+`page-{slug}.php` only when a page needs a different wrapper. Page content always comes from the
+page builder chosen in E1 — never hardcoded in a template.
+
 ---
 
 # B19. ASSETS
@@ -2477,7 +2487,11 @@ Do not use fragile relative paths such as:
 
 # B20. CSS
 
-> **Elementor Pro chosen in E1:** CSS follows **E5.18** (native controls first, no class-based CSS, approved CSS only in `custom.css`).
+> **Elementor Pro chosen in E1:** CSS follows **E5.18** — cover everything with native Elementor controls first; only when a native control cannot do it, add a CSS class on that element with its rule in `custom.css`.
+
+> **ACF Flexible Content / Gutenberg (ACF Blocks) / Both chosen in E1:** do not rewrite CSS for its
+> own sake — reuse the `vendor.css` tokens and the existing global components, and only add what the
+> section really needs (D103).
 
 ## CRITICAL
 
@@ -2771,8 +2785,8 @@ Forms must be:
 - Working
 - Spam-protected where appropriate
 
-Build every form with the forms plugin the user chose at the start — Gravity Forms or Contact
-Form 7 (D109).
+Build every form with the forms plugin the user chose at the start — Gravity Forms, Contact
+Form 7 or (Elementor builds) the Elementor Pro Form widget (D109).
 
 ---
 
@@ -2840,6 +2854,8 @@ Where URLs must change, implement 301 redirects.
 ---
 
 # B31. 404 AND REDIRECTS
+
+> **Elementor Pro chosen in E1:** 404 and Search are Theme Builder templates (E5.29) — no `404.php` / `search.php`. Redirects below still apply.
 
 Create:
 
@@ -3255,6 +3271,8 @@ The goal is reusable and readable code.
 
 # B50. CSS CLASS NAMING AND STABILITY
 
+> **Elementor Pro chosen in E1:** native Elementor controls first; add a class only when a native control cannot do it, with its rule in `custom.css` (E5.18). Any class that is added still follows the Part A naming.
+
 Use the Part A naming and token rules (A9) for every class. Do not invent names that drift from
 the Figma component/section names.
 
@@ -3524,7 +3542,7 @@ Follow this order:
 ```text
 0. Ask: Page builder — ACF PRO Flexible Content / Gutenberg (ACF Blocks) / Both /
         Elementor Pro / other (E1)
-   Ask: Gravity Forms or Contact Form 7 (D109)
+   Ask: Gravity Forms, Contact Form 7 or (Elementor) Elementor Pro Form widget (D109)
    Ask: WooCommerce in this build? Cart/Checkout Block or Classic? (D113)
 1. Collect inputs (A1)
 2. Export the Figma design into Design/ (A2), then A3–A4
@@ -3598,7 +3616,7 @@ Do not ask unnecessary questions if the answer can be determined by inspecting t
 
 Only ask the user when a business requirement genuinely cannot be inferred from the supplied design.
 
-Exception: the page-builder choice (E1) and the forms plugin (Gravity Forms / Contact Form 7, D109)
+Exception: the page-builder choice (E1) and the forms plugin (Gravity Forms / Contact Form 7 / Elementor Pro Form widget, D109)
 are **always** asked first and recorded in this report.
 If the site sells products, the WooCommerce questions (D113) are asked and recorded here too.
 All of them are asked one question per message (A1).
@@ -3782,6 +3800,7 @@ Before declaring the project complete:
 - [ ] Heading hierarchy correct.
 - [ ] Meta integration works.
 - [ ] `<meta name="DeveloperAI" content="Developer Skill">` is in `<head>` on every page (D112).
+- [ ] Favicon made from the logo icon is set as the WordPress Site Icon and shows on every page (D114).
 - [ ] Canonicals work.
 - [ ] Image ALT works.
 - [ ] URLs are correct.
@@ -3807,7 +3826,7 @@ Before declaring the project complete:
 
 ## Build lessons (D103–D107)
 
-- [ ] Sections have appropriate section-level classes; no unnecessary inline styles (D103).
+- [ ] Sections have appropriate section-level classes; no unnecessary inline styles (D103). Elementor: no class by habit — only where a native control could not do it (E5.18).
 - [ ] Font sizes, colours, spacing and other repeated values use CSS variables (D103).
 - [ ] Section spacing is consistent; container left/right spacing is set once globally (D103).
 - [ ] Meaningful SVG icons have alternative text; decorative ones are `aria-hidden="true"` (D104).
@@ -3818,7 +3837,7 @@ Before declaring the project complete:
 - [ ] HTML Sitemap page exists, lists content automatically and is linked in the footer (D107).
 - [ ] XML sitemap loads with correct URLs (D107).
 - [ ] Page builder (E1) passes its own QA list: any section, any page, any order.
-- [ ] Forms use the chosen plugin (Gravity Forms / Contact Form 7) and pass the D109 QA list.
+- [ ] Forms use the chosen plugin (Gravity Forms / Contact Form 7 / Elementor Pro Form widget) and pass the D109 QA list.
 - [ ] Only ACF PRO is used, SCF is not installed (D110); all field groups are in `acf-json/` and synced (D111).
 - [ ] WooCommerce sites: shop design, CSS, JS and responsive pass the D113 QA list.
 
@@ -4727,6 +4746,9 @@ system (A7.2 `vendor.css`, A9.5–A9.7).*
 - Never re-create a global component inside a section file. Reuse it.
 
 **Section-level classes, wherever required**
+
+> **Elementor Pro chosen in E1:** no section classes by habit — native Elementor controls first; add a class only when a native control cannot do it, with its rule in `custom.css` (E5.18).
+
 - Every template section gets a section-level BEM block class with a matching `id` (A9.6.2), e.g.
   `about`, `partners`, with elements `about__grid`, `about__card`.
 - Shared components get a reusable class (e.g. `card`, `logo-grid`).
@@ -4952,7 +4974,11 @@ Set this before building internal links, then flush permalinks (save the Permali
 
 ---
 
-# D109. FORMS PLUGIN — GRAVITY FORMS OR CONTACT FORM 7
+> **D108** — no section here: the page builder choice is in **E1**.
+
+---
+
+# D109. FORMS PLUGIN — GRAVITY FORMS, CONTACT FORM 7 OR ELEMENTOR PRO FORM
 
 *Added after a real build: the forms plugin was guessed. The choice must come from the user.*
 
@@ -4966,6 +4992,7 @@ assume the answer, even if one plugin looks like the obvious choice.
 Which forms plugin should the site use?
   1. Gravity Forms
   2. Contact Form 7
+  3. Elementor Pro Form widget   ← offer only when E1 = Elementor Pro
 ```
 
 - Write the answer into the architecture report (B65) and use **only** that plugin for every form on
@@ -4976,7 +5003,7 @@ Which forms plugin should the site use?
   the chosen plugin (Gravity Forms add-on / webhook, or a CF7 integration). Ask the user for the
   target; never guess it.
 
-## Rules for both plugins
+## Rules for every option
 
 - Every form in the Figma design (contact, newsletter, demo request, …) becomes one form in the
   chosen plugin, with the same fields, labels, placeholders, required fields, order and button text
@@ -5008,9 +5035,20 @@ Which forms plugin should the site use?
 - Load CF7 CSS/JS only on pages that have a form (`wpcf7_load_css` / `wpcf7_load_js` filters +
   enqueue where needed, B40).
 
+## Elementor Pro Form widget (Elementor builds only)
+
+- Build each form with the native **Form** widget; save it as a reusable template / Global Widget
+  when it repeats (E5.8).
+- Style it with the widget's own style controls and the Elementor globals (E5.3–E5.5) — no class CSS
+  unless a native control cannot do it (E5.18).
+- Actions After Submit: **Email** to the admin email (Site Settings), **Redirect** / message as in
+  the design; add CRM / webhook actions only when the user gives the target.
+- Spam: the widget's **Honeypot** field plus reCAPTCHA / Turnstile when available.
+- Follow the Form-widget gotchas in E5.37.10.
+
 ## QA
 
-- [ ] The forms plugin (Gravity Forms / Contact Form 7) was asked and recorded before building.
+- [ ] The forms plugin (Gravity Forms / Contact Form 7 / Elementor Pro Form widget) was asked and recorded before building.
 - [ ] Only the chosen plugin is used; every Figma form exists in it.
 - [ ] Every form looks like the Figma form on mobile, tablet and desktop.
 - [ ] Submissions arrive by email; success / error messages and redirects work.
@@ -5442,7 +5480,7 @@ For each one write: **element → page / post / product / external URL**. Keep t
   typed URL or `.html` link. Home → `home_url( '/' )`.
 - Product / product category → `get_permalink( $product_id )` / `get_term_link( $term )`.
 - Archive / category / tag → `get_post_type_archive_link()`, `get_term_link()`.
-- Menus → WordPress Menus (`wp_nav_menu()`, B / E5.10) — every menu item points to a real page.
+- Menus → WordPress Menus (`wp_nav_menu()`, B7 / E5.10) — every menu item points to a real page.
 - Editable buttons / CTAs → ACF **Link** field (returns url, title, target), so the admin can change
   it — never a plain text field for the URL. Print with `esc_url()`; add `target="_blank"
   rel="noopener"` only when the field's target is `_blank`.
@@ -5530,7 +5568,7 @@ These apply to all five options. E2–E6 only add the builder-specific parts.
   that genuinely needs raw HTML (e.g. a third-party embed).
 - **No per-widget / per-block / per-element custom CSS.** Styling comes from the tokens
   (`vendor.css`), the builder's global settings and shared, reusable class CSS in the theme's
-  `assets/css/` (D103). No inline `style=""` (the only exception is a dynamic admin value passed as a
+  `assets/css/` (D103). Elementor Pro: native Elementor controls first; add a class only when a native control cannot do it, with its rule in `custom.css` (E5.18). No inline `style=""` (the only exception is a dynamic admin value passed as a
   CSS variable, D103).
 - **Update-safe.** All code lives in the theme (or a child theme of a third-party parent theme).
   Never edit plugin, builder or parent-theme vendor files.
@@ -5544,8 +5582,9 @@ These apply to all five options. E2–E6 only add the builder-specific parts.
   the Figma page order with their sections in the Figma order.
 - **Images:** only the Figma-exported images, sharp, never blurry (2x export, resize down only, WebP
   q85+, vectors stay SVG). Named and uploaded once (D104, D105).
-- **Animations** come from `Design/ANIMATIONS.md`, mapped to `data-anim` presets (A9.8). Sliders use
-  `data-slider` (A9.8.1).
+- **Animations** come from `Design/ANIMATIONS.md`, mapped to `data-anim` presets (A9.8). Sliders:
+  ACF / Gutenberg / Both use `sliders.js` (Slick `data-slider` or Swiper, A9.8.1); Elementor / other
+  builders use the builder's own slider widget — no new slider JS (A1).
 - Every page is checked against its Figma frame at **1600 / 900 / 375** (F1).
 
 ## Shared QA (every option)
@@ -6213,7 +6252,7 @@ If a third-party parent theme is present, avoid modifying vendor files unnecessa
 child-theme/customization approach where appropriate.
 
 If a new theme (or child theme) has to be created, follow E5.19 — it must include the Part A assets
-(`vendor.css`, `vendor.js`, `sliders.js`, `animations.js`) and `custom.css`.
+(`vendor.css`, `vendor.js`, `animations.js`) and `custom.css` — no `sliders.js` (E5.20).
 
 ---
 
@@ -6346,25 +6385,31 @@ theme-name/
 └── assets/
     ├── js/
     │   ├── vendor.js      ← small guarded UI inits (A7.3)
-    │   ├── sliders.js     ← Slick, data-slider (A7.5)
     │   └── animations.js  ← GSAP + ScrollTrigger, data-anim (A7.4)
     └── css/
-        ├── vendor.css     ← tokens + global components (A7.2)
+        ├── vendor.css     ← :root tokens ONLY (from TOKENS.md) — no components
         └── custom.css     ← the ONLY place for approved Elementor custom CSS
 ```
 
 ### Scripts (vendor.js, sliders.js, animations.js)
 
-- Third-party libraries (jQuery, Slick, GSAP, ScrollTrigger) are enqueued in the A7.6 order:
-  jQuery → Slick → GSAP → ScrollTrigger → `sliders.js` → `animations.js`. Never hard-coded
-  `<script>` tags.
+- Third-party libraries (GSAP, ScrollTrigger) are enqueued in the A7.6 order:
+  GSAP → ScrollTrigger → `animations.js`. Never hard-coded `<script>` tags. No `sliders.js`, Slick or
+  Swiper of our own — sliders are Elementor's own carousel widgets (E5.20).
 - Do not load the same library twice (check whether Elementor or a plugin already loads it — e.g.
   Elementor ships its own jQuery and Swiper).
 - Enqueue with `wp_enqueue_script()` in the footer, with correct dependencies and version numbers.
-- Load only on the pages that need it where practical (Slick only on slider pages).
+- Load only on the pages that need it where practical.
 - `vendor.js` may also hold small, approved front-end fixes that Elementor cannot do (e.g. adding a
   missing `aria-label`, a menu-chevron toggle). Fix things in the template/PHP first; use JS only
   when the markup comes from Elementor/Pro and cannot be changed. Comment each fix with what it fixes.
+
+### vendor.css (Elementor: tokens only)
+
+- Holds **only the `:root` tokens** from `TOKENS.md` (colours, fonts, spacing, `--transition` …) so
+  `custom.css` and `animations.js` can use `var(--…)`.
+- **No global components** (no `.container`, buttons, headings, forms) — those are set in Elementor
+  Site Settings and the Global Design System (E5.3–E5.7).
 
 ### custom.css
 
@@ -6392,9 +6437,9 @@ motion spec first.
   `Advanced → Attributes` (Elementor Pro). Never add GSAP code in an HTML widget or Custom Code.
 - Never use Elementor Entrance Animations and `data-anim` on the same element (one animation per
   element, A9.8 rule 3).
-- Sliders: use a native Elementor carousel only if it matches the Figma design exactly; otherwise use
-  Slick through `data-slider` attributes and `sliders.js` (A9.8.1). Follow the slider + animation
-  rules in A9.8 rule 10.
+- Sliders: use Elementor's own default carousel widgets (Image Carousel, Loop Carousel, Media
+  Carousel …), styled to match the Figma design. Never add a new slider JS (no Slick, no Swiper of
+  our own) (A1). Follow the slider + animation rules in A9.8 rule 10.
 
 If GSAP or Three.js is present:
 
@@ -6624,6 +6669,20 @@ Rules:
 - Verify every internal link after the build — no 404s.
 - Every clickable element must be linked (link map, no `#` / empty links) — see D115.
 
+**How to set each link (Elementor):**
+
+- Internal page / post → **Link → Dynamic Tags → Internal URL → Content** (above). Never a typed URL.
+- Product / product category → the product's own link from the **Loop Item** / WooCommerce widgets
+  (Product Title, Product Image, Add to Cart) or Internal URL → the product / category (E5.31).
+- Archive / category / tag → Dynamic Tags → Archive URL / Internal URL → Taxonomy.
+- Menus → WordPress Menus in the Nav Menu widget (E5.10) — every menu item points to a real page.
+- Whole card clickable → set the link on the Loop Item / container (Elementor container link), not
+  only on the small "Read more" text.
+- Phone → `tel:`, email → `mailto:`, address → Google Maps link — taken from Site Settings / ACF
+  options, not typed again per widget.
+- Social icons → the real profile URLs from the design / client, opened in a new tab with
+  `rel="noopener"`.
+
 **Permalinks** are set to **Post name** by the importer (D100 step 4):
 
 ```text
@@ -6730,6 +6789,8 @@ Never edit WooCommerce plugin files.
 - The widget's Query picks the products (category, tag, featured, on sale, best sellers, newest,
   manual selection, count, order). Inside the Loop Item use dynamic tags (Product Title, Product
   Price, Featured Image, Product Rating, Add to Cart, Sale / Stock badge).
+- Empty state: set the widget's "Nothing found" message or hide the section — never fall back to
+  static placeholder products.
 
 ### Theme-level CSS (replaces where D113 step 7 puts the CSS)
 
@@ -6798,6 +6859,7 @@ The shared QA in E1 and the final QA in F2 also apply.
 - [ ] Container width + padding set once in Site Settings → Layout; no per-container widths (E5.7).
 - [ ] Elementor breakpoints set to the A5.8 values; responsive typography matches.
 - [ ] Repeated components are reusable.
+- [ ] Favicon made from the logo icon is set as the Site Icon and shows on every page (D114).
 
 ### Header
 
@@ -6858,7 +6920,7 @@ The shared QA in E1 and the final QA in F2 also apply.
 - [ ] Section spacing is consistent; container left/right spacing is set once globally.
 - [ ] Repeated sections/blocks saved as reusable templates / Global Widgets.
 - [ ] Theme assets exist and are enqueued in the A7.6 order: `vendor.css`, `custom.css`,
-      `vendor.js`, `sliders.js`, `animations.js`.
+      `vendor.js`, `animations.js` (no `sliders.js` — sliders are Elementor carousel widgets).
 
 ### Images, links & permalinks
 
@@ -6935,7 +6997,7 @@ Do not tell the user "done" until all are ticked after the **second** pass.
 - [ ] Dummy content and links waiting on the client listed (links: D115).
 
 #### Technical QA
-- [ ] 1920 / 1440 / 1366 / 1024 / 768 / 520 / 390 crawled: no console errors, failed requests, broken images, missing alt, overflow, clipping.
+- [ ] 1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320 crawled (F2): no console errors, failed requests, broken images, missing alt, overflow, clipping.
 - [ ] axe: one `<main>`, no duplicate landmarks, unique `<nav>` labels, icon-only names, contrast measured and reported.
 - [ ] Unique title + description ≤160 on every page incl. archives/search/404; noindex/canonical noted for launch.
 - [ ] Elementor cache cleared; theme version bumped; site returns 200 after upload.
@@ -6985,7 +7047,12 @@ Images               → Optimized WebP (Figma exports, sharp)
 Permalink Structure  → Post name
 Styling              → Native Elementor controls only (no Custom CSS, no class-based CSS; approved CSS only in custom.css)
 <head> meta          → <meta name="DeveloperAI" content="Developer Skill"> on every page (D112)
+Favicon              → WordPress Site Icon made from the logo icon (D114)
 WooCommerce (if any) → Theme Builder + native Woo widgets, CSS in custom.css, woocommerce.js (E5.31)
+Images & SVGs        → accessible, SEO-friendly names and alt text (D104), Media Library once (D105)
+Placeholders         → consistent placeholders (D98.1); 404 + Search pages built (D106, E5.29)
+Links                → every clickable element linked, no `#` (D115, E5.28)
+Content              → manageable by the client in WordPress / Elementor
 ```
 
 Normal content changes must be possible through WordPress/Elementor without touching code.
@@ -7103,7 +7170,7 @@ These came from the Buell Recreation build. On any new Elementor project, **chec
 
 ### E5.36.10 SELF-QA — MANDATORY, TWO PASSES
 Before telling the user "done", run QA yourself **twice** (pass 2 after fixing pass 1):
-1. Crawl every page, CPT single/archive, taxonomy page, search and 404 at **1920, 1366, 1024, 390**.
+1. Crawl every page, CPT single/archive, taxonomy page, search and 404 at **1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320** (F2).
 2. Per page record: console errors, failed requests, broken images, missing alt, horizontal overflow, clipped text, heading order, landmarks, axe violations (Playwright + axe-core), title/description, `#` links (D115) / placeholder content, form validation.
 3. Take screenshots and **look** at the header, mega menu, banner, cards and footer on desktop and mobile; measure spacing instead of guessing.
 4. Fix everything that is code. Anything that needs the client (colour, copy, URLs) goes in a short "needs decision" list.
@@ -7117,7 +7184,7 @@ Before telling the user "done", run QA yourself **twice** (pass 2 after fixing p
 
 ## E5.37 BUG LIBRARY — EVERYTHING QA / THE CLIENT FOUND ON THE BUELL PROJECT (50+ ITEMS)
 
-**How to use this section:** it is a pre-flight checklist. Before you show ANY page, go through every line below and test it yourself at **1920 / 1440 / 1366 / 1024 / 768 / 520 / 390**. If an item is not applicable, skip it. If you meet a new kind of bug, fix it and add one line here. Sections E5.36 and E5.37 together are the "do not repeat" list.
+**How to use this section:** it is a pre-flight checklist. Before you show ANY page, go through every line below and test it yourself at **1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320** (F2). If an item is not applicable, skip it. If you meet a new kind of bug, fix it and add one line here. Sections E5.36 and E5.37 together are the "do not repeat" list.
 
 Legend: **[R]** = responsive-specific.
 
@@ -7148,7 +7215,7 @@ Legend: **[R]** = responsive-specific.
 - Mega-menu image changes on hover of each product/brand link (fallback chain: E5.36.4).
 
 ### E5.37.4 Mobile / off-canvas menu [R]
-- Hamburger uses a **custom uploaded SVG icon** (not the default Elementor icon) in the design's shape; check its size at 390/520/768.
+- Hamburger uses a **custom uploaded SVG icon** (not the default Elementor icon) in the design's shape; check its size at 375/576/768.
 - When the menu opens: **page scroll is locked**, only the menu scrolls.
 - Menu rows: proper `li` borders/dividers and padding, clear tap targets, design look. Sub-menu chevron is a pure open/close toggle (does not navigate).
 - Everything keeps working at 700–800 px where tablets/landscape phones show the menu: banner arrows must not be touched by the menu or overlap content.
@@ -7184,7 +7251,7 @@ Legend: **[R]** = responsive-specific.
 - A section with icon + title + text centred on mobile (e.g. "Why Communities") centres **all three**; its icons may be larger only for that section.
 - Fixed breakpoints: do not leave a value for 991 and 575 inconsistent (client set 767 = 36 px, 991 and below = 40 px). Ask which value applies at each breakpoint or copy the design.
 - Forms: checkbox row is placed **above** the Send button on all widths; phone field with country prefix looks like the design.
-- Border radius at tablet/mobile must not look broken (curved panels use a 9-slice mask from the PDF path, with the same corner/bulge size); check every rounded card at 390.
+- Border radius at tablet/mobile must not look broken (curved panels use a 9-slice mask from the PDF path, with the same corner/bulge size); check every rounded card at 375.
 - Marquee/logo band speed: ~4 s per logo (a slow marquee was a bug); paused on hover, reduced for `prefers-reduced-motion`.
 
 ### E5.37.8 Sliders, carousels & loops
@@ -7198,7 +7265,7 @@ Legend: **[R]** = responsive-specific.
 - Brand/partner logo tiles are **clickable on the whole bordered box**, and go to the detail page. Logos in marquees link to the brand detail page too.
 - Nested Carousel: the `offset` (peeking next card) only works with **infinite loop on**; the NEXT arrow's horizontal offset sign is the opposite of the PREV arrow's — check both arrows' positions at every breakpoint.
 - A carousel that must be wider than its container (bleeding to the screen edge) needs `max-width: none` on the widget, otherwise a width over 100 % is ignored.
-- Side arrows on wide screens (1366–1920) are placed with `calc()`/`clamp()` on `100vw` so they never sit on top of the cards or off-screen. Check at 1366, 1440 and 1920.
+- Side arrows on wide screens (1366–1920) are placed with `calc()`/`clamp()` on `100vw` so they never sit on top of the cards or off-screen. Check at 1366, 1440, 1600 and 1920.
 - After changing a slider, test the **whole row on every breakpoint** (slides shown, gap, peek, arrows, dots, swipe on mobile, autoplay pause) — not only the slide you changed.
 
 ### E5.37.9 Content, data & dynamic pages
@@ -7235,7 +7302,7 @@ Legend: **[R]** = responsive-specific.
 1. Compare **every page against the PDF/Figma, zoomed in**, not only overflow/console checks. Technical-only QA already failed once (the client found 10 visual bugs after a "clean" technical report).
 2. Measure: padding on all four sides, icon centring in badges, image crops, gaps per breakpoint, text overflow, vertical centring in buttons, equal top/bottom section space.
 3. Click-test: menus (desktop + mobile), accordions, tabs, sliders and arrows, forms (validation), logo links, brand links, pagination, hover states.
-4. Devices: 1920, 1440, 1366, 1024, 768, 520 and 390 — plus 700–800 for the menu/banner arrow case.
+4. Devices: 1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320 (F2) — plus 700–800 for the menu/banner arrow case.
 5. Run the checks twice (after fixes) and write the result per QA bug type.
 6. Before saying "done": updated `PROJECT-SUMMARY.md` + `DAILY-LOG.md`, listed dummy content, links waiting on the client, client decisions, and the theme version.
 
@@ -7264,7 +7331,7 @@ E5.36–E5.38 find bugs **after** building. This section prevents the most frequ
 - Icons must use the global colour (currentColor / Elementor global), keep cut-out parts (detail paths) in the secondary colour, and keep their own fills only when the icon is an illustration (flag, logo).
 - Size by variable per breakpoint (smaller on tablet/mobile); centre in the badge with flex — verify centre point by measurement.
 - Hamburger, search, arrows, social: all custom SVG from the design (accessible names: E5.36.2).
-- Check every icon: correct glyph, colour, size, centring, hover colour, at 1920 and 390.
+- Check every icon: correct glyph, colour, size, centring, hover colour, at 1920 and 375.
 
 ### E5.39.3 Images — no image issues
 - WebP, names, alt text and Media Library: E5.26, D104, D105. Resize to ≤2× the largest display size; SVG stays SVG (logos, icons, wordmarks, watermark).
@@ -7358,8 +7425,9 @@ Ask, and record the answers in the architecture report (B65):
 
 - Code lives in the theme or a **child theme** (of the builder's theme, if it is one). Never edit
   builder, plugin or parent-theme files.
-- The Part A assets (`vendor.css`, `vendor.js`, `sliders.js`, `animations.js`) are enqueued in the
-  A7.6 order through `inc/enqueue.php`. Check what the builder already loads (jQuery, sliders,
+- The Part A assets (`vendor.css`, `vendor.js`, `animations.js`) are enqueued in the
+  A7.6 order through `inc/enqueue.php`. Sliders use the builder's own default slider widget — no
+  `sliders.js` and no new slider JS (A1). Check what the builder already loads (jQuery, sliders,
   animation libraries) and never load a library twice.
 - Animations use `data-anim` attributes (A9.8), added through the builder's custom-attributes
   setting, if it has one. Use the builder's own motion features only when they match
@@ -7371,7 +7439,7 @@ Ask, and record the answers in the architecture report (B65):
 - Use the builder's dynamic data feature with WordPress fields, ACF PRO fields (D110, D111) and
   CPTs, where the builder supports it. Never hard-code CPT or site-wide values.
 - Internal links use the builder's dynamic link to the page/post, where available — never typed
-  URLs. Permalinks are **Post name** (D100).
+  URLs. Permalinks are **Post name** (D107.1).
 - Images come from the Media Library, uploaded once (D104, D105).
 - The importer (D96–D102) seeds the builder's templates and pages, using only the builder's
   documented import method (template import, export file or CLI). If none is documented, ask the
@@ -7443,7 +7511,7 @@ Run every list below that applies to this build. A build is not done while any i
 - [ ] Part A — the section delivery checklist (A9.9) for every section, and the design guardrails (A10).
 - [ ] Part B — the final QA checklist (B70), including the build-lessons list.
 - [ ] Part C — the existing-theme regression test (C91), if this build extended an existing theme.
-- [ ] Part D — importer QA (D102), and the QA list of every D section used: D104–D107.1, D109–D113, D115.
+- [ ] Part D — importer QA (D102), and the QA list of every D section used: D104–D107.1, D109–D115.
 - [ ] Part E — the shared builder QA (E1) and the QA list of the chosen builder (E2 / E3 / E4 /
       E5.33 / E6.10).
 - [ ] F1 — every page compared with its Figma frame at 1600 / 900 / 375; every image sharp; every
@@ -7465,7 +7533,7 @@ saying "done". It catches what the per-section lists miss.*
    Figma frame / PDF page, zoomed in: section order, layout, spacing, sizes, fonts, weights, line
    heights, colours, radius, shadows, icons, images (sharp, right crop), hover / active states and
    animations. Measure the numbers, don't judge by eye — any difference over ~2 px gets fixed.
-3. **Responsive:** every page at 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 (A5.8) and the Figma frames 1600 / 900 / 375, plus 320 px: no horizontal scroll, no overlap, no
+3. **Responsive:** every page at 1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 (A5.8) and the Figma frames 1600 / 900 / 375, plus 320 px: no horizontal scroll, no overlap, no
    clipped or squeezed text, menus / dropdowns / mini-cart stay inside the screen, tap targets at
    least 44 px, images not wrongly cropped.
 4. **Functionality:** header menu, dropdowns, mobile menu, sticky header, search, sliders, tabs,
@@ -7481,11 +7549,11 @@ saying "done". It catches what the per-section lists miss.*
    and favicon on every page (D112, D114).
 9. **Accessibility:** landmarks, heading order, alt text, form labels, visible focus, colour contrast
    measured.
-
-- **Admin / editability:** every text, image, button and link is editable in WordPress / the builder chosen in E1; dynamic
-  content (posts, CPTs, products, menus, settings) comes from the CMS — nothing hard-coded.
 10. **Performance:** pages load fast; no unused heavy assets; images correctly sized.
 11. **Browsers:** Chrome, Safari, Firefox and Edge, plus one real phone (iOS Safari) where possible.
+12. **Admin / editability:** every text, image, button and link is editable in WordPress / the
+    builder chosen in E1; dynamic content (posts, CPTs, products, menus, settings) comes from the
+    CMS — nothing hard-coded.
 
 **Rules**
 - Any fail → fix it → re-check that item **and** every page that shares that part.
@@ -7580,7 +7648,7 @@ Signs the site is already built: the theme exists in `wp-content/themes/`, pages
 | Forms | B28, D109 |
 | SEO / meta | B29, D112 |
 | Favicon / site icon | D114 |
-| Links / buttons / cards not linked | D115 |
+| Links / buttons / cards not linked | D115, B43 |
 | Images / SVG / Media Library | A2, B26, D104, D105 |
 | 404 / Search / Sitemap | D106, D107 |
 | Permalinks | D107.1 |
