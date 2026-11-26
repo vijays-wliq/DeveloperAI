@@ -103,6 +103,7 @@ Design/
 ├── images/       every raster image used in the design: photos, backgrounds, illustrations
 ├── svg/          every icon, logo and vector shape, exported as SVG
 ├── ANIMATIONS.md every Figma prototype interaction and animation (see step 4)
+├── CONTENT.md    every text in the design, per page and section (see step 5)
 └── EXPORT-LOG.md every exported node: name, node-id, file, status
 ```
 
@@ -121,6 +122,50 @@ Design/
    `Design/ANIMATIONS.md` (frame, element, trigger, effect, duration, easing), then map it to the
    closest `data-anim` preset from §8. If no preset fits, ask. Never drop a Figma animation without
    telling the user.
+5. **Export all the text into `Design/CONTENT.md`.** Read every text node of every page frame and
+   write it down **exactly as it is in Figma** (same words, same case, same punctuation), grouped by
+   page, then by section, in page order. Include:
+   - headings (with their level as designed: H1, H2, eyebrow, card title …)
+   - body copy and lists
+   - button and link labels, and their target if the design shows one
+   - menu items (header, footer, mobile menu), in order
+   - form labels, placeholders, help text, success / error messages
+   - footer text, copyright line, contact details shown in the design
+   - alt-text hints: one short description per image file in `Design/images/`, naming the file
+   - repeated items (cards, logos, testimonials, FAQ) as a numbered list, one block per item
+
+   Use this structure:
+
+   ```markdown
+   # Page: <Page name> (Design/pages/<page>-desktop.png)
+
+   ## Section: <section name, by role — hero, logo-grid, cta-banner …>
+   - Eyebrow: <text>
+   - H2: <text>
+   - Body: <text>
+   - Button: <label> → <target if shown>
+   - Image: Design/images/<file>.webp — alt hint: <short description>
+   - Items:
+     1. Title: <text> · Text: <text> · Icon: Design/svg/<file>.svg
+   ```
+
+   `Design/CONTENT.md` is the **only** source for the text in the HTML pages. Never retype copy from
+   a screenshot by eye, never shorten it, never invent copy. If a text is missing or unreadable in
+   Figma, write `MISSING — ask` in `CONTENT.md` and list it for the user.
+
+### Images in the site — Figma export only, always sharp
+
+Every image in the site comes **only** from `Design/images/` (raster) and `Design/svg/` (icons,
+logos, vector art). No stock photos, no AI images, no crops of the page PNGs. **Images must never
+look blurry:**
+
+- Export from Figma at **2x** the size the image is shown on screen.
+- When converting to `.webp`, resize **down only** to 2x the largest display size. Never upscale.
+- WebP quality **85 or higher** for photos. Use lossless for images with text or sharp edges.
+- Icons, logos and line art stay **SVG**. Never convert them to PNG or WebP.
+- Set `width` / `height` on `<img>` from the design, and use `object-fit` so it is never stretched.
+- After each page, zoom the screenshot on every image. If any image looks soft, export it again at a
+  higher size.
 
 ### 1A.1 Extract the design values
 
@@ -170,6 +215,12 @@ Detect in this order — largest, most repeated things first, they are the most 
 
 Round everything per Phase 2 and **flag the whole set as "measured — please confirm"** in
 `TOKENS.md`.
+
+In this mode, still fill `../Design/` as far as the source allows: page PNGs in `Design/pages/`,
+every text read from the PDF / screenshots into `Design/CONTENT.md` (same structure as 1A.0 step 5),
+and every animation the user describes into `Design/ANIMATIONS.md`. Images and icons that cannot be
+taken from the PDF as clean files are listed for the user — ask for the original files. Never crop
+them out of a page screenshot.
 
 ---
 
@@ -720,7 +771,8 @@ document.addEventListener('DOMContentLoaded', () => {
 ```
 
 No scroll animation code — that lives only in `animations.js` (§4.4). No slider code — that lives
-only in `sliders.js` (§4.5).
+only in `sliders.js` (§4.5). Every init must also work when the same section appears twice on one
+page — select all matches, never assume one.
 
 ### 4.4 `assets/js/animations.js` (default: GSAP + ScrollTrigger)
 
@@ -940,6 +992,9 @@ before building any section. Build it with:
 
 Rule that keeps it alive: **a new component is not done until it is also in `global.html`.**
 
+Text in `global.html` is sample text for components only. Real page copy always comes from
+`Design/CONTENT.md` (§1 rule 20).
+
 ---
 
 ## PHASE 6 — Generate the project's `CLAUDE.md`
@@ -1049,6 +1104,9 @@ zero-padded; Page Name is the human name from the design; Link text is the filen
     <link rel="icon" href="assets/images/favicon/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/images/favicon/apple-touch-icon.png">
     ```
+20. **Every text comes from `Design/CONTENT.md`** (Phase 1A.0 step 5) — exact words, case and
+    punctuation. Never retype copy from a screenshot, never write "Lorem ipsum" or made-up copy. A
+    text marked `MISSING — ask` is asked, not invented.
 
 ---
 
@@ -1268,6 +1326,10 @@ Only write a breakpoint the design actually changes at. Empty queries are not wr
 **Valid presets — no others exist:** `fade-up`, `fade-down`, `fade-left`, `fade-right`, `fade-in`,
 `zoom-in`. A new preset is added to `PRESETS` in `animations.js` **and** to this list, never inline.
 
+Every animation in `Design/ANIMATIONS.md` is mapped to one of these presets (Phase 1A.0 step 4).
+Figma hover and pressed variants are built as CSS `:hover` / `:focus-visible` / `:active` states
+with `--transition`, not as `data-anim`.
+
 ### Animation rules
 1. **Attributes only.** No custom scroll JS, no `IntersectionObserver`, no entrance keyframes in a
    section file. Hover/focus micro-transitions still use `--transition`.
@@ -1381,6 +1443,7 @@ SLIDERS block **and** this table, never inline.
 - [ ] Responsive queries at the bottom of the same file, largest → smallest
 - [ ] Every raster image is an optimised `.webp` — no JPG/PNG/GIF shipped
 - [ ] Every image comes from the Figma export (`Design/images/`, `Design/svg/`) and is sharp, not blurry
+- [ ] Every text comes from `Design/CONTENT.md` — nothing retyped or invented (rule 20)
 - [ ] Every Figma animation for this section in `Design/ANIMATIONS.md` is built
 - [ ] Images have `alt` + `width`/`height`; below-fold images `loading="lazy"`
 - [ ] Every icon is an inline `<svg>` with `currentColor` — no icon fonts
@@ -1446,9 +1509,18 @@ saying "done". It catches what the per-section lists miss.*
    > Headless Chrome enforces a ~500px minimum window, so a 375px screenshot comes out **cropped,
    > not narrow**. To check true mobile, load the page in a 375px-wide `<iframe>` inside a wrapper
    > page and screenshot that instead.
-3. Fix the drift, then report: what was detected, what was generated, what still needs the user's
-   input (usually real copy, real images and real URLs).
-4. When the **whole site** is built, run the **§10 Final Round** of the generated `CLAUDE.md` —
+3. Fix the drift before building the rest.
+4. As each page is built, screenshot it headless at **1600 / 900 / 375** and compare it side by side
+   with the matching frame in `Design/pages/` (desktop / tablet / mobile). Check, per section:
+   spacing, font sizes, line heights, colours, alignment, radius, shadows, image crops, icon sizes,
+   hover / focus states, and the animation from `Design/ANIMATIONS.md`.
+5. Zoom in on every image in the screenshot. If any image looks soft or blurry, export it again from
+   Figma at a higher size.
+6. Check `Design/EXPORT-LOG.md` — every node must say `ok`. Nothing from the design is missing on the
+   site.
+7. Report: what was detected, what was generated, what still needs the user's input (usually real
+   copy, real images and real URLs).
+8. When the **whole site** is built, run the **§10 Final Round** of the generated `CLAUDE.md` —
    `FINAL-QA.md`, design match 100% to Figma / PDF, responsive, functionality, content and links —
    before handing over.
 
@@ -1477,6 +1549,7 @@ saying "done". It catches what the per-section lists miss.*
 | Dropping a Figma JPG/PNG export straight into `assets/images/` | Convert it to `.webp`, compress it and resize it first — resize down only, to 2x display size, quality 85+, so it never goes blurry. Vector art stays SVG. |
 | Figma export timed out, so the image was skipped or replaced with a placeholder | Retry 3 times, then export in smaller parts. Every node in `EXPORT-LOG.md` must say `ok` (Phase 1A.0). |
 | Blurry image on the page | Export at 2x, resize down only, WebP quality 85+, vectors stay SVG (§1 rule 16). |
+| Retyping copy from a screenshot, or writing "Lorem ipsum" / made-up copy | Use the exact text from `Design/CONTENT.md` (Phase 1A.0 step 5, §1 rule 20). |
 | Figma prototype animation ignored | Write it in `Design/ANIMATIONS.md` and map it to a §8 preset (Phase 1A.0). |
 | A blank browser tab, or a favicon made from the full wordmark | Favicon = the logo icon (mark), square, sharp, linked on every page (§1 rule 19). |
 | A page without the DeveloperAI meta tag | Every page `<head>` gets `<meta name="DeveloperAI" content="Developer Skill">` by default (§1 rule 18). |

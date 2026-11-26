@@ -536,7 +536,7 @@ replace them.
         │   └── custom.css          Elementor builds only — approved CSS only (E5.18)
         ├── js/
         │   ├── vendor.js           nav toggle, accordions — all init guarded
-        │   ├── sliders.js          data-slider → Slick 1.8.1 (A7.5) — the ONLY slider JS
+        │   ├── sliders.js          data-slider → Slick 1.8.1 (A7.5) or Swiper — the ONLY slider JS (ACF / Gutenberg / Both; not for Elementor / other builders, A1)
         │   ├── animations.js       data-anim → GSAP + ScrollTrigger (A7.4) — the ONLY animation JS
         │   └── global/             optional per-feature helpers
         ├── images/                 WebP only (SVG for vector art) — from Design/, optimised, sized to use
