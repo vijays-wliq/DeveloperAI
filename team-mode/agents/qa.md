@@ -108,10 +108,9 @@ apply to this project (e.g. no multilingual site) and write "n/a + why".
 - Check whether caching (e.g. WP Rocket) and a CDN are active. **team:** setting them up.
 
 ### H. Compatibility
-- Chrome, Safari, Firefox and Edge (versions not older than one year); browser-specific CSS issues
-  resolved.
+- **Chrome only** (latest version) — no Safari, Firefox or Edge testing. This overrides the
+  browser lines in Master B70 / F2: write those as "n/a — team mode tests Chrome only".
 - Responsive on mobile, tablet and desktop; navigation toggles work on small screens.
-  **team:** test on real phones and iPads.
 - Multilingual (if the site has it): every text translated; language switcher goes to the right
   page; no layout break after switching; RTL languages lay out correctly.
 
@@ -126,13 +125,15 @@ apply to this project (e.g. no multilingual site) and write "n/a + why".
 
 ## When the PM asks you to **test**
 
-For every task set to `done` in `TASKS.md` that the PM gives you. The proving section (header or
-hero) comes alone; after that the PM sends a **batch of 3–4 sections or a whole page** — test the
-whole batch in this one run.
+QA has **two rounds only**. This is **round 1**: the PM calls you once, after the **whole site**
+is built and every task is `self-reviewed` (`SELF-REVIEW.md` has no open line). Test the whole site
+— or, on a large project (10+ pages), only the page group (1 or 2) the PM gives you; shared
+sections are tested by group 1 only — in this one run. If the site is not
+self-reviewed yet, stop and tell the PM.
 
 **Test by template, not by page.** Give the full test (steps 1–3) once per **template** and once
-per **shared section** (header, footer, CTA, forms). A page that reuses a template that is already
-`qa-ok` gets only a light check: real content present, links, images, no layout break at 1600 and
+per **shared section** (header, footer, CTA, forms). A page that reuses a template that already
+got the full test in this run gets only a light check: real content present, links, images, no layout break at 1600 and
 375. Write in `BUGS.md` / `TASKS.md` which template each page was checked against.
 
 1. Compare with the Figma frame (`Design/pages/`) at **1600 / 900 / 375**, zoomed in: layout,
@@ -146,9 +147,9 @@ per **shared section** (header, footer, CTA, forms). A page that reuses a templa
    overlapping boxes and clipped text, plus console errors and failed network requests. Open
    screenshots only for the widths the script flags. Keep the script in `qa-screenshots/` and
    re-use it.
-3. Run that developer's list in `QA-CHECKLIST.md` — only the items for this section. Site-wide
-   items (F SEO, G performance, H browsers / multilingual, I 404 page, HTTPS, backend login, E
-   theme and plugins) run **once in the final round**, not per section.
+3. Run that developer's list in `QA-CHECKLIST.md`. Site-wide items (F SEO, G performance, H
+   Chrome / multilingual, I 404 page, HTTPS, backend login, E theme and plugins) run **once in
+   this round** for the whole site, not per page.
 4. WordPress sections: also compare with `html-preview/`, and open the editor to confirm text,
    images, links and buttons are editable without code.
 5. Pass → set the task to `qa-ok`. Fail → one row per bug in `BUGS.md`:
@@ -161,28 +162,29 @@ per **shared section** (header, footer, CTA, forms). A page that reuses a templa
 Editability, ACF, menus, forms, importer, PHP warnings, or right in `html-preview/` but wrong in
 WordPress → `wp-dev`.
 
-## When the PM asks you to **verify**
+## When the PM asks for **round 2** (verify + final round, one run)
+
+The PM calls you once, when every round-1 bug is `fixed`. With 20+ `fixed` bugs the PM may call 2
+`qa` runs in parallel: verify only your group's bugs, and run the final round only if you are
+group 1.
 
 Re-test every `fixed` bug. Works → `verified`. Still wrong → back to `open` with what you saw.
-Verify **all `fixed` bugs in one run** (the PM batches them), not one run per fix.
-**Rolling QA:** the PM may send a new group to test together with the last group's `fixed` bugs —
-do both in this one run. Skip pages whose shared section (header, footer, template) is still
-being fixed; in `BUGS.md` only add rows and set `verified` / `open`, never `fixed`.
 **Regression, kept small:** re-run the step-2 script on every page that uses the changed section
 (cheap), but open screenshots only for the bug's page plus **one** other page using that section,
 and any page the script flags.
 
-## When the PM asks for the **final round**
-
-Run Master **F2** "Final round" over the whole site into `FINAL-QA.md`. Tick a box only after you
-really checked it, and write how (screenshot compare, crawl, test submit, test order). Anything not
+Then, in the same run, the **final round**: run Master **F2** "Final round" over the whole site
+into `FINAL-QA.md`. Tick a box only after you really checked it, and write how (screenshot compare, crawl, test submit, test order). Anything not
 checked = "not checked + why".
 
 **Keep the final round light — do not redo the whole QA.** Re-run the step-2 script on **every
 page** at every test width (overflow, overlap, clipped text, console, failed requests, 404s). Do
 the screenshot / design compare **once per template and shared section** only, plus any page the
-script flags. Run the site-wide items (SEO, browsers, 404 page, HTTPS, plugins, backend login)
-here, once. Pages already `qa-ok` are not re-tested by hand.
+script flags. Run the site-wide items (SEO, Chrome, 404 page, HTTPS, plugins, backend login)
+only if round 1 could not check them. Pages already `qa-ok` are not re-tested by hand.
+
+**There is no round 3.** A bug still `open`, or a new one found in round 2, is listed in
+`FINAL-QA.md` and the report as an **open item** for the user.
 
 ## Rules
 

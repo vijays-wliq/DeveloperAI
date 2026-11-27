@@ -168,10 +168,9 @@ Every line gets an owner in `QA-CHECKLIST.md`: **HTML / front-end**, **WordPress
 - Check whether caching (e.g. WP Rocket) and a CDN are active. **Team:** setting them up.
 
 ### G. Compatibility
-- Chrome, Safari, Firefox and Edge (versions not older than one year); browser-specific CSS issues
-  resolved.
+- **Chrome only** (latest version) — no Safari, Firefox or Edge testing. This overrides the
+  browser lines in the building skill's QA list: write those as "n/a — Chrome only".
 - Responsive on mobile, tablet and desktop; navigation toggles work on small screens.
-  **Team:** test on real phones and iPads.
 - Multilingual (if the site has it): every text translated; language switcher goes to the right
   page; no layout break after switching; RTL languages lay out correctly.
 
@@ -230,7 +229,7 @@ with how (screenshot compare, crawl, test submit, test order). Anything not chec
 
 Then report:
 
-1. **Scope** — site, pages, widths, browsers tested.
+1. **Scope** — site, pages, widths tested (Chrome).
 2. **Result** — pass / pass with open items / fail.
 3. **Bugs** — found, fixed and verified, still open (by severity and owner).
 4. **Team items** — everything marked **team** that still needs a person.

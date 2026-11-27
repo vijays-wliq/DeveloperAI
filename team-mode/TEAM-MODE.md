@@ -42,7 +42,8 @@ including role input and the bug loop:
   approval in type 4), final review.
 - **Type 1 (HTML only):** there is no theme. `html-dev` builds in `HTML/` exactly as
   `PROJECT-BOOTSTRAP.md` says (`global.html`, `HTML/CLAUDE.md`, `assets/`), and `qa` routes every
-  bug to `html-dev`. Skip the pipeline in step 6 — `html-dev` builds, `qa` tests.
+  bug to `html-dev`. Skip the pipeline in step 6 — `html-dev` builds and self-reviews, `qa` tests
+  (2 rounds, step 7).
 - **Type 3 (no HTML pages):** same split as type 2, but there is no `html-preview/`. `html-dev`
   writes the front end straight into the theme — section markup in
   `template-parts/sections/<section>.php` (static, from `CONTENT.md`) + CSS / JS in `assets/` —
@@ -66,8 +67,9 @@ including role input and the bug loop:
 ├── login.md                        WordPress login — only wp-dev uses it; never print or commit
 ├── Design/  TOKENS.md              designer (Master A2–A6)
 ├── SCOPE.md                        PM — scope + every role's input
-├── TASKS.md                        PM — final task list, one row per section per owner
+├── TASKS.md                        PM — final task list, one row per page per owner
 ├── QA-CHECKLIST.md                 qa — checklist per developer
+├── SELF-REVIEW.md                  html-dev + wp-dev — self-review before QA
 ├── BUGS.md                         qa — every bug, owner, status
 ├── FINAL-QA.md                     qa — final round (Master F2)
 └── <wordpress>/wp-content/themes/<project-slug>/
@@ -85,9 +87,10 @@ including role input and the bug loop:
 3  PM: final scope and tasks   → TASKS.md                                   ⛔ GATE 1 — user approves
 4  qa: checklist per developer → QA-CHECKLIST.md
 5  designer: design spec       → Design/ + TOKENS.md                         ⛔ GATE 2 — user approves
-6  html-dev + wp-dev           → section by section, in parallel (pipeline below)
-7  qa: test and verify         → BUGS.md; bugs go back to their owner until all are verified
-8  PM: final review            → Master F3; issues go back to step 6        ⛔ GATE 3 — user approves
+6  html-dev + wp-dev           → build the WHOLE site, then each self-reviews → SELF-REVIEW.md
+                                 (no QA before this)
+7  qa: 2 rounds only           → round 1 full test → fixes in one batch → round 2 verify + final round
+8  PM: final review            → Master F3; open bugs go to the user          ⛔ GATE 3 — user approves
 9  Approved: delivered         → final report
 ```
 
@@ -115,18 +118,20 @@ The agents only add input in this step. They build nothing.
 ### 3. Final scope and tasks (PM) — ⛔ GATE 1
 
 - Merge the inputs. Ask the user every open question, one at a time.
-- Write `TASKS.md`: one row per **section × owner**, in build order (Master B64 / E5.35):
+- Write `TASKS.md`: one row per **page × owner** — not per section — in build order (Master B64 /
+  E5.35). Header + footer are one **Global** task, built first. List the page's sections in the
+  Sections column so nothing is missed:
 
 ```markdown
-| ID | Page | Section | Owner | Depends on | Status |
+| ID | Page | Sections | Owner | Depends on | Status |
 |---|---|---|---|---|---|
-| T-001 | Global | Header | html-dev | TOKENS.md | todo |
-| T-002 | Global | Header | wp-dev | T-001 | todo |
-| T-003 | Home | Hero | html-dev | TOKENS.md | todo |
-| T-004 | Home | Hero | wp-dev | T-003 | todo |
+| T-001 | Global | Header, Footer | html-dev | TOKENS.md | todo |
+| T-002 | Global | Header, Footer | wp-dev | T-001 | todo |
+| T-003 | Home | Hero, About, Services, Testimonials, CTA | html-dev | T-001 | todo |
+| T-004 | Home | Hero, About, Services, Testimonials, CTA | wp-dev | T-003 | todo |
 ```
 
-  Status: `todo` → `doing` → `done` → `qa-ok`.
+  Status: `todo` → `doing` → `done` → `self-reviewed` → `qa-ok`.
 - Write the architecture report (Master **B65**) into `SCOPE.md`.
 - **Stop. Show the user `TASKS.md` + the report. Build nothing until they approve.**
 - If the user gives an **Orbit project**, offer to mirror the tasks there. Ask first; never
@@ -143,26 +148,43 @@ skill (see `qa.md`).
 `CONTENT.md`, `ANIMATIONS.md`, `EXPORT-LOG.md`) and `TOKENS.md`.
 **Stop. Show the user `TOKENS.md`. Nothing is built until they approve.**
 
-### 6. HTML + WordPress together (pipeline)
+### 6. Build the whole site, then self-review (html-dev + wp-dev)
 
-The two developers work **at the same time, one section apart**:
+**No QA during the build.** `qa` is called only after the whole site is built and both developers
+have self-reviewed it.
+
+The two developers work **at the same time, one page apart**:
 
 ```text
-html-dev: header (proving) → sections 2–5 → sections 6–9 → …
-                ↓ qa ok          ↓ qa ok (batch)
-wp-dev:         header        →  sections 2–5 → …
+html-dev: Global (header + footer, proving) → page 2 → page 3 → … → self-review ─┐
+                ↓ done                           ↓ done                           ├→ QA round 1
+wp-dev:         Global                       →  page 2 → …        → self-review ─┘
 ```
 
-- `html-dev` builds section N (HTML + CSS + JS), marks its task `done`.
-- `qa` checks it against the Figma frame. If it passes → task `qa-ok`.
-- **QA in batches:** only the **proving section** (header, or hero) gets its own QA run. After it
-  is `qa-ok`, the PM calls `qa` once per **batch of 3–4 `done` sections, or once a whole page is
-  done** — not once per section. `html-dev` keeps building the next batch while `qa` tests this one.
-- `wp-dev` takes **only `qa-ok`** HTML sections and turns them into the WordPress section (PHP +
-  ACF fields, or the chosen builder), while `html-dev` builds section N+1.
+- `html-dev` builds the whole page N — all its sections (HTML + CSS + JS) — runs its own A9.9
+  checklist + Figma compare, and marks the page task `done`.
+- `wp-dev` takes `done` HTML pages and turns them into the WordPress page (PHP + ACF fields, or the
+  chosen builder), while `html-dev` builds page N+1.
 - Call `html-dev` and `wp-dev` in the same message when both have work, so they run in parallel.
-- First run: build **one proving section** (header or hero) through the whole chain before the
-  rest (Master F1 step 1).
+- First run: the **Global task** (header + footer) is the proving step — through the whole chain
+  before the pages (Master F1 step 1). `html-dev` compares it with Figma itself — no QA run for it.
+
+**Self-review — the gate before QA.** When every page is built, call `html-dev` and `wp-dev`
+**in one message** for a self-review (see their agent files). Each one checks its own work and
+writes `SELF-REVIEW.md`:
+
+- **Nothing missing:** every page, section, text, image, link, menu item, form and feature in
+  `TASKS.md` / `SCOPE.md` / Figma is there.
+- **html-dev:** its `QA-CHECKLIST.md` list, every section vs Figma (1600 / 900 / 375), the 5
+  device sizes with a script (no overflow / overlap / clipped text), hover / animations, images,
+  links, no console errors.
+- **wp-dev:** its `QA-CHECKLIST.md` list, all functionality (forms submit + email, menus, search,
+  CPTs, WooCommerce, importer), everything editable in the admin, WordPress matches
+  `html-preview/`, 404 / search / sitemap, favicon, SEO basics, no PHP warnings.
+- Each developer fixes what it finds, then marks its tasks `self-reviewed`.
+
+The PM hands the site to `qa` **only when every task is `self-reviewed`** and `SELF-REVIEW.md` has
+no open line. Not ready → back to the developer, not to `qa`.
 
 **One CSS, never two copies.** `html-dev` writes CSS and JS **directly in the theme's
 `assets/css/` and `assets/js/`** (Master A7). The pages in `html-preview/` load those same files,
@@ -172,9 +194,12 @@ and the theme enqueues them (A7.6). A fix in the HTML is automatically a fix in 
 `html-preview/` is then the approved visual reference that `wp-dev` and `qa` compare against.
 `vendor.css` holds tokens only (E5.19).
 
-### 7. Test and verify (qa) — the bug loop
+### 7. QA — two rounds only
 
-- `qa` tests every `done` task and writes every bug to `BUGS.md`:
+**Round 1 — full test.** One `qa` call over the **whole site**. **Large project (10+ pages): 2
+`qa` calls in parallel, in one message** — split the pages into 2 groups by template, one group
+each; shared sections (header, footer) go to group 1 only. It runs the full test in `qa.md` — design compare per template,
+script on every page, checklists, site-wide items — and writes every bug to `BUGS.md`:
 
 ```markdown
 | ID | Page | Section | Width | What is wrong | Expected (Figma) | Owner | Status |
@@ -188,30 +213,26 @@ and the theme enqueues them (A7.6). A fix in the HTML is automatically a fix in 
   - content not editable, ACF, menus, forms, importer, PHP warnings, WP-only breakage → `wp-dev`
   - right in `html-preview/` but wrong in WordPress → `wp-dev`
 - **Test by template:** `qa` gives the full test once per template and shared section; pages that
-  reuse a `qa-ok` template get a light check (see `qa.md`). Site-wide checks run only in the
-  final round.
-- **QA model:** call `qa` with `model: sonnet` for script-only runs, role input, the checklist and
-  verify runs; call it with `model: opus` for test runs with the design compare.
-- PM sends each developer **only its own open bugs**, then calls `qa` again to verify.
-- **Batch the verify:** wait until the developers have fixed all bugs of the current round, then
-  call `qa` **once** for all `fixed` bugs — not one verify run per fix.
-- **Rolling QA (QA and fixes in parallel):** after the first QA round, do not wait for all bugs to
-  be fixed before testing more. While the developers fix the bugs of group A, `qa` tests group B;
-  `qa`'s next run tests group C **and** verifies group A's `fixed` bugs in the same run. Rules:
-  1. Bugs in shared sections (header, footer, templates) are fixed first, in round 1. `qa` does not
-     test pages whose shared section is still being fixed — test them after the fix.
-  2. `qa` works on a new group, the developers on an old one — never on the same page at the same time.
-  3. Verify stays batched — inside the next group's test run, never one run per fix.
-  4. In `BUGS.md`, `qa` only adds rows and sets `verified` / `open`; developers only set `fixed`.
-  A one-page site has no next group to test — there `qa` simply waits for the fixes.
-- **Loop limit: 3 rounds.** A bug still open after 3 rounds goes to the user with what was tried.
+  reuse a template get a light check (see `qa.md`).
+- **QA model:** call `qa` with `model: sonnet` for role input and the checklist; rounds 1 and 2
+  (design compare) run with `model: opus`.
+
+**Fixes — one batch.** The PM sends each developer **all its own open bugs at once** (both
+developers in one message). Each fixes them all, re-checks the pages that use the changed section,
+sets them `fixed`, and updates `SELF-REVIEW.md`. No `qa` call until every bug is `fixed`.
+
+**Round 2 — verify + final round, in one `qa` call.** `qa` verifies every `fixed` bug (small
+regression check) and runs the light final round into `FINAL-QA.md` (Master F2).
+**Many bugs (20+ `fixed` bugs): 2 `qa` calls in parallel**, each verifying the bugs of its own
+round-1 page group; the final round is run once, by the group-1 call. Fewer bugs → one `qa` call.
+
+**No round 3.** A bug still open, or found new, after round 2 goes to the user as an **open item**
+with what was tried. The user decides: fix it and do a quick verify, or deliver with the open item.
 
 ### 8. Final review (PM) — ⛔ GATE 3
 
-- When every bug is `verified`, `qa` runs the final round into `FINAL-QA.md` (Master F2).
-  Keep it light: the script re-runs on every page, but the design compare is done once per
-  template (see `qa.md`) — not a second full QA.
-- PM checks Master **F3 Definition of done**. Any issue → back to step 6 with an owner.
+- After QA round 2, read `FINAL-QA.md` and the open items in `BUGS.md`.
+- PM checks Master **F3 Definition of done**. Any issue → an open item for the user, with an owner.
 - **Stop. Show the user the summary and `FINAL-QA.md`. Deliver only after approval.**
 
 ### 9. Delivered
