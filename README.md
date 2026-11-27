@@ -13,14 +13,11 @@ these docs as new rules, so every next build starts from them.
 | [`CLAUDE-ELEMENTOR-WORDPRESS-CONVERSION-EXPERT.md`](CLAUDE-ELEMENTOR-WORDPRESS-CONVERSION-EXPERT.md) | **HTML → WordPress with Elementor.** Main rule (§96): the Elementor site must match the HTML site visually and functionally. |
 | [`wordpress_theme_developer_brief.md`](wordpress_theme_developer_brief.md) | Finishing a site on an **existing WordPress theme** to the client's requirements. |
 | [`CLAUDE-QA.md`](CLAUDE-QA.md) | **Website QA** on its own, for any HTML or WordPress site: design compare, company QA checklist, `BUGS.md`, verify loop, final round. |
-| [`team-mode/TEAM-MODE.md`](team-mode/TEAM-MODE.md) | **Team mode** — the main session is the PM and calls four agents (`team-mode/agents/`: designer, html-dev, wp-dev, qa). Gates, HTML + WordPress side by side, QA bug loop. Guide: `team-mode/Team-Mode-Skill.pdf`. |
 
 ## Other files
 
 - `Skill-PDFs/` — PDF versions of the four skills: HTML Design, WordPress ACF, WordPress Elementor,
   WordPress Theme-Based.
-- `team-mode/Team-Mode-Skill.pdf` — guide for team mode: setup, start prompt, project types, roles,
-  flow, gates.
 - `HTML-Build-Time-Report.html` — build-time report for the HTML build with `PROJECT-BOOTSTRAP.md`.
 - `All-Skills-Build-Time-Report.html` — build-time report for all four skills with Claude Code.
 

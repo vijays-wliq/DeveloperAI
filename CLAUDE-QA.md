@@ -214,7 +214,11 @@ When the developer marks bugs `fixed`:
 2. Works → `verified`. Still wrong → back to `open`, with what you saw this time.
 3. Re-check the other pages that share that section or component, so the fix did not break
    something else. A new problem = a new row.
-4. After **3 rounds**, a bug still open goes to the user with what was tried.
+4. **Chrome verification:** re-run the step-3 responsive script on every page at every test width,
+   and click through the functionality by hand in Chrome — menus, mobile menu, search, sliders,
+   tabs, accordions, modals, forms (errors + success + email), WooCommerce if any, keyboard.
+5. **2 rounds only** (round 1 = full QA, round 2 = this verify). A bug still open after round 2 is
+   an **open item** in `FINAL-QA.md` and the report, with what was tried — no round 3.
 
 Status flow: `open` → `fixed` (developer) → `verified` (QA) — or back to `open`.
 

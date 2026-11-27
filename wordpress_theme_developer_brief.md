@@ -217,7 +217,7 @@ saying "done". It catches what the per-section lists miss.*
 - **Admin / editability:** every text, image, button and link is editable in WordPress / the page builder; dynamic
   content (posts, CPTs, products, menus, settings) comes from the CMS — nothing hard-coded.
 10. **Performance:** pages load fast; no unused heavy assets; images correctly sized.
-11. **Browsers:** Chrome, Safari, Firefox and Edge, plus one real phone (iOS Safari) where possible.
+11. **Browser:** **Chrome only** (latest version) — no Safari, Firefox or Edge testing, no real-device testing.
 
 **Rules**
 - Any fail → fix it → re-check that item **and** every page that shares that part.
@@ -225,6 +225,56 @@ saying "done". It catches what the per-section lists miss.*
   down as "not checked + why".
 - Only when every row in `FINAL-QA.md` is ticked, report: what was checked, what the final round
   fixed, and what is still waiting on the client.
+
+### QA → bug fixing → Chrome verification (2 rounds, MANDATORY)
+
+*QA does not stop at finding problems. Every problem is written down, fixed, and verified again in
+Chrome — responsive **and** functionality.*
+
+**Round 1 — full QA** (the final round above + the extra checks below)
+1. **Script first, in Chrome (Playwright):** open every page at the 5 device sizes (1920 / 1440 / 1024 / 768 / 390, 390 inside an `<iframe>`). The script reports
+   horizontal scroll, elements wider than the viewport, overlapping boxes, clipped text, console
+   errors, failed requests (404 / 403 / 500) and broken images. Open screenshots only for the widths
+   the script flags. Keep the script in `qa-screenshots/` and re-use it in round 2.
+2. **Test by template:** the full test once per template and once per shared section (header,
+   footer, CTA, forms). Other pages using that template get a light check: real content, links,
+   images, no layout break at the largest and the smallest width.
+3. Every problem → one row in `BUGS.md` (one problem per row; the same problem on many pages = one
+   row listing every page):
+
+   | ID | Page | Section | Width | What is wrong | Expected (design / requirement) | Status |
+   |---|---|---|---|---|---|---|
+
+**Bug fixing — one batch**
+4. Fix **all** `open` bugs in one pass, grouped by shared section / file (fix the header once, not
+   once per page). Reload the page after each fix, then set the row to `fixed`.
+
+**Round 2 — Chrome verification (responsive + functionality)**
+5. Re-test every `fixed` bug in Chrome, on the same page and width where it was found. Works →
+   `verified`. Still wrong → back to `open` with what you saw.
+6. **Responsive:** re-run the round-1 script on **every page** at every test width. Open
+   screenshots only for flagged widths, plus the bug's page and **one** other page that uses the
+   changed section.
+7. **Functionality — clicked by hand in Chrome:** header menu and dropdowns, mobile menu (open,
+   close, every link) at the smallest width, sticky header, search, sliders, tabs, accordions,
+   modals, video, pagination / filters, forms (empty submit shows errors, valid submit shows success
+   and the email arrives), WooCommerce (add to cart, mini-cart, cart, coupon, checkout test order), tab through by keyboard, 404 page.
+8. **No round 3.** A bug still `open`, or a new one found in round 2, goes into `FINAL-QA.md` and
+   the report as an **open item** (what is wrong, what was tried).
+
+**Extra checks (company QA standard)** — rows in `FINAL-QA.md`:
+- Animations checked with **reduced motion** on; hover, focus, active and **disabled** states on
+  buttons, links and inputs.
+- H1–H6 follow one hierarchy; borders, radius, shadows and icon sizes consistent everywhere.
+- Error / success / warning messages use the brand colours (red error, green success) and are
+  readable.
+- Search: relevant results, Clear / Reset works; breadcrumbs correct; dynamic sections and
+  pagination show the right content.
+- Featured images / thumbnails cropped well; videos play and are responsive.
+- Once live: every URL uses HTTPS.
+- WordPress: backend login works; customisations survive a theme update; plugins do not
+  conflict; SEO plugin (Yoast / Rank Math) set up and XML sitemap generated; caching / CDN
+  active or listed for the team.
 
 Do not claim that a feature has been tested unless it was actually tested. Clearly list any checks that could not be completed.
 
