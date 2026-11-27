@@ -90,7 +90,12 @@ Every page and every section is compared with its design, zoomed in.
    > Headless Chrome enforces a ~500 px minimum window, so a 375 px screenshot comes out
    > **cropped, not narrow**. Check true mobile by loading the page in a 375 px-wide `<iframe>`
    > inside a wrapper page.
-2. Check responsive at **1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320**: no
+2. Check responsive at **actual device sizes only** — **1920** (desktop) / **1440** (laptop) /
+   **1024** (iPad landscape) / **768** (iPad portrait) / **390** (iPhone).
+   Do not test every CSS breakpoint (1600 / 1366 / 1200 / 992 / 576 / 360 / 320 …); this
+   device list also replaces the breakpoint list in the building skill's QA list (step 2).
+   **Elementor build:** test at the Elementor doc's breakpoint widths instead (§119 / §128). Check
+   390 inside an `<iframe>` (see the note above). No
    horizontal scroll, no overlap, no clipped or squeezed text, menus / dropdowns stay on screen,
    tap targets at least 44 px, images not wrongly cropped.
 3. Zoom in on every image: soft, blurry or pixelated = bug.

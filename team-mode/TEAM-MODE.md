@@ -148,13 +148,16 @@ skill (see `qa.md`).
 The two developers work **at the same time, one section apart**:
 
 ```text
-html-dev: section 1 → section 2 → section 3 → …
-                ↓ qa ok      ↓ qa ok
-wp-dev:         section 1 →  section 2 → …
+html-dev: header (proving) → sections 2–5 → sections 6–9 → …
+                ↓ qa ok          ↓ qa ok (batch)
+wp-dev:         header        →  sections 2–5 → …
 ```
 
 - `html-dev` builds section N (HTML + CSS + JS), marks its task `done`.
 - `qa` checks it against the Figma frame. If it passes → task `qa-ok`.
+- **QA in batches:** only the **proving section** (header, or hero) gets its own QA run. After it
+  is `qa-ok`, the PM calls `qa` once per **batch of 3–4 `done` sections, or once a whole page is
+  done** — not once per section. `html-dev` keeps building the next batch while `qa` tests this one.
 - `wp-dev` takes **only `qa-ok`** HTML sections and turns them into the WordPress section (PHP +
   ACF fields, or the chosen builder), while `html-dev` builds section N+1.
 - Call `html-dev` and `wp-dev` in the same message when both have work, so they run in parallel.
@@ -184,12 +187,30 @@ and the theme enqueues them (A7.6). A fix in the HTML is automatically a fix in 
   - design, spacing, fonts, responsive, animation, slider look → `html-dev`
   - content not editable, ACF, menus, forms, importer, PHP warnings, WP-only breakage → `wp-dev`
   - right in `html-preview/` but wrong in WordPress → `wp-dev`
+- **Test by template:** `qa` gives the full test once per template and shared section; pages that
+  reuse a `qa-ok` template get a light check (see `qa.md`). Site-wide checks run only in the
+  final round.
+- **QA model:** call `qa` with `model: sonnet` for script-only runs, role input, the checklist and
+  verify runs; call it with `model: opus` for test runs with the design compare.
 - PM sends each developer **only its own open bugs**, then calls `qa` again to verify.
+- **Batch the verify:** wait until the developers have fixed all bugs of the current round, then
+  call `qa` **once** for all `fixed` bugs — not one verify run per fix.
+- **Rolling QA (QA and fixes in parallel):** after the first QA round, do not wait for all bugs to
+  be fixed before testing more. While the developers fix the bugs of group A, `qa` tests group B;
+  `qa`'s next run tests group C **and** verifies group A's `fixed` bugs in the same run. Rules:
+  1. Bugs in shared sections (header, footer, templates) are fixed first, in round 1. `qa` does not
+     test pages whose shared section is still being fixed — test them after the fix.
+  2. `qa` works on a new group, the developers on an old one — never on the same page at the same time.
+  3. Verify stays batched — inside the next group's test run, never one run per fix.
+  4. In `BUGS.md`, `qa` only adds rows and sets `verified` / `open`; developers only set `fixed`.
+  A one-page site has no next group to test — there `qa` simply waits for the fixes.
 - **Loop limit: 3 rounds.** A bug still open after 3 rounds goes to the user with what was tried.
 
 ### 8. Final review (PM) — ⛔ GATE 3
 
 - When every bug is `verified`, `qa` runs the final round into `FINAL-QA.md` (Master F2).
+  Keep it light: the script re-runs on every page, but the design compare is done once per
+  template (see `qa.md`) — not a second full QA.
 - PM checks Master **F3 Definition of done**. Any issue → back to step 6 with an owner.
 - **Stop. Show the user the summary and `FINAL-QA.md`. Deliver only after approval.**
 

@@ -1472,7 +1472,7 @@ saying "done". It catches what the per-section lists miss.*
    Figma frame / PDF page, zoomed in: section order, layout, spacing, sizes, fonts, weights, line
    heights, colours, radius, shadows, icons, images (sharp, right crop), hover / active states and
    animations. Measure the numbers, don't judge by eye — any difference over ~2 px gets fixed.
-3. **Responsive:** every page at 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 (§7), plus 320 px: no horizontal scroll, no overlap, no
+3. **Responsive:** every page at the 5 device sizes **1920** (desktop) / **1440** (laptop) / **1024** (iPad landscape) / **768** (iPad portrait) / **390** (iPhone, inside a 390 px `<iframe>`) — not every CSS breakpoint: no horizontal scroll, no overlap, no
    clipped or squeezed text, menus / dropdowns / mini-cart stay inside the screen, tap targets at
    least 44 px, images not wrongly cropped.
 4. **Functionality:** header menu, dropdowns, mobile menu, sticky header, search, sliders, tabs,

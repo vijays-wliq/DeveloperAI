@@ -126,14 +126,29 @@ apply to this project (e.g. no multilingual site) and write "n/a + why".
 
 ## When the PM asks you to **test**
 
-For every task set to `done` in `TASKS.md`:
+For every task set to `done` in `TASKS.md` that the PM gives you. The proving section (header or
+hero) comes alone; after that the PM sends a **batch of 3–4 sections or a whole page** — test the
+whole batch in this one run.
+
+**Test by template, not by page.** Give the full test (steps 1–3) once per **template** and once
+per **shared section** (header, footer, CTA, forms). A page that reuses a template that is already
+`qa-ok` gets only a light check: real content present, links, images, no layout break at 1600 and
+375. Write in `BUGS.md` / `TASKS.md` which template each page was checked against.
 
 1. Compare with the Figma frame (`Design/pages/`) at **1600 / 900 / 375**, zoomed in: layout,
    spacing, fonts, colours, radius, icons, images (sharp), hover / focus, animation (F1).
    Headless Chrome cannot go below ~500 px: check 375 inside a 375 px `<iframe>`.
-2. Check responsive at **1920 / 1600 / 1440 / 1366 / 1200 / 992 / 768 / 576 / 375 + 320**: no
-   horizontal scroll, no overlap, no clipped text.
-3. Run that developer's list in `QA-CHECKLIST.md`.
+2. Check responsive at **actual device sizes only** — **1920 / 1440 / 1024 / 768 / 390**
+   (desktop, laptop, iPad landscape, iPad portrait, iPhone); not every
+   CSS breakpoint. 390 inside an `<iframe>`. **Elementor build:** use the Elementor breakpoint
+   list (Master E5) instead. Use a
+   **script first** (Playwright): it reports horizontal scroll, elements wider than the viewport,
+   overlapping boxes and clipped text, plus console errors and failed network requests. Open
+   screenshots only for the widths the script flags. Keep the script in `qa-screenshots/` and
+   re-use it.
+3. Run that developer's list in `QA-CHECKLIST.md` — only the items for this section. Site-wide
+   items (F SEO, G performance, H browsers / multilingual, I 404 page, HTTPS, backend login, E
+   theme and plugins) run **once in the final round**, not per section.
 4. WordPress sections: also compare with `html-preview/`, and open the editor to confirm text,
    images, links and buttons are editable without code.
 5. Pass → set the task to `qa-ok`. Fail → one row per bug in `BUGS.md`:
@@ -149,13 +164,25 @@ WordPress → `wp-dev`.
 ## When the PM asks you to **verify**
 
 Re-test every `fixed` bug. Works → `verified`. Still wrong → back to `open` with what you saw.
-Also re-check the pages that share that section, so a fix did not break something else.
+Verify **all `fixed` bugs in one run** (the PM batches them), not one run per fix.
+**Rolling QA:** the PM may send a new group to test together with the last group's `fixed` bugs —
+do both in this one run. Skip pages whose shared section (header, footer, template) is still
+being fixed; in `BUGS.md` only add rows and set `verified` / `open`, never `fixed`.
+**Regression, kept small:** re-run the step-2 script on every page that uses the changed section
+(cheap), but open screenshots only for the bug's page plus **one** other page using that section,
+and any page the script flags.
 
 ## When the PM asks for the **final round**
 
 Run Master **F2** "Final round" over the whole site into `FINAL-QA.md`. Tick a box only after you
 really checked it, and write how (screenshot compare, crawl, test submit, test order). Anything not
 checked = "not checked + why".
+
+**Keep the final round light — do not redo the whole QA.** Re-run the step-2 script on **every
+page** at every test width (overflow, overlap, clipped text, console, failed requests, 404s). Do
+the screenshot / design compare **once per template and shared section** only, plus any page the
+script flags. Run the site-wide items (SEO, browsers, 404 page, HTTPS, plugins, backend login)
+here, once. Pages already `qa-ok` are not re-tested by hand.
 
 ## Rules
 
